@@ -20,7 +20,10 @@ impl Config {
             None => Scene::default(),
         };
 
-        Config { properties: props.clone(), scene }
+        Config {
+            properties: props.clone(),
+            scene,
+        }
     }
 
     /// Create a new Config using the provided binary file.
@@ -47,7 +50,7 @@ impl Config {
         self.properties.get(name)
     }
 
-    /// Returns a reference to all Properties (including default values) defining the Config.
+    /// Returns a reference to all Properties (including Default values) defining the Config.
     pub fn to_properties(&self) -> &Properties {
         &self.properties
     }
@@ -92,7 +95,7 @@ impl Config {
         false
     }
 
-    /// Returns a Properties container with all default values.
+    /// Returns a Properties container with all Default values.
     pub fn default_properties(&self) -> &Properties {
         &self.properties
     }

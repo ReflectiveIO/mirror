@@ -19,20 +19,14 @@ pub struct Session {
 impl Session {
     /// Create a new Session using the provided config.
     ///
-    /// - config: is the Config used to create the rendering session.
-    /// The Config is not deleted by the destructor.
-    /// - state: is the optional State to use to resume rendering.
-    /// The memory for State is freed by Session.
-    /// - film: is the optional Film to use to resume rendering.
-    /// the memory for Film is freed by Session.
-    ///
+    /// config is the Config used to create the rendering session.
+    /// The Config is not deleted by the destructor. and optional state
+    /// & film used to resume rendering.
     pub fn new(config: &Config, state: &State, film: &Film) -> Self {
         Session::default()
     }
 
     /// Create a new Session using the provided config and state & film.
-    ///
-    /// - #config# is
     pub fn restart(config: &Config, state_filename: &str, film_filename: &str) -> Self {
         Session::default()
     }
@@ -93,8 +87,6 @@ impl Session {
 
     /// Save all the rendering related information (the Config, Scene, State and Film)
     /// in a file for a later restart. The resume file extension must be ".rsm".
-    ///
-    /// filename is the binary file used to save.
     pub fn dump(filename: &str) {}
 
     pub fn config(&self) -> &Config {

@@ -3,18 +3,25 @@
 //! like editing materials, lights, geometry, interactive rendering and more.
 //!
 
-pub use config::Config;
+pub use camera::CameraTrait;
+pub use camera::CameraType;
+// pub use config::Config;
 pub use scene::Scene;
-pub use session::Session;
-pub use state::State;
 
-mod config;
-pub mod film;
+use crate::slg;
+
+// pub use session::Session;
+// pub use state::State;
+//
+mod camera;
+// mod config;
+// pub mod film;
 mod scene;
-mod session;
-mod state;
+// mod session;
+// mod state;
 
 /// Initializes core API. This function is thread safe.
 pub fn init() {
-    println!("Initializes core API.")
+    println!("# core::init");
+    slg::init();
 }
