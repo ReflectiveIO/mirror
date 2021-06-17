@@ -6,7 +6,7 @@ pub use self::utils::clamp;
 pub use self::utils::properties;
 
 mod core;
-mod utils;
+pub mod utils;
 
 pub fn init() {
     println!("# rays::init");
