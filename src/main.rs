@@ -2,9 +2,9 @@
 #![allow(unused_variables, dead_code, unused_imports)]
 
 // use crate::core::Config;
-// use crate::core::film::Film;
+use crate::core::Film;
 // use crate::core::Session;
-// use crate::core::State;
+use crate::core::State;
 use crate::rays::properties::{Getter, Properties};
 
 pub mod core;
@@ -18,8 +18,8 @@ fn main() {
 
     let config_filename = "./demo.cfg";
     let cmdline_props: Properties = Properties::new();
-    // let state: State = State::new();
-    // let film: Film = Film::new();
+    let state: State = State::new();
+    let film: Film = Film::new();
     //
     // let config = Config::new(Properties::load(config_filename).set(cmdline_props), None);
     //
