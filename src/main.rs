@@ -1,9 +1,9 @@
 #![allow(missing_docs)]
 #![allow(unused_variables, dead_code, unused_imports)]
 
-// use crate::core::Config;
+use crate::core::Config;
 use crate::core::Film;
-// use crate::core::Session;
+use crate::core::Session;
 use crate::core::State;
 use crate::rays::properties::{Getter, Properties};
 
@@ -20,10 +20,10 @@ fn main() {
     let cmdline_props: Properties = Properties::new();
     let state: State = State::new();
     let film: Film = Film::new();
-    //
-    // let config = Config::new(Properties::load(config_filename).set(cmdline_props), None);
-    //
-    // let session: Session = Session::new(&config, &state, &film);
+
+    let config = Config::new(Properties::load(config_filename).set(cmdline_props), None);
+
+    let session: Session = Session::new(&config, &state, &film);
     //
     // let halt_time: i32 = config.property("batch.halt_time").get().unwrap();
     // let halt_spp: i32 = config.property("batch.halt_spp").get().unwrap();

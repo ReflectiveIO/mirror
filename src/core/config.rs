@@ -4,7 +4,7 @@ use crate::core::state::State;
 use crate::rays::properties::{Properties, Property};
 
 /// Config stores all the configuration settings used to render a scene.
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub struct Config {
     /// the Config properties
     pub properties: Properties,
@@ -14,16 +14,13 @@ pub struct Config {
 
 impl Config {
     /// Create a new Config using the provided Properties and optional scene.
-    pub fn new(props: &Properties, scene: Option<&Scene>) -> Self {
+    pub fn new(properties: Properties, scene: Option<Scene>) -> Self {
         let scene = match scene {
-            Some(val) => *val,
+            Some(val) => val,
             None => Scene::default(),
         };
 
-        Config {
-            properties: props.clone(),
-            scene,
-        }
+        Config { properties, scene }
     }
 
     /// Create a new Config using the provided binary file.

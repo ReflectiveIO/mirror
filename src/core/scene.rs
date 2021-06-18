@@ -264,3 +264,9 @@ impl Scene {
         Scene::new(0.0)
     }
 }
+
+impl Default for Scene {
+    fn default() -> Self {
+        Self::new(1.0)
+    }
+}

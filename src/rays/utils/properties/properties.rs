@@ -11,7 +11,10 @@ pub struct Properties {
 impl Properties {
     /// Creates a new empty Properties.
     pub fn new() -> Self {
-        Properties { names: vec![], props: HashMap::new() }
+        Properties {
+            names: vec![],
+            props: HashMap::new(),
+        }
     }
 
     /// Sets the list of Property from a text file.
@@ -20,15 +23,15 @@ impl Properties {
     }
 
     /// Sets the list of Property.
-    pub fn set(&mut self, props: Properties) -> &Self {
-        self
+    pub fn set(&mut self, props: Properties) -> Self {
+        Properties::default()
     }
 
     /// Returns a property.
     pub fn get(&self, name: &str) -> &Property {
         match self.props.get(name) {
             Some(val) => val,
-            None => panic!("not found property: {}", name)
+            None => panic!("not found property: {}", name),
         }
     }
 }

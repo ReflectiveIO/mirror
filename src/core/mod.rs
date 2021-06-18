@@ -4,21 +4,21 @@
 //!
 pub use camera::CameraTrait;
 pub use camera::CameraType;
+pub use config::Config;
 pub use film::Film;
 pub use film::FilmChannel;
 pub use film::FilmOutput;
-// pub use config::Config;
 pub use scene::Scene;
-// pub use session::Session;
+pub use session::Session;
 pub use state::State;
 
 use crate::slg;
 
 mod camera;
+mod config;
 mod film;
-// mod config;
 mod scene;
-// mod session;
+mod session;
 mod state;
 
 /// Initializes core API. This function is thread safe.

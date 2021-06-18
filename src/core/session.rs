@@ -4,7 +4,7 @@ use crate::core::state::State;
 use crate::rays::properties::Properties;
 
 /// Session executes a rendering based on the Config provided.
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub struct Session {
     /// A reference to the Config
     config: Config,
