@@ -25,8 +25,8 @@ fn main() {
     //
     // let session: Session = Session::new(&config, &state, &film);
     //
-    // let halt_time: i32 = config.property("batch.halttime").get().unwrap();
-    // let halt_spp: i32 = config.property("batch.haltspp").get().unwrap();
+    // let halt_time: i32 = config.property("batch.halt_time").get().unwrap();
+    // let halt_spp: i32 = config.property("batch.halt_spp").get().unwrap();
     //
     // // Start the rendering
     // session.start();
@@ -35,11 +35,11 @@ fn main() {
     // while !session.done() {
     //     session.update_stats();
     //
-    //     let elapsed_time: i32 = stats.get("stats.renderengine.time").get().unwrap();
-    //     let pass: i32 = stats.get("stats.renderengine.pass").get().unwrap();
-    //     let convergence: f32 = stats.get("stats.renderengine.convergence").get().unwrap();
-    //     let total_sample_sec: i32 = stats.get("stats.renderengine.total.samplesec").get().unwrap();
-    //     let triangle_count: i32 = stats.get("stats.dataset.trianglecount").get().unwrap();
+    //     let elapsed_time: i32 = stats.get("stats.engine.time").get().unwrap();
+    //     let pass: i32 = stats.get("stats.engine.pass").get().unwrap();
+    //     let convergence: f32 = stats.get("stats.engine.convergence").get().unwrap();
+    //     let total_sample_sec: i32 = stats.get("stats.engine.total.sample_sec").get().unwrap();
+    //     let triangle_count: i32 = stats.get("stats.dataset.triangle_count").get().unwrap();
     //
     //     println!("[Elapsed time: {}/{}sec][Samples {}/{}][Convergence {}][Avg. samples/sec {} on {} tris",
     //              elapsed_time, halt_time, pass, halt_spp, 100.0 * convergence, total_sample_sec, triangle_count

@@ -9,6 +9,7 @@ use crate::rays;
 
 pub mod cameras;
 mod edit_action;
+pub mod film;
 pub mod scene;
 
 pub fn init() {

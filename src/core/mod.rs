@@ -5,8 +5,8 @@
 pub use camera::CameraTrait;
 pub use camera::CameraType;
 pub use film::Film;
-pub use film::FilmChannelType;
-pub use film::FilmOutputType;
+pub use film::FilmChannel;
+pub use film::FilmOutput;
 // pub use config::Config;
 pub use scene::Scene;
 // pub use session::Session;
