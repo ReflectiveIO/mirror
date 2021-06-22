@@ -1,6 +1,6 @@
 use log::info;
 
-use crate::rays::properties::Properties;
+use crate::rays::Properties;
 
 use super::config::Config;
 use super::film::Film;

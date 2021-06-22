@@ -13,11 +13,11 @@ pub mod film;
 pub mod scene;
 
 pub fn init() {
-    println!("# slg::init");
+    trace!("slg::init");
 
     rays::init();
 
-    println!("- @TODO: init openvdb");
-    println!("- @TODO: init OpenImageIO threads");
-    println!("- @TODO: clear file name resolver");
+    warn!("@TODO: init openvdb");
+    warn!("@TODO: init OpenImageIO threads");
+    warn!("@TODO: clear file name resolver");
 }

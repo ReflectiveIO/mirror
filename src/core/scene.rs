@@ -1,5 +1,5 @@
-use crate::rays::properties::Properties;
 use crate::rays::utils::HairFile;
+use crate::rays::Properties;
 use crate::slg;
 
 use super::CameraTrait;

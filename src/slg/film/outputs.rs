@@ -3,7 +3,7 @@ use std::str::FromStr;
 use strum::EnumString;
 use strum::ParseError;
 
-use crate::rays::properties::Properties;
+use crate::rays::Properties;
 
 /// FilmOutputs
 pub struct FilmOutputs {

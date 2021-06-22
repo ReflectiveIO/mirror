@@ -1,56 +1,55 @@
 #![allow(missing_docs)]
 #![allow(unused_variables, dead_code, unused_imports)]
 
-use crate::core::Config;
-use crate::core::Film;
-use crate::core::Session;
-use crate::core::State;
-use crate::rays::properties::{Getter, Properties};
+#[macro_use]
+extern crate log;
 
-pub mod core;
-pub mod rays;
-pub mod slg;
+use env_logger::Env;
+
+use mirror::core;
+use mirror::core::{Config, Film, Session, State};
+use mirror::rays::Properties;
 
 #[doc(hidden)]
 fn main() {
+    env_logger::init_from_env(Env::default().filter_or("LOGGING", "trace"));
+
     // Initialize core
     core::init();
 
-    let config_filename = "./demo.cfg";
-    let cmdline_props: Properties = Properties::new();
+    let config_filename = "scenes/alloy/config.toml";
     let state: State = State::new();
     let film: Film = Film::new();
 
-    let config = Config::new(Properties::load(config_filename).set(cmdline_props), None);
-
+    let config = Config::new(Properties::load(config_filename), None);
     let session: Session = Session::new(&config, &state, &film);
-    //
-    // let halt_time: i32 = config.property("batch.halt_time").get().unwrap();
-    // let halt_spp: i32 = config.property("batch.halt_spp").get().unwrap();
-    //
-    // // Start the rendering
-    // session.start();
-    //
-    // let stats = session.stats();
-    // while !session.done() {
-    //     session.update_stats();
-    //
-    //     let elapsed_time: i32 = stats.get("stats.engine.time").get().unwrap();
-    //     let pass: i32 = stats.get("stats.engine.pass").get().unwrap();
-    //     let convergence: f32 = stats.get("stats.engine.convergence").get().unwrap();
-    //     let total_sample_sec: i32 = stats.get("stats.engine.total.sample_sec").get().unwrap();
-    //     let triangle_count: i32 = stats.get("stats.dataset.triangle_count").get().unwrap();
-    //
-    //     println!("[Elapsed time: {}/{}sec][Samples {}/{}][Convergence {}][Avg. samples/sec {} on {} tris",
-    //              elapsed_time, halt_time, pass, halt_spp, 100.0 * convergence, total_sample_sec, triangle_count
-    //     )
-    // }
-    //
-    // // Stop the rendering
-    // session.stop();
-    //
-    // // Save the rendered image
-    // session.film().save_outputs();
 
-    println!("Successful");
+    let halt_time: i64 = config.get("batch.halt_time").unwrap_or(3);
+    let halt_spp: i64 = config.get("batch.halt_spp").unwrap_or(3);
+
+    // Start the rendering
+    session.start();
+
+    let stats = session.stats();
+    while !session.done() {
+        session.update_stats();
+
+        let elapsed_time: f64 = stats.get("stats.engine.time").unwrap();
+        let pass: i64 = stats.get("stats.engine.pass").unwrap();
+        let convergence: f64 = stats.get("stats.engine.convergence").unwrap();
+        let total_sample_sec: f64 = stats.get("stats.engine.total.sample_sec").unwrap();
+        let triangle_count: f64 = stats.get("stats.dataset.triangle_count").unwrap();
+
+        info!("[Elapsed time: {}/{}sec][Samples {}/{}][Convergence {}][Avg. samples/sec {} on {} tris",
+                     elapsed_time, halt_time, pass, halt_spp, convergence * 100.0, total_sample_sec, triangle_count
+            )
+    }
+
+    // Stop the rendering
+    session.stop();
+
+    // Save the rendered image
+    session.film().save_outputs();
+
+    info!("# Successful");
 }

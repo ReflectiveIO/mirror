@@ -1,8 +1,11 @@
-use crate::rays::properties::{Properties, Property};
+use config::{ConfigError, Value};
+
+use crate::rays::Properties;
 
 use super::film::Film;
 use super::scene::Scene;
 use super::state::State;
+use serde::Deserialize;
 
 /// Config stores all the configuration settings used to render a scene.
 #[derive(Default)]
@@ -44,8 +47,8 @@ impl Config {
 
     /// Returns the Property with the given name or the default value
     /// if it has not been defined.
-    pub fn property(&self, name: &str) -> &Property {
-        self.properties.get_or_default(name)
+    pub fn get<'de, T: Deserialize<'de>>(&self, name: &str) -> Result<T, ConfigError> {
+        self.properties.get(name)
     }
 
     /// Returns a reference to all Properties (including Default values) defining the Config.

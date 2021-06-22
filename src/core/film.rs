@@ -1,4 +1,4 @@
-use crate::rays::properties::Properties;
+use crate::rays::Properties;
 
 /// Film stores all the outputs of a rendering. It can be obtained from RenderSession
 /// or as stand alone object loaded from a file.
@@ -66,7 +66,7 @@ impl Film {
     /// Saves all Film output channels defined in the current
     /// RenderSession. This method can not be used with a standalone film.
     pub fn save_outputs(&self) {
-        println!("- @TODO: saves all film output channels")
+        trace!("- @TODO: saves all film output channels")
     }
 
     /// Saves the specified Film output channel.
