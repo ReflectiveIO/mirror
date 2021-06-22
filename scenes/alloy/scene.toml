@@ -1,0 +1,23 @@
+[scene.camera]
+fieldofview = 65.2385
+lookat = [-0.024778, -7.795377, 2.956715, -0.020979, -6.899364, 2.512703]
+motionblur = { enable = false }
+up = [0.001893, 0.444008, 0.896021]
+
+[scene.materials]
+mat_red = { type = "matte", kd = [0.8, 0.0, 0.0] }
+mat1 = { type = "matte", kd = [0.5, 0.5, 0.5] }
+mat2 = { type = "metal2", kr = [0.5, 0.5, 0.5], exp = 5000 }
+mat_alloy = { type = "mix", material1 = "mat1", material2 = "mat2", amount = 0.5 }
+mat_metal = { type = "metal2", kr = [0.5, 0.5, 0.5], exp = 5000 }
+
+[scene.objects]
+mat_alloy = { material = "mat_alloy", ply = "scenes/alloy/mat_alloy.ply" }
+mat_metal = { material = "mat_metal", ply = "scenes/alloy/mat_metal.ply" }
+mat_red = { material = "mat_red", ply = "scenes/alloy/mat_red.ply" }
+
+[scene.lights.infinite]
+type = "infinite"
+file = "scenes/simple-mat/sky.exr"
+gain = [1.0, 1.0, 1.0]
+shift = [0.0, 0.0]

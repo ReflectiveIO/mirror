@@ -7,3 +7,5 @@ edition = "2018"
 
 [dependencies]
 strum = { version = "0.21", features = ["derive"] }
+config = { version = "0.11", features = ["toml"] }
+toml = { version = "0.5" }

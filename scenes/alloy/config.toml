@@ -1,0 +1,22 @@
+[image]
+filename = "image.png"
+
+[film]
+height = 640
+width = 480
+
+[opencl]
+cpu = { use = true }
+gpu = { use = true, workgroup = { size = 64 } }
+
+[path]
+maxdepth = 6
+russianroulette = { cap = 0.25, depth = 5 }
+
+[scene]
+file = "scenes/alloy/scene.toml"
+
+[screen]
+refresh = { interval = 100 }
+
+
