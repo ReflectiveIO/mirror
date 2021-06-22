@@ -2,17 +2,17 @@
 //! render scenes. It includes the support for advanced new features
 //! like editing materials, lights, geometry, interactive rendering and more.
 //!
-pub use camera::CameraTrait;
-pub use camera::CameraType;
-pub use config::Config;
-pub use film::Film;
-pub use film::FilmChannel;
-pub use film::FilmOutput;
-pub use scene::Scene;
-pub use session::Session;
-pub use state::State;
-
 use crate::slg;
+
+pub use self::camera::CameraTrait;
+pub use self::camera::CameraType;
+pub use self::config::Config;
+pub use self::film::Film;
+pub use self::film::FilmChannel;
+pub use self::film::FilmOutput;
+pub use self::scene::Scene;
+pub use self::session::Session;
+pub use self::state::State;
 
 mod camera;
 mod config;
@@ -23,6 +23,6 @@ mod state;
 
 /// Initializes core API. This function is thread safe.
 pub fn init() {
-    println!("# core::init");
+    trace!("core::init");
     slg::init();
 }

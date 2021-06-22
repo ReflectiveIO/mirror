@@ -1,7 +1,8 @@
-use crate::core::film::Film;
-use crate::core::scene::Scene;
-use crate::core::state::State;
 use crate::rays::properties::{Properties, Property};
+
+use super::film::Film;
+use super::scene::Scene;
+use super::state::State;
 
 /// Config stores all the configuration settings used to render a scene.
 #[derive(Default)]
@@ -41,10 +42,10 @@ impl Config {
         Config::default()
     }
 
-    /// Returns the Property with the given name or the defualt value
+    /// Returns the Property with the given name or the default value
     /// if it has not been defined.
     pub fn property(&self, name: &str) -> &Property {
-        self.properties.get(name)
+        self.properties.get_or_default(name)
     }
 
     /// Returns a reference to all Properties (including Default values) defining the Config.

@@ -65,7 +65,9 @@ impl Film {
 
     /// Saves all Film output channels defined in the current
     /// RenderSession. This method can not be used with a standalone film.
-    pub fn save_outputs(&self) {}
+    pub fn save_outputs(&self) {
+        println!("- @TODO: saves all film output channels")
+    }
 
     /// Saves the specified Film output channel.
     pub fn save_output(&self, filename: &str, output_type: FilmOutput, props: &Properties) {}

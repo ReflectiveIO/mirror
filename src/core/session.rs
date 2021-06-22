@@ -1,7 +1,10 @@
-use crate::core::config::Config;
-use crate::core::film::Film;
-use crate::core::state::State;
+use log::info;
+
 use crate::rays::properties::Properties;
+
+use super::config::Config;
+use super::film::Film;
+use super::state::State;
 
 /// Session executes a rendering based on the Config provided.
 #[derive(Default)]
@@ -32,10 +35,14 @@ impl Session {
     }
 
     /// Starts the rendering.
-    pub fn start(&self) {}
+    pub fn start(&self) {
+        info!("- @TODO: start the rendering")
+    }
 
     /// Stops the rendering.
-    pub fn stop(&self) {}
+    pub fn stop(&self) {
+        info!("- @TODO: stop the rendering")
+    }
 
     /// It can be used to check if the session has been started.
     pub fn started(&self) -> bool {
@@ -66,7 +73,7 @@ impl Session {
 
     /// It can be used to check if the rendering is over.
     pub fn done(&self) -> bool {
-        false
+        true
     }
 
     /// Used to wait for the end of the rendering.

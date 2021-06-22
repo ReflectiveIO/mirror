@@ -1,7 +1,8 @@
-use crate::core::CameraTrait;
 use crate::rays::properties::Properties;
 use crate::rays::utils::HairFile;
 use crate::slg;
+
+use super::CameraTrait;
 
 /// Scene stores textures, materials and objects definitions.
 pub struct Scene {
