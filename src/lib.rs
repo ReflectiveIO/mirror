@@ -1,3 +1,4 @@
+#![feature(in_band_lifetimes)]
 #![allow(missing_docs)]
 #![allow(unused_variables, dead_code, unused_imports)]
 
