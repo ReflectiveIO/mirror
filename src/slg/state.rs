@@ -2,14 +2,16 @@ use serde::{Deserialize, Serialize};
 
 use crate::rays::utils::Archiver;
 
-#[derive(Default, Deserialize, Serialize)]
+#[derive(Default, Deserialize, Serialize, PartialEq, Debug)]
 pub struct State {
     tag: String, // engine tag
 }
 
 impl State {
     pub fn new(tag: &str) -> Self {
-        State::default()
+        Self {
+            tag: tag.to_string(),
+        }
     }
 
     pub fn check_engine_tag(&self, tag: &str) {

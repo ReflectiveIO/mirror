@@ -30,7 +30,7 @@ type Result<T> = std::result::Result<T, ArchiveError>;
 impl Archiver {
     pub fn open(filename: &str) -> Self {
         // Attempt to use a relative path for the URI
-        let filename = env::current_dir().unwrap().as_path().join(filename.clone());
+        let filename = env::current_dir().unwrap().as_path().join(filename);
 
         let mut file = OpenOptions::new()
             .read(true)
@@ -48,6 +48,10 @@ impl Archiver {
         };
 
         Self { file, data, stats }
+    }
+
+    pub fn data(&self) -> &Vec<u8> {
+        &self.data
     }
 
     pub fn serialize<T: Serialize>(&mut self, value: &T) -> Result<()> {
