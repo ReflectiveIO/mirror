@@ -1,3 +1,6 @@
+#[derive(Default)]
+pub struct Film;
+
 #[derive(Debug)]
 pub enum FilmChannel {
     RadiancePerPixelNormalized,

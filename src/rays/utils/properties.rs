@@ -3,7 +3,7 @@ use std::result::Result;
 use config::{ConfigError, Value};
 use serde::de::Deserialize;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Properties {
     props: config::Config,
 }

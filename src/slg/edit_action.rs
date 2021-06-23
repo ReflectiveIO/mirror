@@ -17,6 +17,7 @@ pub enum EditAction {
     ImageMapsEdit = 1 << 7,
 }
 
+#[derive(Clone)]
 pub struct EditActionList {
     actions: u32,
 }

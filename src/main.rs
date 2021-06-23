@@ -41,8 +41,8 @@ fn main() {
         let triangle_count: f64 = stats.get("stats.dataset.triangle_count").unwrap();
 
         info!("[Elapsed time: {}/{}sec][Samples {}/{}][Convergence {}][Avg. samples/sec {} on {} tris",
-                     elapsed_time, halt_time, pass, halt_spp, convergence * 100.0, total_sample_sec, triangle_count
-            )
+              elapsed_time, halt_time, pass, halt_spp, convergence * 100.0, total_sample_sec, triangle_count
+        )
     }
 
     // Stop the rendering

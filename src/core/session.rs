@@ -36,12 +36,13 @@ impl Session {
 
     /// Starts the rendering.
     pub fn start(&self) {
-        info!("- @TODO: start the rendering")
+        warn!("@TODO: start the rendering")
     }
 
     /// Stops the rendering.
     pub fn stop(&self) {
-        info!("- @TODO: stop the rendering")
+        trace!("@TODO: stop the rendering");
+        //self.engine.stop();
     }
 
     /// It can be used to check if the session has been started.

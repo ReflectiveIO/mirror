@@ -1,5 +1,5 @@
 use config::*;
-use mirror::rays::properties::Properties;
+use mirror::rays::Properties;
 
 #[test]
 fn test_load_scene() {
