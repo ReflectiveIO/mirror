@@ -12,3 +12,5 @@ strum = { version = "0.21", features = ["derive"] }
 config = { version = "0.11", features = ["toml"] }
 serde = { version = "1.0.126", features = ["derive"] }
 bincode = "1.3.3"
+bitflags = "1.2.1"
+downcast-rs = "1.2.0"

@@ -6,3 +6,4 @@ pub use outputs::FilmOutputs;
 mod film;
 pub mod filter;
 mod outputs;
+pub mod pipeline;

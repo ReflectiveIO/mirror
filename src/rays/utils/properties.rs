@@ -27,6 +27,12 @@ impl Properties {
     pub fn get<'de, T: Deserialize<'de>>(&self, name: &str) -> Result<T, ConfigError> {
         self.props.get(name)
     }
+
+    pub fn set<T: Into<Value>>(&mut self, name: &str, value: T) {
+        if let Err(err) = self.props.set(name, value) {
+            error!("set value to properties error: {}", err);
+        }
+    }
 }
 
 impl Default for Properties {

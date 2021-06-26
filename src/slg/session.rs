@@ -1,16 +1,26 @@
 use crate::rays::Properties;
-use crate::slg::engine::Engine;
+use crate::slg::engine::{Engine, TilePathCPURenderEngine};
 
 use super::config::Config;
 use super::film::Film;
 use super::state::State;
 
-#[derive(Default)]
 pub struct Session {
     pub config: Config,
-    pub engine: Engine,
+    pub engine: Box<dyn Engine>,
     pub film: Film,
     state: State,
+}
+
+impl Default for Session {
+    fn default() -> Self {
+        Self {
+            config: Config::default(),
+            engine: Box::new(TilePathCPURenderEngine::new()),
+            film: Film::default(),
+            state: State::default(),
+        }
+    }
 }
 
 impl Session {
@@ -21,13 +31,13 @@ impl Session {
         };
 
         let film = match film {
-            Some(val) => Film,
+            Some(val) => val,
             None => Film::default(),
         };
 
         Session {
             config,
-            engine: Default::default(),
+            engine: Box::new(TilePathCPURenderEngine::new()),
             film,
             state,
         }
@@ -37,8 +47,13 @@ impl Session {
         false
     }
 
-    pub fn start() {}
-    pub fn stop() {}
+    pub fn start(&self) {
+        warn!("@TODO: start the rendering");
+    }
+
+    pub fn stop(&self) {
+        warn!("@TODO: stop the rendering");
+    }
 
     pub fn editing(&self) -> bool {
         false
@@ -55,7 +70,7 @@ impl Session {
 
     pub fn save_film_outputs(&self) {}
     pub fn save_film(&self, filename: &str) {}
-    pub fn save_resume_file(&self, filename: &str) {}
+    pub fn dump(&self, filename: &str) {}
 
     pub fn check_periodic_save(&self, force: bool) {}
 

@@ -2,7 +2,7 @@ use config::ConfigError;
 use serde::Deserialize;
 
 use crate::rays::Properties;
-use crate::slg::engine::Engine;
+use crate::slg::engine::{Engine, TilePathCPURenderEngine};
 use crate::slg::film::filter::Filter;
 use crate::slg::film::Film;
 use crate::slg::Scene;
@@ -14,11 +14,12 @@ pub struct Config {
 
     props_cache: Properties,
     save_additional_props: Properties,
+    default_properties: Properties,
     allocated_scene: bool,
 }
 
 impl Config {
-    pub fn load(props: &Properties, scene: Option<Scene>) -> Self {
+    pub fn new(props: &Properties, scene: Option<Scene>) -> Self {
         let scene = match scene {
             Some(val) => val,
             None => Scene::default(),
@@ -27,15 +28,19 @@ impl Config {
         Config {
             scene,
             properties: props.clone(),
-            props_cache: Default::default(),
-            save_additional_props: Default::default(),
+            props_cache: Properties::default(),
+            default_properties: Properties::default(),
+            save_additional_props: Properties::default(),
             allocated_scene: false,
         }
     }
 
-    pub fn has_cached_kernels() -> bool {
+    /// Returns false if a (long) kernel compilation time is required at the start of
+    /// the rendering. True otherwise.
+    pub fn has_cached_kernels(&self) -> bool {
         false
     }
+
     pub fn get<'de, T: Deserialize<'de>>(&self, name: &str) -> Result<T, ConfigError> {
         self.properties.get(name)
     }
@@ -55,18 +60,21 @@ impl Config {
 
     pub fn alloc_sample_shared_data() {}
     pub fn alloc_sampler() {}
-    pub fn alloc_engine() -> Engine {
-        Engine::default()
+    pub fn alloc_engine() -> Box<dyn Engine> {
+        Box::new(TilePathCPURenderEngine::new())
     }
 
-    pub fn to_properties() -> Properties {
-        Properties::default()
+    /// Returns a reference to all Properties (including
+    /// default values) defining the RenderConfig.
+    pub fn to_properties(&self) -> &Properties {
+        &self.properties
     }
+
     pub fn default_properties() -> Properties {
         Properties::default()
     }
 
-    pub fn load_serialized(filename: &str) -> Config {
+    pub fn load(filename: &str) -> Config {
         Config::default()
     }
 

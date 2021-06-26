@@ -264,6 +264,10 @@ impl Scene {
     pub fn load(filename: &str, scale: f32) -> Scene {
         Scene::new(0.0)
     }
+
+    pub fn from(scene: slg::Scene) -> Self {
+        Self { scene }
+    }
 }
 
 impl Default for Scene {

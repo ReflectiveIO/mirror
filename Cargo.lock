@@ -72,6 +72,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "downcast-rs"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
+
+[[package]]
 name = "env_logger"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -165,7 +171,9 @@ name = "mirror"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "bitflags",
  "config",
+ "downcast-rs",
  "env_logger",
  "log",
  "serde 1.0.126",
