@@ -18,7 +18,7 @@ impl Config {
     /// Create a new Config using the provided Properties and optional scene.
     pub fn new(props: &Properties, scene: Option<Scene>) -> Self {
         let mut config = Self {
-            ..Default::default()
+            config: slg::Config::default(),
         };
 
         if let Some(scene) = scene {

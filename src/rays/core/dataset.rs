@@ -5,7 +5,6 @@ use crate::rays::Context;
 
 pub struct Dataset {
     dataset_id: u32,
-    context: Context,
 
     total_vertex_count: u64,
     total_triangle_count: u64,
@@ -24,7 +23,6 @@ impl Dataset {
     pub fn new(ctx: Option<&Context>) -> Self {
         Self {
             dataset_id: 0,
-            context: Context::new(None),
             total_vertex_count: 0,
             total_triangle_count: 0,
             accelerators: HashMap::default(),

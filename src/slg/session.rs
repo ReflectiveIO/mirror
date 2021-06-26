@@ -44,7 +44,7 @@ impl Session {
     }
 
     pub fn started(&self) -> bool {
-        false
+        true
     }
 
     pub fn start(&self) {

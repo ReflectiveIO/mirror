@@ -63,7 +63,7 @@ impl Engine for TilePathCPURenderEngine {
     }
 
     fn done(&self) -> bool {
-        todo!()
+        false
     }
 
     fn wait_for_done(&self) {
