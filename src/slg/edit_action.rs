@@ -23,7 +23,7 @@ impl BitAnd<EditAction> for u32 {
     type Output = u32;
 
     fn bitand(self, rhs: EditAction) -> Self::Output {
-        self & rhs
+        self & rhs as u32
     }
 }
 

@@ -1,5 +1,5 @@
 use crate::rays;
-use crate::rays::core::color::Spectrum;
+use crate::rays::color::Spectrum;
 use crate::slg::bsdf::hitpoint::HitPoint;
 
 /// Fresnel texture interface
@@ -32,4 +32,3 @@ impl FresnelTexture {
     fn fr_full(cosi: f32, cost: &Spectrum, eta: &Spectrum, k: &Spectrum) -> Box<Spectrum> {}
     fn fr_diel2(cosi: f32, cost: f32, eta: f32) -> f32 {}
 }
-

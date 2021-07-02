@@ -33,7 +33,7 @@ pub enum WrapType {
 
 /// Types of strands tessellation.
 pub enum StrandsTessellationType {
-    // This list must be aligned with slg::StrandsShape::TessellationType
+    // This list must be aligned with slg::shape::TessellationType
     Ribbon,
     RibbonAdaptive,
     Solid,

@@ -11,6 +11,7 @@ pub use self::film::Film;
 pub use self::film::FilmChannel;
 pub use self::film::FilmOutput;
 pub use self::scene::Scene;
+pub use self::scene::SceneTrait;
 pub use self::session::Session;
 pub use self::state::State;
 

@@ -23,6 +23,10 @@ pub mod accelerator {
 mod core;
 pub mod utils;
 
+pub use self::core::color;
+pub use self::core::mesh;
+pub use self::core::named_object::NamedObject;
+
 pub fn init() {
     trace!("rays::init");
     warn!("@TODO: init OpenCL");

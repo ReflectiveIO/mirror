@@ -1,4 +1,4 @@
-use crate::rays::core::color::{RGBColor, Spectrum};
+use crate::rays::color::{RGBColor, Spectrum};
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::textures::fresnel::texture::FresnelTextureTrait;
 
