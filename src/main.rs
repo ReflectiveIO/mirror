@@ -6,8 +6,7 @@ extern crate log;
 
 use env_logger::Env;
 
-use mirror::core;
-use mirror::core::{Config, Film, Session, State};
+use mirror::core::{self, Config, Film, Session, State};
 use mirror::rays::Properties;
 
 #[doc(hidden)]

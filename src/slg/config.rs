@@ -54,7 +54,7 @@ impl Config {
         Filter::default()
     }
 
-    pub fn alloc_film() -> Film {
+    pub fn alloc_film(&self) -> Film {
         Film::default()
     }
 

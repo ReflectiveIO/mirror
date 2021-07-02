@@ -33,6 +33,10 @@ impl Properties {
             error!("set value to properties error: {}", err);
         }
     }
+
+    pub fn has(&self, name: &str) -> bool {
+        self.props.get_str(name).is_ok()
+    }
 }
 
 impl Default for Properties {

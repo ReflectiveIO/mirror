@@ -87,7 +87,7 @@ impl Session {
     }
 
     /// Ends the scene editing and start the rendering again.
-    pub fn end_edit(&self) {
+    pub fn end_edit(&mut self) {
         self.session.end_edit();
 
         // @TODO: Invalidate the scene properties cache
@@ -298,7 +298,7 @@ impl Session {
     ///
     /// props are the Properties with the definition of: film.image-pipeline(s).*
     /// (including radiance channel scales), film.outputs.*, film.width or film.height.
-    pub fn parse(&self, props: &Properties) {
+    pub fn parse(&mut self, props: &Properties) {
         self.session.parse(props);
     }
 

@@ -2,8 +2,9 @@ use downcast_rs::Downcast;
 
 use crate::rays::device::{DeviceDescription, IntersectionDevice};
 use crate::slg::film::Film;
-use crate::slg::State;
+use crate::slg::{EditActionList, State};
 
+#[derive(Eq, PartialEq)]
 pub enum EngineType {
     PathOCLRenderEngine,
     LightCPURenderEngine,
@@ -20,13 +21,13 @@ pub enum EngineType {
 
 /// Base class for render engines
 pub trait Engine: Downcast {
-    fn started(&self);
-    fn start(&self);
+    fn started(&self) -> bool;
+    fn start(&self, film: &Film);
     fn stop(&self);
 
     fn editing(&self) -> bool;
     fn begin_scene_edit(&self);
-    fn end_scene_edit(&self);
+    fn end_scene_edit(&self, actions: &EditActionList);
 
     fn begin_film_edit(&self);
     fn end_film_edit(&self);

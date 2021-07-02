@@ -16,6 +16,9 @@ impl Scene {
             dataset: Dataset::new(None),
         }
     }
+
+    pub fn preprocess_camera(&self, film_width: u32, film_height: u32, film_sub_region: &Vec<u32>) {
+    }
 }
 
 impl Default for Scene {

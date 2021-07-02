@@ -3,7 +3,7 @@ use crate::slg::engine::cpu_engine::{CPURenderEngine, CPUTileRenderEngine};
 use crate::slg::engine::tile::TileRepository;
 use crate::slg::engine::{Engine, EngineType};
 use crate::slg::film::Film;
-use crate::slg::State;
+use crate::slg::{EditActionList, State};
 
 pub struct TilePathCPURenderEngine {
     tile_repository: TileRepository,
@@ -18,11 +18,11 @@ impl TilePathCPURenderEngine {
 }
 
 impl Engine for TilePathCPURenderEngine {
-    fn started(&self) {
-        todo!()
+    fn started(&self) -> bool {
+        false
     }
 
-    fn start(&self) {
+    fn start(&self, film: &Film) {
         todo!()
     }
 
@@ -38,7 +38,7 @@ impl Engine for TilePathCPURenderEngine {
         todo!()
     }
 
-    fn end_scene_edit(&self) {
+    fn end_scene_edit(&self, edit_actions: &EditActionList) {
         todo!()
     }
 
