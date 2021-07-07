@@ -1,4 +1,6 @@
 use crate::rays::geometry::{Point, Transform, Vector};
+use crate::rays::Properties;
+use crate::slg::image_map::ImageMapCache;
 
 pub struct Camera {
     clip_hither: f32,
@@ -87,7 +89,7 @@ pub trait CameraTrait {
         0.0
     }
 
-    fn to_properties(&self) {}
+    fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties;
     fn update_volume_reference(&self) {}
     fn compute_bounding_box(&self, orig: &Point) {}
 }

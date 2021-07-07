@@ -37,6 +37,10 @@ impl Properties {
     pub fn has(&self, name: &str) -> bool {
         self.props.get_str(name).is_ok()
     }
+
+    pub fn merge(&mut self, source: Properties) {
+        self.props.merge(source.props);
+    }
 }
 
 impl Default for Properties {
