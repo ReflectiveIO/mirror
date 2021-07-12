@@ -2,14 +2,14 @@ use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::BSDFEvent;
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
 use super::material::Material;
 use super::material::MaterialTrait;
-use crate::slg::bsdf::BSDFEvent;
-use crate::slg::material::MaterialType;
 
 pub struct MixMaterial {
     a: Box<dyn MaterialTrait>,
@@ -160,7 +160,7 @@ impl MaterialTrait for MixMaterial {
         todo!()
     }
 
-    fn update_avg_pass_through_transparency() {
+    fn update_avg_pass_through_transparency(&mut self) {
         todo!()
     }
 }

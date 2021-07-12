@@ -248,7 +248,7 @@ impl Material {
         self.bump_sample_distance = dist
     }
 
-    pub fn get_bump_sample_distance(&self) -> f23 {
+    pub fn get_bump_sample_distance(&self) -> f32 {
         self.bump_sample_distance
     }
 

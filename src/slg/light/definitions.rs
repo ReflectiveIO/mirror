@@ -104,13 +104,13 @@ impl LightSourceDefinitions {
         &self.light_index_by_tri_index
     }
 
-    pub fn get_emit_light_strategy(&self) -> &dyn LightStrategy {
+    pub fn get_emit_light_strategy(&self) -> &Box<dyn LightStrategy> {
         &self.emit_light_strategy
     }
-    pub fn get_illuminate_light_strategy(&self) -> &dyn LightStrategy {
+    pub fn get_illuminate_light_strategy(&self) -> &Box<dyn LightStrategy> {
         &self.illuminate_light_strategy
     }
-    pub fn get_infinite_light_strategy(&self) -> &dyn LightStrategy {
+    pub fn get_infinite_light_strategy(&self) -> &Box<dyn LightStrategy> {
         &self.infinite_light_strategy
     }
 

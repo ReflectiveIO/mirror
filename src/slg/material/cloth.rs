@@ -2,12 +2,47 @@ use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Point, Vector, UV};
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
-use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
-use crate::slg::material::MaterialType;
+
+pub enum ClothPreset {
+    Denim,
+    SilkShantung,
+    SilkCharMeuse,
+    CottonTwill,
+    WoolGabardine,
+    Polyester,
+}
+
+pub enum YarnType {
+    Warp,
+    Weft,
+}
+
+/// Data structure describing the properties of a single yarn
+#[derive(Default)]
+pub struct Yarn {
+    /// Fiber twist angle
+    psi: f32,
+    /// Maximum inclination angle
+    umax: f32,
+    /// Spine curvature
+    kappa: f32,
+    /// Width of segment rectangle
+    width: f32,
+    /// Length of segment rectangle
+    length: f32,
+    /// u coordinate of the yarn segment center,
+    /// assumes that the tile covers 0 <= u, v <= 1.
+    /// (0, 0) is lower left corner of the weave pattern
+    center_u: f32,
+    /// v coordinate of the yarn segment center
+    center_v: f32,
+}
 
 pub struct ClothMaterial {
     preset: ClothPreset,
@@ -79,7 +114,10 @@ impl ClothMaterial {
     }
 
     fn set_preset(&mut self) {}
-    fn get_yarn(&self, u_i: f32, v_i: f32, uv: &UV, umax: f32, scale: f32) -> Yarn {}
+    fn get_yarn(&self, u_i: f32, v_i: f32, uv: &UV, umax: f32, scale: f32) -> Yarn {
+        Yarn::default()
+    }
+
     fn get_yarn_uv(&self, yarn: &Yarn, center: &Point, xy: &Point, uv: &UV, umax_mod: f32) {}
 
     fn radius_of_curvature(&self, yarn: &Yarn, u: f32, umax_mod: f32) -> f32 {
