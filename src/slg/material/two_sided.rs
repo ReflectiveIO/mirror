@@ -2,6 +2,7 @@ use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::BSDFEvent;
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
@@ -46,7 +47,7 @@ impl MaterialTrait for TwoSidedMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        self.event_types
     }
 
     fn is_light_source(&self) -> bool {
@@ -156,7 +157,7 @@ impl MaterialTrait for TwoSidedMaterial {
         todo!()
     }
 
-    fn update_avg_pass_through_transparency() {
+    fn update_avg_pass_through_transparency(&mut self) {
         todo!()
     }
 }

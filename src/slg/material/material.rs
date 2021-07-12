@@ -2,6 +2,7 @@ use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::BSDFEvent;
 use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
@@ -406,9 +407,7 @@ impl MaterialTrait for Material {
         todo!()
     }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Material>) {
-        todo!()
-    }
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {}
 
     fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
         todo!()
@@ -538,7 +537,7 @@ pub trait MaterialTrait {
     fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool {
         false
     }
-    fn add_referenced_materials(&mut self, v: &Vec<Material>) {}
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {}
     fn add_referenced_textures(&mut self, v: &Vec<Texture>) {}
     fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {}
 
@@ -548,5 +547,5 @@ pub trait MaterialTrait {
         Properties::default()
     }
 
-    fn update_avg_pass_through_transparency() {}
+    fn update_avg_pass_through_transparency(&mut self) {}
 }

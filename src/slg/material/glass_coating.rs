@@ -7,6 +7,7 @@ use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
 use super::material::MaterialTrait;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 
 pub struct GlassCoatingMaterial {
     mat_base: Texture,
@@ -78,7 +79,7 @@ impl MaterialTrait for GlassCoatingMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::GLOSSY | BSDFEventType::REFLECT | self.mat_base.get_event_types()
     }
 
     fn is_light_source(&self) -> bool {
@@ -168,7 +169,7 @@ impl MaterialTrait for GlassCoatingMaterial {
         todo!()
     }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Material>) {
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {
         todo!()
     }
 
@@ -184,7 +185,7 @@ impl MaterialTrait for GlassCoatingMaterial {
         todo!()
     }
 
-    fn update_avg_pass_through_transparency() {
+    fn update_avg_pass_through_transparency(&mut self) {
         todo!()
     }
 }

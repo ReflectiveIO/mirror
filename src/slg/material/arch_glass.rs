@@ -1,6 +1,7 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
@@ -95,7 +96,7 @@ impl MaterialTrait for ArchGlassMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::SPECULAR | BSDFEventType::REFLECT | BSDFEventType::TRANSMIT
     }
 
     fn evaluate(

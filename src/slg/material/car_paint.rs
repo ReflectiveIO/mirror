@@ -2,6 +2,7 @@ use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
@@ -73,7 +74,7 @@ impl MaterialTrait for CarPaintMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::GLOSSY | BSDFEventType::REFLECT
     }
 
     fn albedo(&self, hit_point: &HitPoint) -> Spectrum {

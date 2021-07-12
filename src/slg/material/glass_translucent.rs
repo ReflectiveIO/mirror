@@ -8,6 +8,7 @@ use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
 use super::material::MaterialTrait;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 
 pub struct GlassTranslucentMaterial {
     kd: Texture,
@@ -123,7 +124,7 @@ impl MaterialTrait for GlassTranslucentMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::GLOSSY | BSDFEventType::REFLECT | BSDFEventType::TRANSMIT
     }
 
     fn albedo(&self, hit_point: &HitPoint) -> Spectrum {

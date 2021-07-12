@@ -2,6 +2,7 @@ use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
@@ -23,7 +24,7 @@ impl MaterialTrait for NullMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::SPECULAR | BSDFEventType::TRANSMIT
     }
 
     fn is_delta(&self) -> bool {
@@ -85,7 +86,7 @@ impl MaterialTrait for NullMaterial {
         todo!()
     }
 
-    fn update_avg_pass_through_transparency() {
+    fn update_avg_pass_through_transparency(&mut self) {
         todo!()
     }
 }

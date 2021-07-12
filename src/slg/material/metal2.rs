@@ -6,6 +6,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 
 pub struct Metal2Material {
     fresnel_tex: Texture,
@@ -72,7 +73,7 @@ impl MaterialTrait for Metal2Material {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::GLOSSY | BSDFEventType::REFLECT
     }
 
     fn albedo(&self, hit_point: &HitPoint) -> Spectrum {

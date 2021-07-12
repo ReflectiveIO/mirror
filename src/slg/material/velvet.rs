@@ -6,6 +6,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 
 pub struct VelvetMaterial {
     kd: Texture,
@@ -59,7 +60,7 @@ impl MaterialTrait for VelvetMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::DIFFUSE | BSDFEventType::REFLECT
     }
 
     fn albedo(&self, hit_point: &HitPoint) -> Spectrum {

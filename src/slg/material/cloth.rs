@@ -6,6 +6,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 
 pub struct ClothMaterial {
     preset: ClothPreset,
@@ -128,7 +129,7 @@ impl MaterialTrait for ClothMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::GLOSSY | BSDFEventType::REFLECT
     }
 
     fn albedo(&self, hit_point: &HitPoint) -> Spectrum {

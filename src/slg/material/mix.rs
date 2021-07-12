@@ -8,12 +8,13 @@ use crate::slg::volume::Volume;
 
 use super::material::Material;
 use super::material::MaterialTrait;
+use crate::slg::bsdf::BSDFEvent;
 
 pub struct MixMaterial {
     a: Box<dyn MaterialTrait>,
     b: Box<dyn MaterialTrait>,
     mix_factor: Texture,
-    event_types: BSDEvent,
+    event_types: BSDFEvent,
     is_light_source: bool,
     is_delta: bool,
 }
@@ -52,7 +53,7 @@ impl MaterialTrait for MixMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        self.event_types
     }
 
     fn is_light_source(&self) -> bool {
@@ -142,7 +143,7 @@ impl MaterialTrait for MixMaterial {
         todo!()
     }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Material>) {
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {
         todo!()
     }
 

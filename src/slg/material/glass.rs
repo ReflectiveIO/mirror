@@ -4,6 +4,7 @@ use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 
 pub struct GlassMaterial {
     kr: Texture,
@@ -95,7 +96,7 @@ impl MaterialTrait for GlassMaterial {
     }
 
     fn get_event_types(&self) -> BSDFEvent {
-        todo!()
+        BSDFEventType::SPECULAR | BSDFEventType::REFLECT | BSDFEventType::TRANSMIT
     }
 
     fn evaluate(
