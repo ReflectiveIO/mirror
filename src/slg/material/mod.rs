@@ -13,5 +13,10 @@ mod mirror;
 pub use self::mirror::MirrorMaterial;
 
 mod matte;
-
 pub use self::matte::MatteMaterial;
+
+mod car_paint;
+pub use self::car_paint::CarPaintMaterial;
+
+mod cloth;
+pub use self::cloth::ClothMaterial;
