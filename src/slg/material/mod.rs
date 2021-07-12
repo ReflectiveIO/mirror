@@ -6,3 +6,6 @@ pub use self::material::Material;
 
 mod glass;
 pub use self::glass::GlassMaterial;
+
+mod mirror;
+pub use self::mirror::MirrorMaterial;
