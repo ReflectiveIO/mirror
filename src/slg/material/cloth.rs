@@ -3,8 +3,9 @@ use crate::rays::geometry::{Point, Vector, UV};
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::material::material::MaterialTrait;
 use crate::slg::textures::Texture;
+
+use super::material::MaterialTrait;
 
 pub struct ClothMaterial {
     preset: ClothPreset,
@@ -79,8 +80,12 @@ impl ClothMaterial {
     fn get_yarn(&self, u_i: f32, v_i: f32, uv: &UV, umax: f32, scale: f32) -> Yarn {}
     fn get_yarn_uv(&self, yarn: &Yarn, center: &Point, xy: &Point, uv: &UV, umax_mod: f32) {}
 
-    fn radius_of_curvature(&self, yarn: &Yarn, u: f32, umax_mod: f32) -> f32 {}
-    fn eval_specular(&self, yarn: &Yarn, uv: &UV, umax: f32, wo: &Vector, vi: &Vector) -> f32 {}
+    fn radius_of_curvature(&self, yarn: &Yarn, u: f32, umax_mod: f32) -> f32 {
+        0.0
+    }
+    fn eval_specular(&self, yarn: &Yarn, uv: &UV, umax: f32, wo: &Vector, vi: &Vector) -> f32 {
+        0.0
+    }
     fn eval_integrand(
         &self,
         yarn: &Yarn,

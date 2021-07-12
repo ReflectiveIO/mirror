@@ -394,11 +394,15 @@ impl MaterialTrait for Material {
         todo!()
     }
 
-    fn update_material_references(&mut self, old_mat: &Material, new_mat: &Material) {
+    fn update_material_references(
+        &mut self,
+        old_mat: &Box<dyn MaterialTrait>,
+        new_mat: &Box<dyn MaterialTrait>,
+    ) {
         todo!()
     }
 
-    fn is_referencing(&self, mat: &Material) -> bool {
+    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool {
         todo!()
     }
 
@@ -524,9 +528,14 @@ pub trait MaterialTrait {
     /// Update any reference to old_mat with new_mat (mostly used for updating
     /// mix material) but also to update volume reference
     /// (because volumes are just a special kind of materials)
-    fn update_material_references(&mut self, old_mat: &Material, new_mat: &Material) {}
+    fn update_material_references(
+        &mut self,
+        old_mat: &Box<dyn MaterialTrait>,
+        new_mat: &Box<dyn MaterialTrait>,
+    ) {
+    }
 
-    fn is_referencing(&self, mat: &Material) -> bool {
+    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool {
         false
     }
     fn add_referenced_materials(&mut self, v: &Vec<Material>) {}

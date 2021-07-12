@@ -1,38 +1,50 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 
-pub struct MirrorMaterial {
-    kr: Texture,
+pub struct RoughMatteMaterial {
+    kd: Texture,
+    sigma: Texture,
 }
 
-impl MirrorMaterial {
+impl RoughMatteMaterial {
     pub fn new(
         front_transp: &Texture,
         back_transp: &Texture,
         emitted: &Texture,
         bump: &Texture,
-        refl: &Texture,
+        col: &Texture,
+        s: &Texture,
     ) -> Self {
-        MirrorMaterial {
-            kr: Texture::default(),
+        Self {
+            ..Default::default()
         }
     }
 
-    pub fn get_kr(&self) -> &Texture {
-        &self.kr
+    pub fn get_kd(&self) -> &Texture {
+        &self.kd
+    }
+
+    pub fn get_sigma(&self) -> &Texture {
+        &self.sigma
     }
 }
 
-impl MaterialTrait for MirrorMaterial {
+impl MaterialTrait for RoughMatteMaterial {
     fn get_type(&self) -> MaterialType {
-        MaterialType::Mirror
+        todo!()
     }
 
     fn get_event_types(&self) -> BSDFEvent {
+        todo!()
+    }
+
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
         todo!()
     }
 
@@ -78,6 +90,10 @@ impl MaterialTrait for MirrorMaterial {
     }
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
+        todo!()
+    }
+
+    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
         todo!()
     }
 }

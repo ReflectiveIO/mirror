@@ -3,8 +3,9 @@ use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::material::material::MaterialTrait;
 use crate::slg::textures::Texture;
+
+use super::material::MaterialTrait;
 
 pub struct MatteMaterial {
     kd: Texture,

@@ -1,4 +1,5 @@
-use crate::slg::material::Material;
+use super::material::Material;
+use super::material::MaterialTrait;
 
 #[derive(Default)]
 pub struct MaterialDefinitions {
@@ -12,11 +13,11 @@ impl MaterialDefinitions {
 
     pub fn define_material(&mut self, t: Material) {}
 
-    pub fn get_material(&self, name: String) -> &Material {
+    pub fn get_material(&self, name: String) -> &Box<dyn MaterialTrait> {
         self.materials.get_obj_by_name(name)
     }
 
-    pub fn get_material_idx(&self, index: usize) -> &Material {
+    pub fn get_material_idx(&self, index: usize) -> &Box<dyn MaterialTrait> {
         self.materials.get_obj_by_index(index)
     }
 
@@ -24,7 +25,7 @@ impl MaterialDefinitions {
         self.materials.get_index_by_name(name)
     }
 
-    pub fn get_material_index_t(&self, t: &Material) -> usize {
+    pub fn get_material_index_t(&self, t: &Box<dyn MaterialTrait>) -> usize {
         self.materials.get_index_by_obj(t)
     }
 

@@ -1,38 +1,86 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 
-pub struct MirrorMaterial {
-    kr: Texture,
+pub struct Glass2Material {
+    kd: Texture,
+    ks: Texture,
+    nu: Texture,
+    nv: Texture,
+    ka: Texture,
+    depth: Texture,
+    index: Texture,
+    multi_bounce: bool,
 }
 
-impl MirrorMaterial {
+impl Glass2Material {
     pub fn new(
         front_transp: &Texture,
         back_transp: &Texture,
         emitted: &Texture,
         bump: &Texture,
-        refl: &Texture,
+        kd: &Texture,
+        ks: &Texture,
+        u: &Texture,
+        v: &Texture,
+        ka: &Texture,
+        d: &Texture,
+        i: &Texture,
+        multi_bounce: bool,
     ) -> Self {
-        MirrorMaterial {
-            kr: Texture::default(),
+        Self {
+            ..Default::default()
         }
     }
 
-    pub fn get_kr(&self) -> &Texture {
-        &self.kr
+    pub fn get_kd(&self) -> &Texture {
+        &self.kd
+    }
+
+    pub fn get_ks(&self) -> &Texture {
+        &self.ks
+    }
+
+    pub fn get_nu(&self) -> &Texture {
+        &self.nu
+    }
+
+    pub fn get_nv(&self) -> &Texture {
+        &self.nv
+    }
+
+    pub fn get_ka(&self) -> &Texture {
+        &self.ka
+    }
+
+    pub fn get_depth(&self) -> &Texture {
+        &self.depth
+    }
+
+    pub fn get_index(&self) -> &Texture {
+        &self.index
+    }
+
+    pub fn is_multi_bounce(&self) -> bool {
+        self.multi_bounce
     }
 }
 
-impl MaterialTrait for MirrorMaterial {
+impl MaterialTrait for Glass2Material {
     fn get_type(&self) -> MaterialType {
-        MaterialType::Mirror
+        MaterialType::Glass2
     }
 
     fn get_event_types(&self) -> BSDFEvent {
+        todo!()
+    }
+
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
         todo!()
     }
 
@@ -78,6 +126,10 @@ impl MaterialTrait for MirrorMaterial {
     }
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
+        todo!()
+    }
+
+    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
         todo!()
     }
 }

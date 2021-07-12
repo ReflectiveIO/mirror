@@ -1,8 +1,9 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::material::material::MaterialTrait;
 use crate::slg::textures::Texture;
+
+use super::material::MaterialTrait;
 
 pub struct ArchGlassMaterial {
     kr: Texture,

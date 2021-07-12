@@ -1,38 +1,81 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 
-pub struct MirrorMaterial {
-    kr: Texture,
+pub struct Metal2Material {
+    fresnel_tex: Texture,
+    n: Texture,
+    k: Texture,
+    nu: Texture,
+    nv: Texture,
 }
 
-impl MirrorMaterial {
+impl Metal2Material {
     pub fn new(
         front_transp: &Texture,
         back_transp: &Texture,
         emitted: &Texture,
         bump: &Texture,
-        refl: &Texture,
+        nn: &Texture,
+        kk: &Texture,
+        u: &Texture,
+        v: &Texture,
     ) -> Self {
-        MirrorMaterial {
-            kr: Texture::default(),
+        Self {
+            ..Default::default()
         }
     }
 
-    pub fn get_kr(&self) -> &Texture {
-        &self.kr
+    pub fn fresnel(
+        front_transp: &Texture,
+        back_transp: &Texture,
+        emitted: &Texture,
+        bump: &Texture,
+        fresnel_texture: &Texture,
+        u: &Texture,
+        v: &Texture,
+    ) -> Self {
+        Self {
+            ..Default::default()
+        }
+    }
+
+    pub fn get_fresnel(&self) -> &Texture {
+        &self.fresnel_tex
+    }
+
+    pub fn get_n(&self) -> &Texture {
+        &self.n
+    }
+
+    pub fn get_k(&self) -> &Texture {
+        &self.k
+    }
+
+    pub fn get_nu(&self) -> &Texture {
+        &self.nu
+    }
+
+    pub fn get_nv(&self) -> &Texture {
+        &self.nv
     }
 }
 
-impl MaterialTrait for MirrorMaterial {
+impl MaterialTrait for Metal2Material {
     fn get_type(&self) -> MaterialType {
-        MaterialType::Mirror
+        todo!()
     }
 
     fn get_event_types(&self) -> BSDFEvent {
+        todo!()
+    }
+
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
         todo!()
     }
 
@@ -78,6 +121,10 @@ impl MaterialTrait for MirrorMaterial {
     }
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
+        todo!()
+    }
+
+    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
         todo!()
     }
 }
