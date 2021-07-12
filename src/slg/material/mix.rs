@@ -9,6 +9,7 @@ use crate::slg::volume::Volume;
 use super::material::Material;
 use super::material::MaterialTrait;
 use crate::slg::bsdf::BSDFEvent;
+use crate::slg::material::MaterialType;
 
 pub struct MixMaterial {
     a: Box<dyn MaterialTrait>,
@@ -49,7 +50,7 @@ impl MixMaterial {
 
 impl MaterialTrait for MixMaterial {
     fn get_type(&self) -> MaterialType {
-        todo!()
+        MaterialType::Mix
     }
 
     fn get_event_types(&self) -> BSDFEvent {

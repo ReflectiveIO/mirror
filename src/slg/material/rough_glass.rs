@@ -7,6 +7,7 @@ use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::material::MaterialType;
 
 pub struct RoughGlassMaterial {
     kr: Texture,
@@ -73,7 +74,7 @@ impl RoughGlassMaterial {
 
 impl MaterialTrait for RoughGlassMaterial {
     fn get_type(&self) -> MaterialType {
-        MaterialType::Matte
+        MaterialType::RoughGlass
     }
 
     fn get_event_types(&self) -> BSDFEvent {

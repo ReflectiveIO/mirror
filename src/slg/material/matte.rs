@@ -7,6 +7,7 @@ use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::material::MaterialType;
 
 pub struct MatteMaterial {
     kd: Texture,

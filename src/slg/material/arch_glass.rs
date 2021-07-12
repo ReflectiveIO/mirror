@@ -5,6 +5,7 @@ use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
+use crate::slg::material::MaterialType;
 
 pub struct ArchGlassMaterial {
     kr: Texture,
@@ -92,7 +93,7 @@ impl ArchGlassMaterial {
 
 impl MaterialTrait for ArchGlassMaterial {
     fn get_type(&self) -> MaterialType {
-        MaterialType::Glass
+        MaterialType::ArchGlass
     }
 
     fn get_event_types(&self) -> BSDFEvent {

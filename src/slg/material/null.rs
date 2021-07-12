@@ -7,6 +7,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
+use crate::slg::material::MaterialType;
 
 pub struct NullMaterial;
 
@@ -20,7 +21,7 @@ impl NullMaterial {
 
 impl MaterialTrait for NullMaterial {
     fn get_type(&self) -> MaterialType {
-        todo!()
+        MaterialType::NullMat
     }
 
     fn get_event_types(&self) -> BSDFEvent {

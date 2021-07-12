@@ -7,6 +7,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
+use crate::slg::material::MaterialType;
 
 pub struct CarPaintMaterial {
     pub kd: Texture,
@@ -70,7 +71,7 @@ impl CarPaintMaterial {
 
 impl MaterialTrait for CarPaintMaterial {
     fn get_type(&self) -> MaterialType {
-        todo!()
+        MaterialType::CarPaint
     }
 
     fn get_event_types(&self) -> BSDFEvent {

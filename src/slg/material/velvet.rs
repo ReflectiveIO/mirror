@@ -7,6 +7,7 @@ use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::material::MaterialType;
 
 pub struct VelvetMaterial {
     kd: Texture,
@@ -56,7 +57,7 @@ impl VelvetMaterial {
 
 impl MaterialTrait for VelvetMaterial {
     fn get_type(&self) -> MaterialType {
-        todo!()
+        MaterialType::Velvet
     }
 
     fn get_event_types(&self) -> BSDFEvent {

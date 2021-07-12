@@ -8,8 +8,9 @@ use crate::slg::volume::Volume;
 
 use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::material::MaterialType;
 
-pub struct GlassCoatingMaterial {
+pub struct GlossyCoatingMaterial {
     mat_base: Texture,
     ks: Texture,
     nu: Texture,
@@ -20,7 +21,7 @@ pub struct GlassCoatingMaterial {
     multi_bounce: bool,
 }
 
-impl GlassCoatingMaterial {
+impl GlossyCoatingMaterial {
     pub fn new(
         front_transp: &Texture,
         back_transp: &Texture,
@@ -73,9 +74,9 @@ impl GlassCoatingMaterial {
     }
 }
 
-impl MaterialTrait for GlassCoatingMaterial {
+impl MaterialTrait for GlossyCoatingMaterial {
     fn get_type(&self) -> MaterialType {
-        todo!()
+        MaterialType::GlossyCoating
     }
 
     fn get_event_types(&self) -> BSDFEvent {

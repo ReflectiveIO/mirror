@@ -9,6 +9,7 @@ use crate::slg::volume::Volume;
 
 use super::material::Material;
 use super::material::MaterialTrait;
+use crate::slg::material::MaterialType;
 
 pub struct TwoSidedMaterial {
     front_mat: Box<dyn MaterialTrait>,
@@ -43,7 +44,7 @@ impl TwoSidedMaterial {
 
 impl MaterialTrait for TwoSidedMaterial {
     fn get_type(&self) -> MaterialType {
-        todo!()
+        MaterialType::TwoSided
     }
 
     fn get_event_types(&self) -> BSDFEvent {
@@ -141,7 +142,7 @@ impl MaterialTrait for TwoSidedMaterial {
         todo!()
     }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Material>) {
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {
         todo!()
     }
 

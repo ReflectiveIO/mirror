@@ -7,6 +7,33 @@ use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
+pub enum MaterialType {
+    Matte,
+    Mirror,
+    Glass,
+    ArchGlass,
+    Mix,
+    NullMat,
+    MatteTranslucent,
+    Glossy2,
+    Metal2,
+    RoughGlass,
+    Velvet,
+    Cloth,
+    CarPaint,
+    RoughMatte,
+    RoughMatteTranslucent,
+    GlossyTranslucent,
+    GlossyCoating,
+    Disney,
+    TwoSided,
+
+    // Volumes
+    HomogeneousVol,
+    ClearVol,
+    HeterogeneousVol,
+}
+
 /// Material emission direct light sampling type
 pub enum MaterialEmissionDLSType {
     Enabled,

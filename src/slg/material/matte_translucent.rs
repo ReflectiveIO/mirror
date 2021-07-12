@@ -7,6 +7,7 @@ use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::material::MaterialType;
 
 pub struct MatteTranslucentMaterial {
     kr: Texture,
@@ -38,7 +39,7 @@ impl MatteTranslucentMaterial {
 
 impl MaterialTrait for MatteTranslucentMaterial {
     fn get_type(&self) -> MaterialType {
-        MaterialType::Matte
+        MaterialType::MatteTranslucent
     }
 
     fn get_event_types(&self) -> BSDFEvent {

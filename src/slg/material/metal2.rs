@@ -7,6 +7,7 @@ use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::material::MaterialType;
 
 pub struct Metal2Material {
     fresnel_tex: Texture,
@@ -69,7 +70,7 @@ impl Metal2Material {
 
 impl MaterialTrait for Metal2Material {
     fn get_type(&self) -> MaterialType {
-        todo!()
+        MaterialType::Metal2
     }
 
     fn get_event_types(&self) -> BSDFEvent {

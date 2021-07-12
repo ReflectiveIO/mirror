@@ -7,6 +7,7 @@ use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::material::MaterialType;
 
 /// Disney BRDF
 /// Based on "Physically Based Shading at Disney" presentet SIGGRAPH 2012
@@ -112,7 +113,7 @@ impl DisneyMaterial {
 
 impl MaterialTrait for DisneyMaterial {
     fn get_type(&self) -> MaterialType {
-        todo!()
+        MaterialType::Disney
     }
 
     fn get_event_types(&self) -> BSDFEvent {
