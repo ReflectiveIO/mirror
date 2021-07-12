@@ -1,6 +1,8 @@
 use crate::rays;
 use crate::rays::geometry::{Point, Transform, Vector};
+use crate::rays::Properties;
 use crate::slg::cameras::CameraType;
+use crate::slg::image_map::ImageMapCache;
 
 use super::camera::CameraTrait;
 
@@ -161,6 +163,10 @@ impl CameraTrait for EnvironmentCamera {
         pdf_w: f32,
         flux_to_radiance_factor: f32,
     ) {
+        todo!()
+    }
+
+    fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties {
         todo!()
     }
 }

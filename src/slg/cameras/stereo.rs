@@ -1,6 +1,8 @@
 use crate::rays::geometry::{Transform, Vector};
+use crate::rays::Properties;
 use crate::slg::cameras::camera::CameraTrait;
 use crate::slg::cameras::CameraType;
+use crate::slg::image_map::ImageMapCache;
 
 pub struct StereoCamera;
 
@@ -101,6 +103,10 @@ impl CameraTrait for StereoCamera {
         pdf_w: f32,
         flux_to_radiance_factor: f32,
     ) {
+        todo!()
+    }
+
+    fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties {
         todo!()
     }
 }

@@ -11,9 +11,27 @@ impl Color {
 
     pub fn pow(&self, rhs: &Self) -> Self {
         Self {
-            0: { if self.0 > 0.0 { self.0.powf(rhs.0) } else { 0.0 } },
-            1: { if self.1 > 0.0 { self.1.powf(rhs.1) } else { 0.0 } },
-            2: { if self.2 > 0.0 { self.2.powf(rhs.2) } else { 0.0 } },
+            0: {
+                if self.0 > 0.0 {
+                    self.0.powf(rhs.0)
+                } else {
+                    0.0
+                }
+            },
+            1: {
+                if self.1 > 0.0 {
+                    self.1.powf(rhs.1)
+                } else {
+                    0.0
+                }
+            },
+            2: {
+                if self.2 > 0.0 {
+                    self.2.powf(rhs.2)
+                } else {
+                    0.0
+                }
+            },
         }
     }
 
@@ -32,7 +50,7 @@ pub trait ColorTrait {}
 
 pub trait RGBColor: ColorTrait {}
 
-pub type Spectrum = dyn RGBColor;
+pub type Spectrum = Box<dyn RGBColor>;
 
 #[test]
 fn test_color_pow() {

@@ -247,7 +247,7 @@ impl Scene {
     /// Create a new empty Scene. the scale used for storing any kind of image in memory.
     pub fn new(scale: f32) -> Scene {
         Scene {
-            scene: slg::Scene::new(),
+            scene: slg::Scene::default(),
         }
     }
 

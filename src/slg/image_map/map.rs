@@ -29,12 +29,4 @@ impl NamedObject for ImageMap {
     fn set_name(&mut self, name: &str) {
         self.name = name.to_string()
     }
-
-    fn to_properties(&self) -> Properties {
-        Properties::default()
-    }
-
-    fn get_unique_name(prefix: &str) -> String {
-        todo!()
-    }
 }

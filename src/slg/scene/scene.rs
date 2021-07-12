@@ -1,9 +1,7 @@
 use crate::core::SceneTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::device::IntersectionDevice;
-use crate::rays::geometry::{
-    BSphere, MotionSystem, Normal, Point, Ray, RayHit, Transform, Triangle, UV,
-};
+use crate::rays::geometry::*;
 use crate::rays::mesh::{ExtMesh, ExtTriangleMesh};
 use crate::rays::utils::HairFile;
 use crate::rays::{Context, Dataset, NamedObject, Properties};
@@ -11,7 +9,7 @@ use crate::slg::bsdf::BSDF;
 use crate::slg::cameras::{Camera, CameraTrait, CameraType, EnvironmentCamera};
 use crate::slg::film::SampleResult;
 use crate::slg::image_map::{ChannelSelectionType, ImageMap, ImageMapCache, WrapType};
-use crate::slg::light::{LightSource, LightSourceDefinitions};
+use crate::slg::light::{LightSource, LightSourceDefinitions, NotIntersectableLightSource};
 use crate::slg::material::{Material, MaterialDefinitions};
 use crate::slg::scene::{ExtMeshCache, SceneObject, SceneObjectDefinitions};
 use crate::slg::shape::TessellationType;
@@ -22,11 +20,13 @@ use crate::slg::{EditAction, EditActionList};
 
 type SceneRayType = i8;
 
+pub const TRIANGLE_LIGHT_POSTFIX: &str = "__triangle__light__";
+
 pub struct Scene {
     // This volume is applied to rays hitting nothing
-    pub default_world_volume: Volume,
+    pub default_world_volume: Option<Volume>,
 
-    pub camera: Box<dyn CameraTrait>,
+    pub camera: Option<Box<dyn CameraTrait>>,
 
     // Mesh objects cache,
     pub ext_mesh_cache: ExtMeshCache,
@@ -44,7 +44,7 @@ pub struct Scene {
 
     pub dataset: Dataset,
 
-    // the bounding sphere of the scene (including the camera)
+    // the bounding Sphere of the scene (including the camera)
     pub scene_bounding_sphere: BSphere,
 
     pub edit_actions: EditActionList,
@@ -52,21 +52,33 @@ pub struct Scene {
 }
 
 impl Scene {
-    pub fn new() -> Self {
+    pub fn new(scale: f32) -> Self {
+        let mut edit_actions = EditActionList::new();
+        edit_actions.add_all_action();
+
+        let mut img_map_cache = ImageMapCache::default();
+        img_map_cache.set_image_resize(scale);
+        img_map_cache.define_image_map(ImageMap::random());
+
         Scene {
-            default_world_volume: Volume::default(),
-            camera: Box::new(EnvironmentCamera::new()),
+            default_world_volume: None,
+            camera: None,
             ext_mesh_cache: ExtMeshCache::default(),
-            img_map_cache: ImageMapCache::default(),
+            img_map_cache,
             tex_defs: TextureDefinitions::default(),
             mat_defs: MaterialDefinitions::default(),
             obj_defs: SceneObjectDefinitions::default(),
             light_defs: LightSourceDefinitions::default(),
             dataset: Dataset::new(None),
             scene_bounding_sphere: BSphere::default(),
-            edit_actions: EditActionList::new(),
+            edit_actions,
             enable_parse_print: false,
         }
+    }
+
+    pub fn from(props: &Properties, scale: f32) {
+        let scene = Scene::new(scale);
+        scene.parse(props)
     }
 
     pub fn intersect(
@@ -99,13 +111,86 @@ impl Scene {
     ) {
     }
 
-    pub fn to_properties(&self) -> Properties {
-        Properties::default()
+    pub fn to_properties(&self, real_filename: bool) -> Properties {
+        let mut props = Properties::new();
+
+        // Write the camera information
+        if self.camera.is_some() {
+            props.merge(
+                self.camera
+                    .unwrap()
+                    .to_properties(&self.img_map_cache, real_filename),
+            );
+        }
+
+        // Save all not intersectable light sources
+        for name in self.light_defs.get_light_source_names() {
+            let light_source = self.light_defs.get_light_source(name.as_str());
+            let light_source = light_source.downcast_ref::<dyn NotIntersectableLightSource>();
+            if light_source {
+                props.merge(light_source.to_properties(&self.img_map_cache, real_filename));
+            }
+        }
+
+        // Get the sorted list of texture names according their dependencies
+        for name in self.tex_defs.get_texture_sorted_names() {
+            // Skip all textures starting with Implicit-ConstFloatTexture(3)
+            // because they are expanded inline
+            if name.starts_with("Implicit-ConstFloatTexture") {
+                continue;
+            }
+            let texture = self.tex_defs.get_texture(name);
+            props.merge(texture.to_properties(&self.img_map_cache, real_filename));
+        }
+
+        // Get the sorted list of material names according their dependencies
+        let mat_names = self.mat_defs.get_material_sorted_names();
+
+        for name in mat_names {
+            let material = self.mat_defs.get_material(name);
+            // Check if it is a volume
+            let volume = material.downcast_ref::<Volume>();
+            if volume {
+                props.merge(volume.to_properties());
+            }
+        }
+
+        // Set the default world interior/exterior volume if required
+        if self.default_world_volume.is_some() {
+            let index = self
+                .mat_defs
+                .get_material_index_t(&self.default_world_volume.unwrap());
+            props.set(
+                "scene.world.volume.default",
+                self.mat_defs.get_material_idx(index).get_name(),
+            );
+        }
+
+        // Writes the materials information
+        for name in mat_names {
+            let material = self.mat_defs.get_material(name);
+            // Check if it is a volume
+            let volume = material.downcast_ref::<Volume>();
+            if !volume {
+                props.merge(material.to_properties(&self.img_map_cache, real_filename));
+            }
+        }
+
+        // Write the object information
+        for i in 0..self.obj_defs.get_size() {
+            let object = self.obj_defs.get_scene_object_idx(i);
+            props.merge(object.to_properties(&self.ext_mesh_cache, real_filename));
+        }
+
+        return props;
     }
 
     /* Methods to build and edit scene */
 
-    pub fn define_image_map(&self, im: &ImageMap) {}
+    pub fn define_image_map(&mut self, im: &ImageMap) {
+        self.img_map_cache.define_image_map(im);
+        self.edit_actions.add_action(EditAction::ImageMapsEdit);
+    }
 
     pub fn define_image_map_args<T>(
         &mut self,
@@ -129,16 +214,55 @@ impl Scene {
     }
 
     pub fn is_image_map_defined(&self, name: &str) -> bool {
-        false
+        self.img_map_cache.is_image_map_defined(name)
     }
 
     // Mesh shape
     // Use one of the following methods, do not directly call extMeshCache.DefineExtMesh()
 
-    pub fn define_mesh(&self, mesh: &ExtMesh) {}
+    pub fn define_mesh(&mut self, mesh: &ExtMesh) {
+        let shape_name = mesh.get_name();
+
+        if self.ext_mesh_cache.is_ext_mesh_defined(shape_name) {
+            // A replacement for an existing mesh
+            let old = self.ext_mesh_cache.get_ext_mesh(shape_name);
+
+            // Replace old mesh direct references with new one and get the list
+            // of scene objects referencing the old mesh
+            let modified_obj_lists = self.obj_defs.update_mesh_references(old, mesh);
+
+            for object in modified_obj_lists {
+                if !object.get_material().is_light_source() {
+                    continue;
+                }
+
+                let obj_name = object.get_name();
+
+                // Delete all old triangle lights
+                self.light_defs
+                    .delete_light_source_start_with(obj_name + TRIANGLE_LIGHT_POSTFIX);
+
+                // Add all new triangle lights
+                info!(
+                    "the {} object is a light sources with {} triangles",
+                    obj_name,
+                    mesh.get_total_triangle_count()
+                );
+                self.obj_defs
+                    .define_intersectable_lights(&self.light_defs, object);
+
+                let action = EditAction::LightsEdit | EditAction::LightTypesEdit;
+                self.edit_actions.add_actions(action);
+            }
+        }
+
+        // This is the only place where it is safe to all ext_mesh_cache.define_ext_mesh()
+        self.ext_mesh_cache.define_ext_mesh(mesh);
+        self.edit_actions.add_action(EditAction::GeometryEdit);
+    }
 
     pub fn define_mesh_args(
-        &self,
+        &mut self,
         shape_name: &str,
         ply_nb_verts: i64,
         ply_nb_tris: i64,
@@ -149,11 +273,13 @@ impl Scene {
         cols: Box<Spectrum>,
         alphas: Vec<f32>,
     ) {
-        todo!()
+        let mesh = ExtTriangleMesh::new(ply_nb_tris, ply_nb_verts, p, vi, n, uvs, cols, alphas);
+        mesh.set_name(shape_name);
+        self.define_mesh(mesh);
     }
 
     pub fn define_mesh_ext(
-        &self,
+        &mut self,
         shape_name: &str,
         ply_nb_verts: i64,
         ply_nb_tris: i64,
@@ -164,24 +290,84 @@ impl Scene {
         cols: Vec<Box<Spectrum>>,
         alphas: Vec<Vec<f32>>,
     ) {
-        todo!()
+        let mesh = ExtTriangleMesh::new(ply_nb_verts, ply_nb_tris, p, vi, n, uvs, cols, alphas);
+        mesh.set_name(shape_name);
+        self.define_mesh(mesh);
     }
 
-    pub fn define_mesh_trans(&self, inst_mesh_name: &str, mesh_name: &str, trans: &Transform) {}
-    pub fn define_mesh_ms(&self, mot_mesh_name: &str, mesh_name: &str, ms: &MotionSystem) {}
+    pub fn define_mesh_trans(
+        &mut self,
+        inst_mesh_name: &str,
+        mesh_name: &str,
+        trans: &Transform,
+    ) -> Result<(), String> {
+        let mesh = self.ext_mesh_cache.get_ext_mesh(mesh_name);
+        if !mesh.is_some() {
+            return Err(format!(
+                "Unknown mesh is Scene::define_mesh(): {}",
+                mesh_name
+            ));
+        }
+
+        let et_mesh = mesh.downcast_ref::<ExtTriangleMesh>();
+        if !et_mesh {
+            return Err(format!(
+                "Wrong mesh type in Scene::define_mesh(): {}",
+                mesh_name
+            ));
+        }
+
+        // @TODO: define ext instance triangle mesh
+        // let inst_mesh = ExtInstanceTriangleMesh::new(et_mesh, trans);
+        // inst_mesh.set_name(inst_mesh_name);
+        // self.define_mesh(inst_mesh);
+
+        Ok(())
+    }
+    pub fn define_mesh_ms(
+        &mut self,
+        mot_mesh_name: &str,
+        mesh_name: &str,
+        ms: &MotionSystem,
+    ) -> Result<(), String> {
+        let mesh = self.ext_mesh_cache.get_ext_mesh(mesh_name);
+        if !mesh.is_some() {
+            return Err(format!(
+                "Unknown mesh in Scene:define_ext_mesh(): {}",
+                mesh_name
+            ));
+        }
+
+        let et_mesh = mesh.downcast_ref::<ExtTriangleMesh>();
+        if !et_mesh {
+            return Err(format!(
+                "Wrong mesh type in Scene::define_mesh(): {}",
+                mesh_name
+            ));
+        }
+
+        // @TODO: Define ExtMotionTriangleMesh
+        // let mot_mesh = ExtMotionTriangleMesh::new(et_mesh, ms);
+        // mot_mesh.set_name(mot_mesh_name);
+        // self.define_mesh(mot_mesh);
+
+        Ok(())
+    }
 
     pub fn set_mesh_vertex_aov(&self, mesh_name: &str, index: u32, data: Vec<f32>) {
-        todo!()
+        self.ext_mesh_cache
+            .set_mesh_vertex_aov(mesh_name, index, data);
     }
 
     pub fn set_mesh_triangle_aov(&self, mesh_name: &str, index: u32, data: Vec<f32>) {
-        todo!()
+        self.ext_mesh_cache
+            .set_mesh_triangle_aov(mesh_name, index, data);
     }
 
     pub fn define_stands(
-        &self,
+        &mut self,
         shape_name: &str,
-        strands_file: HairFile,
+        strands_file: &HairFile,
         tessel_type: TessellationType,
         adaptive_max_depth: u32,
         adaptive_error: f32,
@@ -190,31 +376,84 @@ impl Scene {
         solid_cap_top: bool,
         use_camera_positions: bool,
     ) {
-        todo!()
+        // @TODO: define_stands
+        // let shape = StrandsShape::new(
+        //     self,
+        //     strands_file,
+        //     tessel_type,
+        //     adaptive_max_depth,
+        //     adaptive_error,
+        //     sold_side_count,
+        //     solid_cap_bottom,
+        //     solid_cap_top,
+        //     use_camera_positions,
+        // );
+        // let mesh = shape.refine(self);
+        // mesh.set_name(shape_name);
+        // self.define_mesh(mesh);
+        //
+        // self.edit_actions.add_action(EditAction::GeometryEdit);
     }
 
-    pub fn is_texture_defined(&self, name: &str) {
-        todo!()
+    pub fn is_texture_defined(&self, name: &str) -> bool {
+        self.tex_defs.is_texture_defined(name.to_string())
     }
 
-    pub fn is_material_defined(&self, name: &str) {
-        todo!()
+    pub fn is_material_defined(&self, name: &str) -> bool {
+        self.mat_defs.is_material_defined(name.to_string())
     }
 
-    pub fn is_mesh_defined(&self, name: &str) {
-        todo!()
+    pub fn is_mesh_defined(&self, name: &str) -> bool {
+        self.ext_mesh_cache.is_ext_mesh_defined(name.to_string())
     }
 
     pub fn parse(&self, props: &Properties) {
-        todo!()
+        if self.enable_parse_print {
+            info!("===Scene::parse()===");
+            info!("{:?}", props);
+            info!("====================");
+        }
+
+        self.parse_textures(props);
+        self.parse_volumes(props);
+        self.parse_materials(props);
+
+        // Read camera position and target, note: doing the parsing after volumes
+        // because t may reference a volume
+        self.parse_camera(props);
+
+        self.parse_shapes(props);
+        self.parse_objects(props);
+        self.parse_lights(props);
     }
 
     pub fn delete_object(&mut self, obj_name: &str) {
-        todo!()
+        if !self.obj_defs.is_scene_object_defined(obj_name.to_string()) {
+            return;
+        }
+
+        let old = self.obj_defs.get_scene_object(obj_name.to_string());
+        let was_light_source = old.get_material().is_light_source();
+
+        if was_light_source {
+            let action = EditAction::LightsEdit | EditAction::LightTypesEdit;
+            self.edit_actions.add_actions(action);
+
+            let mesh = old.get_ext_mesh();
+            for i in mesh.get_total_triangle_count() {
+                let light_source_name =
+                    format!("{}{}{}", old.get_name(), TRIANGLE_LIGHT_POSTFIX, i);
+                self.light_defs.delete_light_source(light_source_name);
+            }
+        }
     }
 
     pub fn delete_light(&mut self, light_name: &str) {
-        todo!()
+        if self.light_defs.is_light_source_defined(light_name) {
+            self.light_defs.delete_light_source(light_name);
+            let action = EditAction::LightsEdit | EditAction::LightTypesEdit;
+            self.edit_actions.add_actions(action);
+        }
     }
 
     pub fn duplicate_object_trans(&self, src: &str, dst: &str, trans: Transform, dst_obj_id: u32) {
@@ -250,7 +489,7 @@ impl Scene {
     }
 
     pub fn load(filename: &str) -> Scene {
-        Scene::new()
+        Scene::default()
     }
 
     pub fn save(filename: &str, scene: &Scene) {
@@ -258,7 +497,6 @@ impl Scene {
     }
 
     /* private methods */
-    fn init(&self, scale: f32) {}
 
     fn parse_camera(&self, props: &Properties) {}
     fn parse_textures(&self, props: &Properties) {}
@@ -308,7 +546,7 @@ impl Scene {
         ImageMap::default()
     }
 
-    fn create_light_source(&self, name: &str, props: &Properties) -> LightSource {
+    fn create_light_source(&self, name: &str, props: &Properties) -> &dyn LightSource {
         LightSource::default()
     }
 
@@ -324,6 +562,6 @@ impl Scene {
 
 impl Default for Scene {
     fn default() -> Self {
-        Self::new()
+        Self::new(1.0)
     }
 }

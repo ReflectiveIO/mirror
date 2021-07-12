@@ -1,4 +1,6 @@
 use crate::rays::geometry::{Transform, Vector};
+use crate::rays::Properties;
+use crate::slg::image_map::ImageMapCache;
 
 use super::camera::CameraTrait;
 use super::camera::CameraType;
@@ -102,6 +104,10 @@ impl CameraTrait for OrthographicCamera {
         pdf_w: f32,
         flux_to_radiance_factor: f32,
     ) {
+        todo!()
+    }
+
+    fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties {
         todo!()
     }
 }
