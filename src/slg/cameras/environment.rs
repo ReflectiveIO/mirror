@@ -1,5 +1,5 @@
 use crate::rays;
-use crate::rays::geometry::{Point, Transform, Vector};
+use crate::rays::geometry::{Point, Transform, Vector, normalize};
 use crate::rays::Properties;
 use crate::slg::cameras::CameraType;
 use crate::slg::image_map::ImageMapCache;
@@ -96,11 +96,11 @@ impl CameraTrait for EnvironmentCamera {
     }
 
     fn translate_left(&mut self, k: f32) {
-        self.translate(&(rays::normalize(&Vector::from(self.x)) * -k));
+        self.translate(&(normalize(&Vector::from(self.x)) * -k));
     }
 
     fn translate_right(&mut self, k: f32) {
-        self.translate(&(rays::normalize(&Vector::from(self.x)) * k))
+        self.translate(&(normalize(&Vector::from(self.x)) * k))
     }
 
     fn translate_forward(&mut self, k: f32) {

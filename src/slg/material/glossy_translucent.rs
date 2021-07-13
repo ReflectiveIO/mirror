@@ -10,6 +10,7 @@ use crate::slg::volume::Volume;
 use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 
+#[derive(Default)]
 pub struct GlossyTranslucentMaterial {
     kd: Texture,
     kt: Texture,

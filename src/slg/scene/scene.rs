@@ -443,7 +443,7 @@ impl Scene {
             for i in mesh.get_total_triangle_count() {
                 let light_source_name =
                     format!("{}{}{}", old.get_name(), TRIANGLE_LIGHT_POSTFIX, i);
-                self.light_defs.delete_light_source(light_source_name);
+                self.light_defs.delete_light_source(light_source_name.as_str());
             }
         }
     }

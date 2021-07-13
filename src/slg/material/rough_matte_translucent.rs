@@ -9,6 +9,7 @@ use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
 
+#[derive(Default)]
 pub struct RoughMatteTranslucentMaterial {
     kr: Texture,
     kt: Texture,

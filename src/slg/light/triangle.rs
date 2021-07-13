@@ -7,10 +7,11 @@ use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDF;
 use crate::slg::image_map::ImageMap;
 use crate::slg::light::{IntersectableLightSource, LightSource, LightSourceType};
-use crate::slg::material::Material;
+use crate::slg::material::{Material, MaterialTrait};
 use crate::slg::scene::SceneObject;
 use crate::slg::Scene;
 
+#[derive(Default)]
 pub struct TriangleLight {
     pub light_material: Material,
     pub scene_object: SceneObject,
@@ -60,9 +61,9 @@ impl IntersectableLightSource for TriangleLight {
             .light_material
             .get_emitted_radiance_y(self.inv_mesh_area);
 
-        if self.light_material.get_emitted_theta == 0.0 {
+        if self.light_material.get_emitted_theta() == 0.0 {
             self.triangle_area * emitted_radiance_y
-        } else if self.light_material.get_emitted_theta < 90.0 {
+        } else if self.light_material.get_emitted_theta() < 90.0 {
             self.triangle_area
                 * (2.0 * PI)
                 * (1.0 - self.light_material.get_emitted_cos_theta_max())

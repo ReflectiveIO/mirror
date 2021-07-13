@@ -9,6 +9,7 @@ use crate::slg::textures::Texture;
 
 use super::material::MaterialTrait;
 
+#[derive(Default)]
 pub struct Glossy2Material {
     kd: Texture,
     ks: Texture,

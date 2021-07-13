@@ -1,4 +1,4 @@
-use std::ops::BitAnd;
+use std::ops::{BitAnd, BitOr};
 
 pub enum EditAction {
     // Use this for any Camera parameter editing
@@ -24,6 +24,14 @@ impl BitAnd<EditAction> for u32 {
 
     fn bitand(self, rhs: EditAction) -> Self::Output {
         self & rhs as u32
+    }
+}
+
+impl BitOr<EditAction> for EditAction {
+    type Output = u32;
+
+    fn bitor(self, rhs: EditAction) -> Self::Output {
+        self as u32 | rhs as u32
     }
 }
 

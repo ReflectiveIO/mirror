@@ -11,6 +11,7 @@ use crate::slg::volume::Volume;
 use super::material::Material;
 use super::material::MaterialTrait;
 
+#[derive(Default)]
 pub struct MixMaterial {
     a: Box<dyn MaterialTrait>,
     b: Box<dyn MaterialTrait>,

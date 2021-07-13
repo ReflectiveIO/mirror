@@ -11,6 +11,7 @@ use super::material::Material;
 use super::material::MaterialTrait;
 use crate::slg::material::MaterialType;
 
+#[derive(Default)]
 pub struct TwoSidedMaterial {
     front_mat: Box<dyn MaterialTrait>,
     back_mat: Box<dyn MaterialTrait>,

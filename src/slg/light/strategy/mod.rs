@@ -29,7 +29,9 @@ impl ToString for LightStrategyType {
             LightStrategyType::Power => "POWER".to_string(),
             LightStrategyType::LogPower => "LOG_POWER".to_string(),
             LightStrategyType::DlsCache => "DLS_CACHE".to_string(),
-            _ => {}
+            _ => {
+                panic!("Unknown light strategy type")
+            }
         }
     }
 }

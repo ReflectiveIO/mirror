@@ -1,10 +1,11 @@
 //! The Rays core classes are defined with this module.
 
+pub use self::core::color;
 pub use self::core::context::Context;
 pub use self::core::dataset::Dataset;
 pub use self::core::geometry;
-pub use self::core::geometry::normalize;
-pub use self::utils::clamp;
+pub use self::core::mesh;
+pub use self::core::named_object::NamedObject;
 pub use self::utils::properties::Properties;
 
 pub mod device {
@@ -22,10 +23,6 @@ pub mod accelerator {
 
 mod core;
 pub mod utils;
-
-pub use self::core::color;
-pub use self::core::mesh;
-pub use self::core::named_object::NamedObject;
 
 pub fn init() {
     trace!("rays::init");

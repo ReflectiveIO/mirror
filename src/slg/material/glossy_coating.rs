@@ -10,6 +10,7 @@ use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
 
+#[derive(Default)]
 pub struct GlossyCoatingMaterial {
     mat_base: Texture,
     ks: Texture,

@@ -49,5 +49,5 @@ mod two_sided;
 mod velvet;
 
 pub fn calc_film_color(local_fixed_dir: &Vector, film_thickness: f32, film_ior: f32) -> Spectrum {
-    Spectrum::new(())
+    Spectrum::new()
 }

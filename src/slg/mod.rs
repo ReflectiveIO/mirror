@@ -22,6 +22,7 @@ pub mod volume;
 pub mod bsdf;
 pub mod cameras;
 pub mod shape;
+pub mod core;
 
 mod config;
 mod edit_action;

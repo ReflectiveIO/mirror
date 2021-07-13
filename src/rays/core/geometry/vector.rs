@@ -1,6 +1,8 @@
+use std::f32::consts::PI;
 use std::ops::{Add, AddAssign, Div, Mul, Sub, SubAssign};
 
 use crate::rays::geometry::Point;
+use crate::rays::utils::clamp;
 
 #[derive(Debug, Copy, Clone, PartialEq, Default)]
 pub struct Vector {
@@ -104,6 +106,23 @@ impl Div<f32> for Vector {
     }
 }
 
+#[inline]
 pub fn normalize(v: &Vector) -> Vector {
     v.clone() / v.length()
+}
+
+#[inline]
+pub fn spherical_theta(v: &Vector) -> f32 {
+    clamp(v.z, -1.0, 1.0).acos()
+}
+
+#[inline]
+pub fn spherical_phi(v: &Vector) -> f32 {
+    let p: f32 = v.y.atan2(v.x);
+
+    if p < 0.0 {
+        p + 2.0 * PI
+    } else {
+        p
+    }
 }

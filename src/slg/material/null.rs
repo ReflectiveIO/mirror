@@ -9,6 +9,7 @@ use crate::slg::textures::Texture;
 use super::material::MaterialTrait;
 use crate::slg::material::MaterialType;
 
+#[derive(Default)]
 pub struct NullMaterial;
 
 impl NullMaterial {

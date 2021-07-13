@@ -18,6 +18,12 @@ pub enum ClothPreset {
     Polyester,
 }
 
+impl Default for ClothPreset {
+    fn default() -> Self {
+        ClothPreset::Denim
+    }
+}
+
 pub enum YarnType {
     Warp,
     Weft,
@@ -44,6 +50,7 @@ pub struct Yarn {
     center_v: f32,
 }
 
+#[derive(Default)]
 pub struct ClothMaterial {
     preset: ClothPreset,
     weft_kd: Texture,

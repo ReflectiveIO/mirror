@@ -11,6 +11,7 @@ use crate::slg::material::MaterialType;
 
 /// Disney BRDF
 /// Based on "Physically Based Shading at Disney" presentet SIGGRAPH 2012
+#[derive(Default)]
 pub struct DisneyMaterial {
     base_color: Texture,
     sub_surface: Texture,

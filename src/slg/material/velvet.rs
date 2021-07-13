@@ -9,6 +9,7 @@ use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
 
+#[derive(Default)]
 pub struct VelvetMaterial {
     kd: Texture,
     p1: Texture,

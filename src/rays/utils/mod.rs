@@ -5,6 +5,7 @@ pub use utils::clamp;
 pub use utils::path_relative_from;
 
 pub use self::distribution::Distribution1D;
+pub use self::distribution::Distribution2D;
 
 pub mod properties;
 

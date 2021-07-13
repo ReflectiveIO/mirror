@@ -1,8 +1,9 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
-use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDFEvent;
+use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::core::SampleableSphericalFunction;
 use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
@@ -41,6 +42,12 @@ pub enum MaterialEmissionDLSType {
     Auto,
 }
 
+impl Default for MaterialEmissionDLSType {
+    fn default() -> Self {
+        MaterialEmissionDLSType::Auto
+    }
+}
+
 #[derive(Default)]
 pub struct Material {
     mat_id: u32,
@@ -65,11 +72,11 @@ pub struct Material {
     back_transparency_tex: Texture,
     pass_through_shadow_transparency: Spectrum,
     emitted_tex: Option<Texture>,
-    bump_tax: Texture,
+    bump_tax: Option<Texture>,
     bump_sample_distance: f32,
 
     emission_map: ImageMap,
-    emission_func: SampleableShericalFunction,
+    emission_func: SampleableSphericalFunction,
     interior_volume: Volume,
     exterior_volume: Volume,
 
@@ -276,12 +283,12 @@ impl Material {
         &self.back_transparency_tex
     }
 
-    pub fn get_emit_texture(&self) -> Option<&Texture> {
-        *self.emitted_tex
+    pub fn get_emit_texture(&self) -> &Option<Texture> {
+        &self.emitted_tex
     }
 
-    pub fn get_bump_texture(&self) -> Option<&Texture> {
-        *self.bump_tax
+    pub fn get_bump_texture(&self) -> &Option<Texture> {
+        &self.bump_tax
     }
 
     pub fn set_emission_map(&mut self, map: ImageMap) {
@@ -292,8 +299,8 @@ impl Material {
         &self.emission_map
     }
 
-    pub fn get_emission_func(&self) -> SampleableSphericalFunction {
-        ()
+    pub fn get_emission_func(&self) -> &SampleableSphericalFunction {
+        &self.emission_func
     }
 
     // MixMaterial can have multiple volumes assigned and needs
@@ -479,10 +486,10 @@ pub trait MaterialTrait {
         pass_through_event: f32,
         back_tracing: bool,
     ) -> Spectrum {
-        Box::new(())
+        Spectrum::new()
     }
     fn get_emitted_radiance(&self, hit_point: &HitPoint, one_over_primitive_area: f32) -> Spectrum {
-        Box::new(())
+        Spectrum::new()
     }
     fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 {
         0.0
@@ -498,14 +505,14 @@ pub trait MaterialTrait {
 
     /// albedo() returns the material albedo. It is used for Albedo AOV
     fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        Spectrum::new(())
+        Spectrum::new()
     }
 
     /// Returns the total reflection given an constant illumination
     /// over the hemisphere. It is currently used only by PhotonGICache
     /// and BakeCPU render engine.
     fn evaluate_total(&self, hit_point: &HitPoint) -> Spectrum {
-        Spectrum::new(())
+        Spectrum::new()
     }
 
     /// Used to evaluate the material (i.e. get a color plus some

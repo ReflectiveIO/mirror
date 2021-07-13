@@ -7,6 +7,7 @@ use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
 
+#[derive(Default)]
 pub struct GlassMaterial {
     kr: Texture,
     kt: Texture,
@@ -74,7 +75,7 @@ impl GlassMaterial {
         local_film_thickness: f32,
         local_film_ior: f32,
     ) -> Spectrum {
-        Spectrum::new(())
+        Spectrum::new()
     }
 
     pub fn eval_specular_transmission(
@@ -87,7 +88,7 @@ impl GlassMaterial {
         cauchy_b: f32,
         local_sampled_dir: Vector,
     ) -> Spectrum {
-        Spectrum::new(())
+        Spectrum::new()
     }
 }
 
