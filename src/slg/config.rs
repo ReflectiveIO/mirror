@@ -12,7 +12,6 @@ pub struct Config {
     pub properties: Properties,
     pub scene: Scene,
 
-    props_cache: Properties,
     save_additional_props: Properties,
     default_properties: Properties,
     allocated_scene: bool,
@@ -25,14 +24,15 @@ impl Config {
             None => Scene::default(),
         };
 
-        Config {
+        let mut config = Config {
             scene,
             properties: props.clone(),
-            props_cache: Properties::default(),
             default_properties: Properties::default(),
             save_additional_props: Properties::default(),
             allocated_scene: false,
-        }
+        };
+        config.parse(props);
+        return config;
     }
 
     /// Returns false if a (long) kernel compilation time is required at the start of
@@ -45,7 +45,43 @@ impl Config {
         self.properties.get(name)
     }
 
-    pub fn parse(&self, props: &Properties) {}
+    pub fn parse(&mut self, props: &Properties) {
+        if props
+            .get::<bool>("debug.config.parse.print")
+            .unwrap_or(false)
+        {
+            print!(
+                "========Config::parse========\n{:?},===================",
+                props
+            )
+        }
+
+        self.properties.merge(props);
+        self.scene.enable_parse_print = self
+            .properties
+            .get("debug.scene.parse.print")
+            .unwrap_or(false);
+
+        self.update_film_properties(props);
+        self.scene.light_defs.set_light_strategy(&self.properties);
+
+        // Update the Camera
+        let mut film_full_width: u32 = 0;
+        let mut film_full_height: u32 = 0;
+        let mut film_sub_region: [u32; 4] = [0, 0, 0, 0];
+
+        Film::parse_film_size(
+            props,
+            &mut film_full_width,
+            &mut film_full_height,
+            &mut film_sub_region,
+        );
+        self.scene
+            .camera
+            .unwrap()
+            .update(film_full_width, film_full_height, film_sub_region);
+    }
+
     pub fn delete_all_film_image_pipelines_properties(&self) {}
     pub fn update_film_properties(&self, props: &Properties) {}
     pub fn delete(&mut self, prefix: &str) {}

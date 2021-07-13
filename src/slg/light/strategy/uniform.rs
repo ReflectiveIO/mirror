@@ -34,7 +34,9 @@ impl From<&Properties> for LightStrategyUniform {
 
 impl Into<Properties> for LightStrategyUniform {
     fn into(self) -> Properties {
-        todo!()
+        let mut props = Properties::new();
+        props.set("light.strategy.type", self.get_type().to_string());
+        props
     }
 }
 
@@ -74,11 +76,5 @@ impl LightStrategy for LightStrategyUniform {
 
     fn sample_lights2(&self, u: f32, pdf: f32) -> Option<Box<dyn LightSource>> {
         self.inner.sample_lights2(u, pdf)
-    }
-
-    fn to_properties(&self) -> Properties {
-        let mut props = Properties::new();
-        props.set("light.strategy.type", self.get_type().to_string());
-        props
     }
 }

@@ -1,8 +1,9 @@
 use std::collections::HashMap;
+use std::str::FromStr;
 
 use crate::rays::Properties;
-use crate::slg::light::strategy::{LightStrategy, LightStrategyType, LightStrategyUniform};
 use crate::slg::light::{EnvLightSource, LightSource, LightSourceType, TriangleLight};
+use crate::slg::light::strategy::{LightStrategies, LightStrategy, LightStrategyType, LightStrategyUniform};
 use crate::slg::material::Material;
 use crate::slg::Scene;
 
@@ -25,23 +26,41 @@ pub struct LightSourceDefinitions {
 
 impl LightSourceDefinitions {
     pub fn new() -> Self {
-        LightSourceDefinitions {
+        Self {
             map: HashMap::new(),
-            light_group_count: 0,
+
             light_type_count: vec![],
             lights: vec![],
             intersectable_light_sources: vec![],
             env_light_sources: vec![],
             light_index_offset_by_mesh_index: vec![],
             light_index_by_tri_index: vec![],
+
+            // strategies
             emit_light_strategy: Box::new(LightStrategyUniform::new()),
             illuminate_light_strategy: Box::new(LightStrategyUniform::new()),
             infinite_light_strategy: Box::new(LightStrategyUniform::new()),
+            light_group_count: 1,
         }
     }
 
-    pub fn set_light_strategy(&mut self, props: &Properties) {}
-    pub fn update_visibility_maps(&mut self, scene: &Scene, real_time: bool) {}
+    pub fn set_light_strategy(&mut self, props: &Properties) {
+        if let Some(t) = LightStrategies::parse(props) {
+            if &t != self.emit_light_strategy.get_type() {
+                self.emit_light_strategy = LightStrategies::from(props);
+            }
+
+            if &t != self.illuminate_light_strategy.get_type() {
+                self.illuminate_light_strategy = LightStrategies::from(props);
+            }
+
+            if &t != self.infinite_light_strategy.get_type() {
+                self.infinite_light_strategy = LightStrategies::from(props)
+            }
+        }
+    }
+
+    pub fn update_visibility_maps(&mut self, scene: &Scene, rt: bool) {}
 
     pub fn define_light_source(&mut self, l: &Box<dyn LightSource>) {}
     pub fn is_light_source_defined(&self, name: &str) -> bool {

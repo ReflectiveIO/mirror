@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 pub use distribution::DistributionLightStrategy;
 pub use uniform::LightStrategyUniform;
 
@@ -15,6 +17,7 @@ pub enum LightStrategyTask {
     InfiniteOnly,
 }
 
+#[derive(Eq, PartialEq)]
 pub enum LightStrategyType {
     Uniform,
     Power,
@@ -32,6 +35,20 @@ impl ToString for LightStrategyType {
             _ => {
                 panic!("Unknown light strategy type")
             }
+        }
+    }
+}
+
+impl FromStr for LightStrategyType {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "UNIFORM" => Ok(LightStrategyType::Uniform),
+            "POWER" => Ok(LightStrategyType::Power),
+            "LOG_POWER" => Ok(LightStrategyType::LogPower),
+            "DLS_CACHE" => Ok(LightStrategyType::DlsCache),
+            _ => Err(String::from("Unknown light strategy type string")),
         }
     }
 }
@@ -61,5 +78,34 @@ pub trait LightStrategy {
 
     fn sample_lights2(&self, u: f32, pdf: f32) -> Option<Box<dyn LightSource>>;
 
-    fn to_properties(&self) -> Properties;
+    fn to_properties(&self) -> Properties {
+        Properties::new()
+    }
+}
+
+pub struct LightStrategies;
+
+impl LightStrategies {
+    pub fn parse(props: &Properties) -> Option<LightStrategyType> {
+        let t: String = props
+            .get("light.strategy.type")
+            .unwrap_or(String::from(LightStrategyUniform::get_object_tag()));
+
+        match LightStrategyType::from_str(&*t) {
+            Ok(t) => Some(t),
+            Err(_) => None,
+        }
+    }
+
+    pub fn from(props: &Properties) -> Box<dyn LightStrategy> {
+        let t = Self::parse(props).unwrap();
+
+        let strategy = match t {
+            LightStrategyType::Uniform => LightStrategyUniform::from(props),
+            LightStrategyType::Power => LightStrategyUniform::from(props),
+            _ => LightStrategyUniform::from(props),
+        };
+
+        Box::new(strategy)
+    }
 }

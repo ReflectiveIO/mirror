@@ -1,3 +1,5 @@
+use std::cmp::{max, min};
+
 use crate::rays::Properties;
 use crate::slg::film::pipeline::ImagePipeline;
 use crate::slg::film::FilmOutput;
@@ -259,8 +261,61 @@ impl Film {
 
     /* Tests related methods (halt conditions, noise estimation, etc.) */
 
-    pub fn set_convergence(&self, conv: f32) {}
+    pub fn set_convergence(&mut self, conv: f32) {}
     pub fn get_convergence(&self) -> f64 {
         0.0
+    }
+
+    pub fn parse_film_size(
+        props: &Properties,
+        film_full_width: &mut u32,
+        film_full_height: &mut u32,
+        film_sub_region: &mut [u32],
+    ) -> bool {
+        let mut width = 640;
+        if props.has("image.width") {
+            warn!("deprecated property image.width");
+            width = props.get("image.width").unwrap_or(width);
+        }
+        width = props.get("film.width").unwrap_or(width);
+
+        let mut height = 480;
+        if props.has("image.height") {
+            warn!("deprecated property image.height");
+            height = props.get("image.height").unwrap_or(height);
+        }
+        height = props.get("film.height").unwrap_or(height);
+
+        let mut sub_region: [i64; 4] = [0, 0, 0, 0];
+        let mut sub_region_used = false;
+
+        if props.has("film.subregion") {
+            let prop: [i64; 4] =
+                props
+                    .get("film.subregion")
+                    .unwrap_or([0, width - 1, 0, height - 1]);
+
+            sub_region[0] = max(0, min(width - 1, prop[0]));
+            sub_region[1] = max(0, min(width - 1, max(sub_region[0] + 1, prop[1])));
+            sub_region[2] = max(0, min(height - 1, prop[2]));
+            sub_region[3] = max(0, min(height - 1, max(sub_region[2] + 1, prop[3])));
+            sub_region_used = true
+        } else {
+            sub_region[0] = 0;
+            sub_region[1] = width - 1;
+            sub_region[2] = 0;
+            sub_region[3] = height - 1;
+            sub_region_used = false;
+        }
+
+        *film_full_width = width as u32;
+        *film_full_height = height as u32;
+
+        film_sub_region[0] = sub_region[0] as u32;
+        film_sub_region[1] = sub_region[1] as u32;
+        film_sub_region[2] = sub_region[2] as u32;
+        film_sub_region[3] = sub_region[3] as u32;
+
+        return sub_region_used;
     }
 }
