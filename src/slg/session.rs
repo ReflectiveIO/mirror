@@ -1,9 +1,8 @@
-use crate::rays::Properties;
-use crate::slg::engine::{Engine, EngineType, TilePathCPURenderEngine};
-
 use super::config::Config;
 use super::film::Film;
 use super::state::State;
+use crate::rays::Properties;
+use crate::slg::engine::{Engine, EngineType, TilePathCPURenderEngine};
 
 pub struct Session {
     pub config: Config,
@@ -43,15 +42,14 @@ impl Session {
         }
     }
 
-    pub fn started(&self) -> bool {
-        self.engine.started()
-    }
+    pub fn started(&self) -> bool { self.engine.started() }
 
     pub fn start(&mut self) {
         trace!("start the rendering");
 
         // I need to allocate a new film because the current one has already been
-        // used. For instance, it can happen when stopping and starting the same session.
+        // used. For instance, it can happen when stopping and starting the same
+        // session.
         if self.film.initialized() {
             self.film = self.config.alloc_film()
         }
@@ -65,13 +63,9 @@ impl Session {
         self.engine.stop()
     }
 
-    pub fn editing(&self) -> bool {
-        self.engine.editing()
-    }
+    pub fn editing(&self) -> bool { self.engine.editing() }
 
-    pub fn begin_edit(&self) {
-        self.engine.begin_scene_edit()
-    }
+    pub fn begin_edit(&self) { self.engine.begin_scene_edit() }
 
     pub fn end_edit(&mut self) {
         // Make a copy of the edit actions
@@ -89,17 +83,11 @@ impl Session {
         self.engine.end_scene_edit(&edit_actions);
     }
 
-    pub fn paused(&self) -> bool {
-        self.engine.paused()
-    }
+    pub fn paused(&self) -> bool { self.engine.paused() }
 
-    pub fn pause(&self) {
-        self.engine.pause()
-    }
+    pub fn pause(&self) { self.engine.pause() }
 
-    pub fn resume(&self) {
-        self.engine.resume()
-    }
+    pub fn resume(&self) { self.engine.resume() }
 
     pub fn save_film_outputs(&self) {
         // Ask the Engine to update the film

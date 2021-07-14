@@ -1,15 +1,13 @@
+use super::material::{Material, MaterialTrait};
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDFEvent;
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
-
-use super::material::Material;
-use super::material::MaterialTrait;
-use crate::slg::material::MaterialType;
 
 #[derive(Default)]
 pub struct TwoSidedMaterial {
@@ -34,31 +32,19 @@ impl TwoSidedMaterial {
         }
     }
 
-    pub fn get_front_material(&self) -> &Box<dyn MaterialTrait> {
-        &self.front_mat
-    }
+    pub fn get_front_material(&self) -> &Box<dyn MaterialTrait> { &self.front_mat }
 
-    pub fn get_back_material(&self) -> &Box<dyn MaterialTrait> {
-        &self.back_mat
-    }
+    pub fn get_back_material(&self) -> &Box<dyn MaterialTrait> { &self.back_mat }
 }
 
 impl MaterialTrait for TwoSidedMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::TwoSided
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::TwoSided }
 
-    fn get_event_types(&self) -> BSDFEvent {
-        self.event_types
-    }
+    fn get_event_types(&self) -> BSDFEvent { self.event_types }
 
-    fn is_light_source(&self) -> bool {
-        todo!()
-    }
+    fn is_light_source(&self) -> bool { todo!() }
 
-    fn is_delta(&self) -> bool {
-        todo!()
-    }
+    fn is_delta(&self) -> bool { todo!() }
 
     fn get_pass_through_transparency(
         &self,
@@ -74,9 +60,7 @@ impl MaterialTrait for TwoSidedMaterial {
         todo!()
     }
 
-    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 {
-        todo!()
-    }
+    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 { todo!() }
 
     fn get_interior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
         todo!()
@@ -86,13 +70,9 @@ impl MaterialTrait for TwoSidedMaterial {
         todo!()
     }
 
-    fn bump(&mut self, hit_point: &HitPoint) {
-        todo!()
-    }
+    fn bump(&mut self, hit_point: &HitPoint) { todo!() }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -139,27 +119,15 @@ impl MaterialTrait for TwoSidedMaterial {
         todo!()
     }
 
-    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool {
-        todo!()
-    }
+    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { todo!() }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {
-        todo!()
-    }
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) { todo!() }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
-    fn update_avg_pass_through_transparency(&mut self) {
-        todo!()
-    }
+    fn update_avg_pass_through_transparency(&mut self) { todo!() }
 }

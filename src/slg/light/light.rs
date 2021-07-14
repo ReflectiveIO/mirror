@@ -6,29 +6,20 @@ use crate::rays::{NamedObject, Properties};
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDF;
 use crate::slg::image_map::{ImageMap, ImageMapCache};
-use crate::slg::material::Material;
-use crate::slg::material::MaterialTrait;
+use crate::slg::material::{Material, MaterialTrait};
 use crate::slg::Scene;
 
 pub trait LightSource {
     fn preprocess(&self);
     fn get_type(&self) -> LightSourceType;
 
-    fn is_environmental(&self) -> bool {
-        false
-    }
+    fn is_environmental(&self) -> bool { false }
 
-    fn is_infinite(&self) -> bool {
-        false
-    }
+    fn is_infinite(&self) -> bool { false }
 
-    fn is_intersectable(&self) -> bool {
-        false
-    }
+    fn is_intersectable(&self) -> bool { false }
 
-    fn get_avg_pass_through_transparency(&self) -> f32 {
-        1.0
-    }
+    fn get_avg_pass_through_transparency(&self) -> f32 { 1.0 }
     fn get_id(&self) -> u32;
     fn get_power(&self, scene: &Scene) -> f32;
     fn get_importance(&self) -> f32;
@@ -74,9 +65,7 @@ pub trait LightSource {
     // shadow (to avoid tracing the shadow ray). This method can be optionally
     // implemented by a light source. The return value can be just false if the
     // answer is unknown.
-    fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool {
-        false
-    }
+    fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool { false }
 
     fn add_referenced_image_maps(&mut self, maps: HashSet<ImageMap>) {}
 }
@@ -86,31 +75,21 @@ pub trait IntersectableLightSource {
     fn preprocess(&self);
     fn get_type(&self) -> LightSourceType;
 
-    fn is_environmental(&self) -> bool {
-        false
-    }
+    fn is_environmental(&self) -> bool { false }
 
-    fn is_infinite(&self) -> bool {
-        false
-    }
+    fn is_infinite(&self) -> bool { false }
 
-    fn is_intersectable(&self) -> bool {
-        true
-    }
+    fn is_intersectable(&self) -> bool { true }
 
     fn get_avg_pass_through_transparency(&self) -> f32 {
         self.light_material().get_avg_pass_through_transparency()
     }
 
-    fn get_id(&self) -> u32 {
-        self.light_material().get_light_id()
-    }
+    fn get_id(&self) -> u32 { self.light_material().get_light_id() }
 
     fn get_power(&self, scene: &Scene) -> f32;
 
-    fn get_importance(&self) -> f32 {
-        self.light_material().get_emitted_importance()
-    }
+    fn get_importance(&self) -> f32 { self.light_material().get_emitted_importance() }
 
     fn is_direct_light_sampling_enabled(&self) -> bool;
 
@@ -278,8 +257,8 @@ pub trait IntersectableLightSource {
 //         )
 //     }
 //
-//     fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool {
-//         self.is_always_in_shadow(scene, p, n)
+//     fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) ->
+// bool {         self.is_always_in_shadow(scene, p, n)
 //     }
 //
 //     fn add_referenced_image_maps(&mut self, maps: HashSet<ImageMap>) {
@@ -291,21 +270,13 @@ pub trait NotIntersectableLightSource {
     fn preprocess(&self);
     fn get_type(&self) -> LightSourceType;
 
-    fn is_environmental(&self) -> bool {
-        false
-    }
+    fn is_environmental(&self) -> bool { false }
 
-    fn is_infinite(&self) -> bool {
-        false
-    }
+    fn is_infinite(&self) -> bool { false }
 
-    fn is_intersectable(&self) -> bool {
-        false
-    }
+    fn is_intersectable(&self) -> bool { false }
 
-    fn get_avg_pass_through_transparency(&self) -> f32 {
-        1.0
-    }
+    fn get_avg_pass_through_transparency(&self) -> f32 { 1.0 }
 
     fn set_id(&mut self, light_id: u32);
     fn get_id(&self) -> u32;
@@ -317,17 +288,11 @@ pub trait NotIntersectableLightSource {
 
     fn is_direct_light_sampling_enabled(&self) -> bool;
 
-    fn is_visible_indirect_diffuse(&self) -> bool {
-        false
-    }
+    fn is_visible_indirect_diffuse(&self) -> bool { false }
 
-    fn is_visible_indirect_glossy(&self) -> bool {
-        false
-    }
+    fn is_visible_indirect_glossy(&self) -> bool { false }
 
-    fn is_visible_indirect_specular(&self) -> bool {
-        false
-    }
+    fn is_visible_indirect_specular(&self) -> bool { false }
 
     fn emit(
         &mut self,
@@ -479,8 +444,8 @@ pub trait NotIntersectableLightSource {
 //         )
 //     }
 //
-//     fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool {
-//         self.is_always_in_shadow(scene, p, n)
+//     fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) ->
+// bool {         self.is_always_in_shadow(scene, p, n)
 //     }
 //
 //     fn add_referenced_image_maps(&mut self, maps: HashSet<ImageMap>) {
@@ -492,21 +457,13 @@ pub trait InfiniteLightSource {
     fn preprocess(&self);
     fn get_type(&self) -> LightSourceType;
 
-    fn is_environmental(&self) -> bool {
-        false
-    }
+    fn is_environmental(&self) -> bool { false }
 
-    fn is_infinite(&self) -> bool {
-        true
-    }
+    fn is_infinite(&self) -> bool { true }
 
-    fn is_intersectable(&self) -> bool {
-        false
-    }
+    fn is_intersectable(&self) -> bool { false }
 
-    fn get_avg_pass_through_transparency(&self) -> f32 {
-        1.0
-    }
+    fn get_avg_pass_through_transparency(&self) -> f32 { 1.0 }
 
     fn set_id(&mut self, light_id: u32);
     fn get_id(&self) -> u32;
@@ -675,8 +632,8 @@ pub trait InfiniteLightSource {
 //         )
 //     }
 //
-//     fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool {
-//         self.is_always_in_shadow(scene, p, n)
+//     fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) ->
+// bool {         self.is_always_in_shadow(scene, p, n)
 //     }
 //
 //     fn add_referenced_image_maps(&mut self, maps: HashSet<ImageMap>) {
@@ -688,21 +645,13 @@ pub trait EnvLightSource {
     fn preprocess(&self);
     fn get_type(&self) -> LightSourceType;
 
-    fn is_environmental(&self) -> bool {
-        true
-    }
+    fn is_environmental(&self) -> bool { true }
 
-    fn is_infinite(&self) -> bool {
-        true
-    }
+    fn is_infinite(&self) -> bool { true }
 
-    fn is_intersectable(&self) -> bool {
-        false
-    }
+    fn is_intersectable(&self) -> bool { false }
 
-    fn get_avg_pass_through_transparency(&self) -> f32 {
-        1.0
-    }
+    fn get_avg_pass_through_transparency(&self) -> f32 { 1.0 }
 
     fn set_id(&mut self, light_id: u32);
     fn get_id(&self) -> u32;
@@ -785,57 +734,31 @@ where
     T: InfiniteLightSource,
     T: EnvLightSource,
 {
-    fn preprocess(&self) {
-        self.preprocess()
-    }
+    fn preprocess(&self) { self.preprocess() }
 
-    fn get_type(&self) -> LightSourceType {
-        self.get_type()
-    }
+    fn get_type(&self) -> LightSourceType { self.get_type() }
 
-    fn is_environmental(&self) -> bool {
-        self.is_environmental()
-    }
+    fn is_environmental(&self) -> bool { self.is_environmental() }
 
-    fn is_infinite(&self) -> bool {
-        self.is_infinite()
-    }
+    fn is_infinite(&self) -> bool { self.is_infinite() }
 
-    fn is_intersectable(&self) -> bool {
-        self.is_intersectable()
-    }
+    fn is_intersectable(&self) -> bool { self.is_intersectable() }
 
-    fn get_avg_pass_through_transparency(&self) -> f32 {
-        self.get_avg_pass_through_transparency()
-    }
+    fn get_avg_pass_through_transparency(&self) -> f32 { self.get_avg_pass_through_transparency() }
 
-    fn get_id(&self) -> u32 {
-        self.get_id()
-    }
+    fn get_id(&self) -> u32 { self.get_id() }
 
-    fn get_power(&self, scene: &Scene) -> f32 {
-        self.get_power(scene)
-    }
+    fn get_power(&self, scene: &Scene) -> f32 { self.get_power(scene) }
 
-    fn get_importance(&self) -> f32 {
-        self.get_importance()
-    }
+    fn get_importance(&self) -> f32 { self.get_importance() }
 
-    fn is_direct_light_sampling_enabled(&self) -> bool {
-        self.is_direct_light_sampling_enabled()
-    }
+    fn is_direct_light_sampling_enabled(&self) -> bool { self.is_direct_light_sampling_enabled() }
 
-    fn is_visible_indirect_diffuse(&self) -> bool {
-        self.is_visible_indirect_diffuse()
-    }
+    fn is_visible_indirect_diffuse(&self) -> bool { self.is_visible_indirect_diffuse() }
 
-    fn is_visible_indirect_glossy(&self) -> bool {
-        self.is_visible_indirect_glossy()
-    }
+    fn is_visible_indirect_glossy(&self) -> bool { self.is_visible_indirect_glossy() }
 
-    fn is_visible_indirect_specular(&self) -> bool {
-        self.is_visible_indirect_specular()
-    }
+    fn is_visible_indirect_specular(&self) -> bool { self.is_visible_indirect_specular() }
 
     fn emit(
         &mut self,

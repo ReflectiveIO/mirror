@@ -1,11 +1,10 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::textures::Texture;
-
-use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
+use crate::slg::textures::Texture;
 
 #[derive(Default)]
 pub struct MirrorMaterial {
@@ -25,19 +24,13 @@ impl MirrorMaterial {
         }
     }
 
-    pub fn get_kr(&self) -> &Texture {
-        &self.kr
-    }
+    pub fn get_kr(&self) -> &Texture { &self.kr }
 }
 
 impl MaterialTrait for MirrorMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::Mirror
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::Mirror }
 
-    fn get_event_types(&self) -> BSDFEvent {
-        BSDFEventType::SPECULAR | BSDFEventType::REFLECT
-    }
+    fn get_event_types(&self) -> BSDFEvent { BSDFEventType::SPECULAR | BSDFEventType::REFLECT }
 
     fn evaluate(
         &self,
@@ -76,11 +69,7 @@ impl MaterialTrait for MirrorMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 }

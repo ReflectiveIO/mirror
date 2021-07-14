@@ -34,27 +34,17 @@ impl TriangleLight {
         }
     }
 
-    pub fn get_triangle_area(&self) -> f32 {
-        self.triangle_area
-    }
+    pub fn get_triangle_area(&self) -> f32 { self.triangle_area }
 
-    pub fn get_mesh_area(&self) -> f32 {
-        self.mesh_area
-    }
+    pub fn get_mesh_area(&self) -> f32 { self.mesh_area }
 
-    pub fn get_area(&self) -> f32 {
-        self.triangle_area
-    }
+    pub fn get_area(&self) -> f32 { self.triangle_area }
 }
 
 impl IntersectableLightSource for TriangleLight {
-    fn preprocess(&self) {
-        todo!()
-    }
+    fn preprocess(&self) { todo!() }
 
-    fn get_type(&self) -> LightSourceType {
-        LightSourceType::TriangleLight
-    }
+    fn get_type(&self) -> LightSourceType { LightSourceType::TriangleLight }
 
     fn get_power(&self, scene: &Scene) -> f32 {
         let emitted_radiance_y: f32 = self
@@ -81,7 +71,7 @@ impl IntersectableLightSource for TriangleLight {
                 } else {
                     true
                 }
-            }
+            },
             DLS_ENABLED => true,
             DLS_DISABLED => false,
         }
@@ -120,9 +110,7 @@ impl IntersectableLightSource for TriangleLight {
         todo!()
     }
 
-    fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool {
-        todo!()
-    }
+    fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool { todo!() }
 
     fn get_radiance(
         &self,
@@ -133,7 +121,5 @@ impl IntersectableLightSource for TriangleLight {
         todo!()
     }
 
-    fn light_material(&self) -> &Material {
-        &self.light_material
-    }
+    fn light_material(&self) -> &Material { &self.light_material }
 }

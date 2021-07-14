@@ -1,13 +1,12 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::Texture;
-
-use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
+use crate::slg::textures::Texture;
 
 #[derive(Default)]
 pub struct RoughMatteMaterial {
@@ -29,27 +28,17 @@ impl RoughMatteMaterial {
         }
     }
 
-    pub fn get_kd(&self) -> &Texture {
-        &self.kd
-    }
+    pub fn get_kd(&self) -> &Texture { &self.kd }
 
-    pub fn get_sigma(&self) -> &Texture {
-        &self.sigma
-    }
+    pub fn get_sigma(&self) -> &Texture { &self.sigma }
 }
 
 impl MaterialTrait for RoughMatteMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::RoughMatte
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::RoughMatte }
 
-    fn get_event_types(&self) -> BSDFEvent {
-        BSDFEventType::DIFFUSE | BSDFEventType::REFLECT
-    }
+    fn get_event_types(&self) -> BSDFEvent { BSDFEventType::DIFFUSE | BSDFEventType::REFLECT }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -88,15 +77,9 @@ impl MaterialTrait for RoughMatteMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

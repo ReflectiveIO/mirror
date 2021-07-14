@@ -218,7 +218,8 @@ impl Scene {
     }
 
     // Mesh shape
-    // Use one of the following methods, do not directly call extMeshCache.DefineExtMesh()
+    // Use one of the following methods, do not directly call
+    // extMeshCache.DefineExtMesh()
 
     pub fn define_mesh(&mut self, mesh: &ExtMesh) {
         let shape_name = mesh.get_name();
@@ -256,7 +257,8 @@ impl Scene {
             }
         }
 
-        // This is the only place where it is safe to all ext_mesh_cache.define_ext_mesh()
+        // This is the only place where it is safe to all
+        // ext_mesh_cache.define_ext_mesh()
         self.ext_mesh_cache.define_ext_mesh(mesh);
         self.edit_actions.add_action(EditAction::GeometryEdit);
     }
@@ -324,6 +326,7 @@ impl Scene {
 
         Ok(())
     }
+
     pub fn define_mesh_ms(
         &mut self,
         mot_mesh_name: &str,
@@ -443,7 +446,8 @@ impl Scene {
             for i in mesh.get_total_triangle_count() {
                 let light_source_name =
                     format!("{}{}{}", old.get_name(), TRIANGLE_LIGHT_POSTFIX, i);
-                self.light_defs.delete_light_source(light_source_name.as_str());
+                self.light_defs
+                    .delete_light_source(light_source_name.as_str());
             }
         }
     }
@@ -464,55 +468,41 @@ impl Scene {
         todo!()
     }
 
-    pub fn update_object_material(&mut self, obj_name: &str, mat_name: &str) {
-        todo!()
-    }
+    pub fn update_object_material(&mut self, obj_name: &str, mat_name: &str) { todo!() }
 
-    pub fn update_object_transformation(&mut self, obj_name: &str, trans_mat: Vec<f32>) {
-        todo!()
-    }
+    pub fn update_object_transformation(&mut self, obj_name: &str, trans_mat: Vec<f32>) { todo!() }
 
-    pub fn remove_unused_image_maps(&mut self) {
-        todo!()
-    }
+    pub fn remove_unused_image_maps(&mut self) { todo!() }
 
-    pub fn remove_unused_textures(&mut self) {
-        todo!()
-    }
+    pub fn remove_unused_textures(&mut self) { todo!() }
 
-    pub fn remove_unused_materials(&mut self) {
-        todo!()
-    }
+    pub fn remove_unused_materials(&mut self) { todo!() }
 
-    pub fn remove_unused_meshes(&mut self) {
-        todo!()
-    }
+    pub fn remove_unused_meshes(&mut self) { todo!() }
 
-    pub fn load(filename: &str) -> Scene {
-        Scene::default()
-    }
+    pub fn load(filename: &str) -> Scene { Scene::default() }
 
-    pub fn save(filename: &str, scene: &Scene) {
-        todo!()
-    }
+    pub fn save(filename: &str, scene: &Scene) { todo!() }
 
     /* private methods */
 
     fn parse_camera(&self, props: &Properties) {}
+
     fn parse_textures(&self, props: &Properties) {}
+
     fn parse_volumes(&self, props: &Properties) {}
+
     fn parse_materials(&self, props: &Properties) {}
+
     fn parse_shapes(&self, props: &Properties) {}
+
     fn parse_objects(&self, props: &Properties) {}
+
     fn parse_lights(&self, props: &Properties) {}
 
-    fn get_texture(&self, name: &str) -> Texture {
-        Texture::default()
-    }
+    fn get_texture(&self, name: &str) -> Texture { Texture::default() }
 
-    fn create_camera(&self, props: &Properties) -> Camera {
-        Camera::new(CameraType::ENVIRONMENT)
-    }
+    fn create_camera(&self, props: &Properties) -> Camera { Camera::new(CameraType::ENVIRONMENT) }
 
     fn create_texture_mapping_2d(&self, prefix: &str, props: &Properties) -> TextureMapping2D {
         TextureMapping2D::default()
@@ -522,13 +512,9 @@ impl Scene {
         TextureMapping3D::default()
     }
 
-    fn create_texture(&self, name: &str, props: &Properties) -> Texture {
-        Texture::default()
-    }
+    fn create_texture(&self, name: &str, props: &Properties) -> Texture { Texture::default() }
 
-    fn create_volume(&self, id: u32, name: &str, props: &Properties) -> Volume {
-        Volume::default()
-    }
+    fn create_volume(&self, id: u32, name: &str, props: &Properties) -> Volume { Volume::default() }
 
     fn create_material(&self, id: u32, name: &str, props: &Properties) -> Material {
         Material::default()
@@ -561,7 +547,5 @@ impl Scene {
 }
 
 impl Default for Scene {
-    fn default() -> Self {
-        Self::new(1.0)
-    }
+    fn default() -> Self { Self::new(1.0) }
 }

@@ -22,13 +22,9 @@ impl DistributionLightStrategy {
 }
 
 impl LightStrategy for DistributionLightStrategy {
-    fn get_type(&self) -> &LightStrategyType {
-        &self.light_strategy_type
-    }
+    fn get_type(&self) -> &LightStrategyType { &self.light_strategy_type }
 
-    fn get_tag(&self) -> &String {
-        todo!()
-    }
+    fn get_tag(&self) -> &String { todo!() }
 
     fn preprocess(&mut self, scene: &Scene, task_type: LightStrategyTask, real_time: bool) {
         self.scene = Some(scene.into())
@@ -55,7 +51,7 @@ impl LightStrategy for DistributionLightStrategy {
         match &self.lights_distribution {
             Some(lightsDistribution) => {
                 lightsDistribution.pdf_discrete(self.light.light_scene_index)
-            }
+            },
             None => 0.0,
         }
     }
@@ -69,7 +65,7 @@ impl LightStrategy for DistributionLightStrategy {
                 } else {
                     None
                 }
-            }
+            },
             None => None,
         }
     }

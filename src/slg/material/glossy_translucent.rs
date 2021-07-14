@@ -1,14 +1,13 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::{Material, MaterialType};
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
-
-use super::material::MaterialTrait;
-use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 
 #[derive(Default)]
 pub struct GlossyTranslucentMaterial {
@@ -58,79 +57,47 @@ impl GlossyTranslucentMaterial {
         }
     }
 
-    pub fn get_kd(&self) -> &Texture {
-        &self.kd
-    }
-    pub fn get_kt(&self) -> &Texture {
-        &self.kt
-    }
-    pub fn get_ks(&self) -> &Texture {
-        &self.ks
-    }
-    pub fn get_ks_bf(&self) -> &Texture {
-        &self.ks_bf
-    }
+    pub fn get_kd(&self) -> &Texture { &self.kd }
 
-    pub fn get_nu(&self) -> &Texture {
-        &self.nu
-    }
-    pub fn get_nu_bf(&self) -> &Texture {
-        &self.nu_bf
-    }
+    pub fn get_kt(&self) -> &Texture { &self.kt }
 
-    pub fn get_nv(&self) -> &Texture {
-        &self.nv
-    }
+    pub fn get_ks(&self) -> &Texture { &self.ks }
 
-    pub fn get_nv_bf(&self) -> &Texture {
-        &self.nv_bf
-    }
+    pub fn get_ks_bf(&self) -> &Texture { &self.ks_bf }
 
-    pub fn get_ka(&self) -> &Texture {
-        &self.ka
-    }
+    pub fn get_nu(&self) -> &Texture { &self.nu }
 
-    pub fn get_ka_bf(&self) -> &Texture {
-        &self.ka_bf
-    }
+    pub fn get_nu_bf(&self) -> &Texture { &self.nu_bf }
 
-    pub fn get_depth(&self) -> &Texture {
-        &self.depth
-    }
+    pub fn get_nv(&self) -> &Texture { &self.nv }
 
-    pub fn get_depth_bf(&self) -> &Texture {
-        &self.depth_bf
-    }
+    pub fn get_nv_bf(&self) -> &Texture { &self.nv_bf }
 
-    pub fn get_index(&self) -> &Texture {
-        &self.index
-    }
+    pub fn get_ka(&self) -> &Texture { &self.ka }
 
-    pub fn get_index_bf(&self) -> &Texture {
-        &self.index_bf
-    }
+    pub fn get_ka_bf(&self) -> &Texture { &self.ka_bf }
 
-    pub fn is_multi_bounce(&self) -> bool {
-        self.multi_bounce
-    }
+    pub fn get_depth(&self) -> &Texture { &self.depth }
 
-    pub fn is_multi_bounce_bf(&self) -> bool {
-        self.multi_bounce_bf
-    }
+    pub fn get_depth_bf(&self) -> &Texture { &self.depth_bf }
+
+    pub fn get_index(&self) -> &Texture { &self.index }
+
+    pub fn get_index_bf(&self) -> &Texture { &self.index_bf }
+
+    pub fn is_multi_bounce(&self) -> bool { self.multi_bounce }
+
+    pub fn is_multi_bounce_bf(&self) -> bool { self.multi_bounce_bf }
 }
 
 impl MaterialTrait for GlossyTranslucentMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::GlossyTranslucent
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::GlossyTranslucent }
 
     fn get_event_types(&self) -> BSDFEvent {
         BSDFEventType::GLOSSY | BSDFEventType::REFLECT | BSDFEventType::TRANSMIT
     }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -169,15 +136,9 @@ impl MaterialTrait for GlossyTranslucentMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

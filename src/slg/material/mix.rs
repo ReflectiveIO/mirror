@@ -1,3 +1,4 @@
+use super::material::{Material, MaterialTrait};
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
@@ -7,9 +8,6 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
-
-use super::material::Material;
-use super::material::MaterialTrait;
 
 #[derive(Default)]
 pub struct MixMaterial {
@@ -36,35 +34,21 @@ impl MixMaterial {
         }
     }
 
-    pub fn get_a(&self) -> &Box<dyn MaterialTrait> {
-        &self.a
-    }
+    pub fn get_a(&self) -> &Box<dyn MaterialTrait> { &self.a }
 
-    pub fn get_b(&self) -> &Box<dyn MaterialTrait> {
-        &self.b
-    }
+    pub fn get_b(&self) -> &Box<dyn MaterialTrait> { &self.b }
 
-    pub fn get_mix_factor(&self) -> &Texture {
-        &self.mix_factor
-    }
+    pub fn get_mix_factor(&self) -> &Texture { &self.mix_factor }
 }
 
 impl MaterialTrait for MixMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::Mix
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::Mix }
 
-    fn get_event_types(&self) -> BSDFEvent {
-        self.event_types
-    }
+    fn get_event_types(&self) -> BSDFEvent { self.event_types }
 
-    fn is_light_source(&self) -> bool {
-        todo!()
-    }
+    fn is_light_source(&self) -> bool { todo!() }
 
-    fn is_delta(&self) -> bool {
-        todo!()
-    }
+    fn is_delta(&self) -> bool { todo!() }
 
     fn get_pass_through_transparency(
         &self,
@@ -80,9 +64,7 @@ impl MaterialTrait for MixMaterial {
         todo!()
     }
 
-    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 {
-        todo!()
-    }
+    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 { todo!() }
 
     fn get_interior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
         todo!()
@@ -92,9 +74,7 @@ impl MaterialTrait for MixMaterial {
         todo!()
     }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -141,27 +121,15 @@ impl MaterialTrait for MixMaterial {
         todo!()
     }
 
-    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool {
-        todo!()
-    }
+    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { todo!() }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {
-        todo!()
-    }
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) { todo!() }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
-    fn update_avg_pass_through_transparency(&mut self) {
-        todo!()
-    }
+    fn update_avg_pass_through_transparency(&mut self) { todo!() }
 }

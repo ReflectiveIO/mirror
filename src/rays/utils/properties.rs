@@ -1,8 +1,8 @@
+use std::fmt::{Display, Formatter};
 use std::result::Result;
 
 use config::{ConfigError, Value};
 use serde::de::Deserialize;
-use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone)]
 pub struct Properties {

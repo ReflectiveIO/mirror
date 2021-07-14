@@ -1,4 +1,3 @@
-mod color;
+pub use self::color::{RGBColor, Spectrum};
 
-pub use self::color::RGBColor;
-pub use self::color::Spectrum;
+mod color;

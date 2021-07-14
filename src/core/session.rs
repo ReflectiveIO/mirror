@@ -4,15 +4,14 @@ use std::error::Error;
 
 use log::info;
 
+use super::config::Config;
+use super::film::Film;
+use super::state::State;
 use crate::rays::device::{HardwareDevice, IntersectionDevice};
 use crate::rays::Properties;
 use crate::slg::engine::tile::Tile;
 use crate::slg::engine::{CPUTileRenderEngine, EngineType, TilePathCPURenderEngine};
 use crate::slg::{self};
-
-use super::config::Config;
-use super::film::Film;
-use super::state::State;
 
 /// Session executes a rendering based on the Config provided.
 #[derive(Default)]
@@ -52,14 +51,10 @@ impl Session {
     }
 
     /// Returns a reference to the Config used to create this Session
-    pub fn config(&self) -> &Config {
-        &self.config
-    }
+    pub fn config(&self) -> &Config { &self.config }
 
     /// Returns a pointer to the current State, The Session must be paused.
-    pub fn state(&self) -> &State {
-        &self.state
-    }
+    pub fn state(&self) -> &State { &self.state }
 
     /// Starts the rendering.
     pub fn start(&mut self) {
@@ -77,14 +72,10 @@ impl Session {
     }
 
     /// It can be used to check if the session has been started.
-    pub fn started(&self) -> bool {
-        self.session.started()
-    }
+    pub fn started(&self) -> bool { self.session.started() }
 
     /// Stops the rendering and allows to edit the scene.
-    pub fn begin_edit(&self) {
-        self.session.begin_edit();
-    }
+    pub fn begin_edit(&self) { self.session.begin_edit(); }
 
     /// Ends the scene editing and start the rendering again.
     pub fn end_edit(&mut self) {
@@ -95,45 +86,29 @@ impl Session {
     }
 
     /// It can be used to check if the session is in scene editing mode.
-    pub fn editing(&self) -> bool {
-        self.session.editing()
-    }
+    pub fn editing(&self) -> bool { self.session.editing() }
 
     /// Pause the rendering.
-    pub fn pause(&self) {
-        self.session.pause()
-    }
+    pub fn pause(&self) { self.session.pause() }
 
     /// Resume the rendering.
-    pub fn resume(&self) {
-        self.session.resume()
-    }
+    pub fn resume(&self) { self.session.resume() }
 
     /// It can be used to check if the session is paused.
-    pub fn paused(&self) -> bool {
-        self.session.paused()
-    }
+    pub fn paused(&self) -> bool { self.session.paused() }
 
     /// It can be used to check if the rendering is over.
-    pub fn done(&self) -> bool {
-        self.session.engine.done()
-    }
+    pub fn done(&self) -> bool { self.session.engine.done() }
 
     /// Used to wait for the end of the rendering.
-    pub fn wait_for_done(&self) {
-        self.session.engine.wait_for_done()
-    }
+    pub fn wait_for_done(&self) { self.session.engine.wait_for_done() }
 
     /// Used to wait for the next frame with real-time render engines like
     /// RealTimePathOpenCL. it does nothing with other render engines.
-    pub fn wait_for_frame(&self) {
-        self.session.engine.wait_for_frame()
-    }
+    pub fn wait_for_frame(&self) { self.session.engine.wait_for_frame() }
 
     /// Returns a reference to a Film with the output of the rendering
-    pub fn film(&self) -> &Film {
-        &self.film
-    }
+    pub fn film(&self) -> &Film { &self.film }
 
     /// Updates the statistics.
     ///
@@ -197,7 +172,8 @@ impl Session {
         let mut counters: HashMap<String, u32> = HashMap::new();
 
         for device in devices {
-            // Append a device index for the case where the same device is used multiple times.
+            // Append a device index for the case where the same device is used multiple
+            // times.
             let index = *counters.get_mut(device.name()).unwrap() + 1;
             names.push(format!("{}-{}", device.name(), index));
             let prefix = format!("stats.engine.devices.{}-{}", device.name(), index);
@@ -279,8 +255,8 @@ impl Session {
                     engine.get_converged_tiles(&mut tiles);
                     self.stats.set("stats.tile-path.tiles.converged", tiles);
                 }
-            }
-            _ => {}
+            },
+            _ => {},
         };
 
         // Periodic save
@@ -290,21 +266,17 @@ impl Session {
     /// Returns a list of statistics related to the ongoing rendering. The
     /// returned Properties is granted to have content only after the first call
     /// to the UpdateStats method.
-    pub fn stats(&self) -> &Properties {
-        &self.stats
-    }
+    pub fn stats(&self) -> &Properties { &self.stats }
 
     /// Dynamic edit the definition of Config properties.
     ///
-    /// props are the Properties with the definition of: film.image-pipeline(s).*
-    /// (including radiance channel scales), film.outputs.*, film.width or film.height.
-    pub fn parse(&mut self, props: &Properties) {
-        self.session.parse(props);
-    }
+    /// props are the Properties with the definition of:
+    /// film.image-pipeline(s).* (including radiance channel scales),
+    /// film.outputs.*, film.width or film.height.
+    pub fn parse(&mut self, props: &Properties) { self.session.parse(props); }
 
-    /// Save all the rendering related information (the Config, Scene, State and Film)
-    /// in a file for a later restart. The resume file extension must be ".rsm".
-    pub fn dump(&self, filename: &str) {
-        self.session.dump(filename);
-    }
+    /// Save all the rendering related information (the Config, Scene, State and
+    /// Film) in a file for a later restart. The resume file extension must
+    /// be ".rsm".
+    pub fn dump(&self, filename: &str) { self.session.dump(filename); }
 }

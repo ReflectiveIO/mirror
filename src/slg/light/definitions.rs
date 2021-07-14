@@ -2,8 +2,10 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 use crate::rays::Properties;
+use crate::slg::light::strategy::{
+    LightStrategies, LightStrategy, LightStrategyType, LightStrategyUniform,
+};
 use crate::slg::light::{EnvLightSource, LightSource, LightSourceType, TriangleLight};
-use crate::slg::light::strategy::{LightStrategies, LightStrategy, LightStrategyType, LightStrategyUniform};
 use crate::slg::material::Material;
 use crate::slg::Scene;
 
@@ -63,23 +65,21 @@ impl LightSourceDefinitions {
     pub fn update_visibility_maps(&mut self, scene: &Scene, rt: bool) {}
 
     pub fn define_light_source(&mut self, l: &Box<dyn LightSource>) {}
-    pub fn is_light_source_defined(&self, name: &str) -> bool {
-        false
-    }
+
+    pub fn is_light_source_defined(&self, name: &str) -> bool { false }
 
     pub fn get_light_source(&self, name: &str) -> Box<dyn LightSource> {
         Box::new(TriangleLight::new())
     }
 
-    pub fn get_size(&self) -> usize {
-        self.map.len()
-    }
-    pub fn get_light_source_names(&self) -> Vec<String> {
-        vec![]
-    }
+    pub fn get_size(&self) -> usize { self.map.len() }
+
+    pub fn get_light_source_names(&self) -> Vec<String> { vec![] }
 
     pub fn delete_light_source(&mut self, name: &str) {}
+
     pub fn delete_light_source_start_with(&mut self, prefix: &str) {}
+
     pub fn delete_light_source_by_material(&mut self, mat: &Material) {}
 
     /* Following methods require preprocess() */
@@ -92,24 +92,15 @@ impl LightSourceDefinitions {
         TriangleLight::new()
     }
 
-    pub fn get_light_group_count(&self) -> usize {
-        self.light_group_count
-    }
-    pub fn get_light_type_count(&self, t: LightSourceType) -> usize {
-        self.light_type_count.len()
-    }
+    pub fn get_light_group_count(&self) -> usize { self.light_group_count }
 
-    pub fn get_light_type_counts(&self) -> &Vec<usize> {
-        &self.light_type_count
-    }
+    pub fn get_light_type_count(&self, t: LightSourceType) -> usize { self.light_type_count.len() }
 
-    pub fn get_light_sources(&self) -> &Vec<Box<dyn LightSource>> {
-        &self.lights
-    }
+    pub fn get_light_type_counts(&self) -> &Vec<usize> { &self.light_type_count }
 
-    pub fn get_env_light_sources(&self) -> &Vec<Box<dyn EnvLightSource>> {
-        &self.env_light_sources
-    }
+    pub fn get_light_sources(&self) -> &Vec<Box<dyn LightSource>> { &self.lights }
+
+    pub fn get_env_light_sources(&self) -> &Vec<Box<dyn EnvLightSource>> { &self.env_light_sources }
 
     pub fn get_intersectable_light_sources(&self) -> &Vec<TriangleLight> {
         &self.intersectable_light_sources
@@ -119,16 +110,14 @@ impl LightSourceDefinitions {
         &self.light_index_offset_by_mesh_index
     }
 
-    pub fn get_light_index_by_tri_index(&self) -> &Vec<usize> {
-        &self.light_index_by_tri_index
-    }
+    pub fn get_light_index_by_tri_index(&self) -> &Vec<usize> { &self.light_index_by_tri_index }
 
-    pub fn get_emit_light_strategy(&self) -> &Box<dyn LightStrategy> {
-        &self.emit_light_strategy
-    }
+    pub fn get_emit_light_strategy(&self) -> &Box<dyn LightStrategy> { &self.emit_light_strategy }
+
     pub fn get_illuminate_light_strategy(&self) -> &Box<dyn LightStrategy> {
         &self.illuminate_light_strategy
     }
+
     pub fn get_infinite_light_strategy(&self) -> &Box<dyn LightStrategy> {
         &self.infinite_light_strategy
     }
@@ -140,7 +129,5 @@ impl LightSourceDefinitions {
 }
 
 impl Default for LightSourceDefinitions {
-    fn default() -> Self {
-        LightSourceDefinitions::new()
-    }
+    fn default() -> Self { LightSourceDefinitions::new() }
 }

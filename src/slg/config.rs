@@ -35,11 +35,9 @@ impl Config {
         return config;
     }
 
-    /// Returns false if a (long) kernel compilation time is required at the start of
-    /// the rendering. True otherwise.
-    pub fn has_cached_kernels(&self) -> bool {
-        false
-    }
+    /// Returns false if a (long) kernel compilation time is required at the
+    /// start of the rendering. True otherwise.
+    pub fn has_cached_kernels(&self) -> bool { false }
 
     pub fn get<'de, T: Deserialize<'de>>(&self, name: &str) -> Result<T, ConfigError> {
         self.properties.get(name)
@@ -83,40 +81,34 @@ impl Config {
     }
 
     pub fn delete_all_film_image_pipelines_properties(&self) {}
+
     pub fn update_film_properties(&self, props: &Properties) {}
+
     pub fn delete(&mut self, prefix: &str) {}
 
-    pub fn alloc_pixel_filter() -> Filter {
-        Filter::default()
-    }
+    pub fn alloc_pixel_filter() -> Filter { Filter::default() }
 
-    pub fn alloc_film(&self) -> Film {
-        Film::default()
-    }
+    pub fn alloc_film(&self) -> Film { Film::default() }
 
     pub fn alloc_sample_shared_data() {}
+
     pub fn alloc_sampler() {}
-    pub fn alloc_engine() -> Box<dyn Engine> {
-        Box::new(TilePathCPURenderEngine::new())
-    }
+
+    pub fn alloc_engine() -> Box<dyn Engine> { Box::new(TilePathCPURenderEngine::new()) }
 
     /// Returns a reference to all Properties (including
     /// default values) defining the RenderConfig.
-    pub fn to_properties(&self) -> &Properties {
-        &self.properties
-    }
+    pub fn to_properties(&self) -> &Properties { &self.properties }
 
-    pub fn default_properties() -> Properties {
-        Properties::default()
-    }
+    pub fn default_properties() -> Properties { Properties::default() }
 
-    pub fn load(filename: &str) -> Config {
-        Config::default()
-    }
+    pub fn load(filename: &str) -> Config { Config::default() }
 
     pub fn save_serialized(filename: &str, config: &Config) {}
 
     fn save() {}
+
     fn read() {}
+
     fn init_default_properties() {}
 }

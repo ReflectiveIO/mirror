@@ -1,14 +1,13 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
-
-use super::material::MaterialTrait;
-use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
-use crate::slg::material::MaterialType;
 
 #[derive(Default)]
 pub struct GlossyCoatingMaterial {
@@ -42,55 +41,33 @@ impl GlossyCoatingMaterial {
         }
     }
 
-    pub fn get_material_base(&self) -> &Texture {
-        &self.mat_base
-    }
+    pub fn get_material_base(&self) -> &Texture { &self.mat_base }
 
-    pub fn get_ks(&self) -> &Texture {
-        &self.ks
-    }
+    pub fn get_ks(&self) -> &Texture { &self.ks }
 
-    pub fn get_nu(&self) -> &Texture {
-        &self.nu
-    }
+    pub fn get_nu(&self) -> &Texture { &self.nu }
 
-    pub fn get_nv(&self) -> &Texture {
-        &self.nv
-    }
+    pub fn get_nv(&self) -> &Texture { &self.nv }
 
-    pub fn get_ka(&self) -> &Texture {
-        &self.ka
-    }
+    pub fn get_ka(&self) -> &Texture { &self.ka }
 
-    pub fn get_depth(&self) -> &Texture {
-        &self.depth
-    }
+    pub fn get_depth(&self) -> &Texture { &self.depth }
 
-    pub fn get_index(&self) -> &Texture {
-        &self.index
-    }
+    pub fn get_index(&self) -> &Texture { &self.index }
 
-    pub fn is_multi_bounce(&self) -> bool {
-        self.multi_bounce
-    }
+    pub fn is_multi_bounce(&self) -> bool { self.multi_bounce }
 }
 
 impl MaterialTrait for GlossyCoatingMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::GlossyCoating
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::GlossyCoating }
 
     fn get_event_types(&self) -> BSDFEvent {
         BSDFEventType::GLOSSY | BSDFEventType::REFLECT | self.mat_base.get_event_types()
     }
 
-    fn is_light_source(&self) -> bool {
-        todo!()
-    }
+    fn is_light_source(&self) -> bool { todo!() }
 
-    fn is_delta(&self) -> bool {
-        todo!()
-    }
+    fn is_delta(&self) -> bool { todo!() }
 
     fn get_pass_through_transparency(
         &self,
@@ -106,9 +83,7 @@ impl MaterialTrait for GlossyCoatingMaterial {
         todo!()
     }
 
-    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 {
-        todo!()
-    }
+    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 { todo!() }
 
     fn get_interior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
         todo!()
@@ -118,9 +93,7 @@ impl MaterialTrait for GlossyCoatingMaterial {
         todo!()
     }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -167,27 +140,15 @@ impl MaterialTrait for GlossyCoatingMaterial {
         todo!()
     }
 
-    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool {
-        todo!()
-    }
+    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { todo!() }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {
-        todo!()
-    }
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) { todo!() }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
-    fn update_avg_pass_through_transparency(&mut self) {
-        todo!()
-    }
+    fn update_avg_pass_through_transparency(&mut self) { todo!() }
 }
