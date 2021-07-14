@@ -3,7 +3,6 @@ use crate::rays::geometry::{Ray, Transform, Vector};
 use crate::rays::{NamedObject, Properties};
 use crate::slg::bsdf::BSDF;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::light::LightSource;
 use crate::slg::Scene;
 
 pub struct DistantLight {

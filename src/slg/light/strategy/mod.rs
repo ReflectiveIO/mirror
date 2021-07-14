@@ -5,7 +5,7 @@ pub use uniform::LightStrategyUniform;
 
 use crate::rays::geometry::{Normal, Point};
 use crate::rays::Properties;
-use crate::slg::light::LightSource;
+use crate::slg::light::traits::LightSource;
 use crate::slg::Scene;
 
 mod distribution;
@@ -34,7 +34,7 @@ impl ToString for LightStrategyType {
             LightStrategyType::DlsCache => "DLS_CACHE".to_string(),
             _ => {
                 panic!("Unknown light strategy type")
-            }
+            },
         }
     }
 }
@@ -78,9 +78,7 @@ pub trait LightStrategy {
 
     fn sample_lights2(&self, u: f32, pdf: f32) -> Option<Box<dyn LightSource>>;
 
-    fn to_properties(&self) -> Properties {
-        Properties::new()
-    }
+    fn to_properties(&self) -> Properties { Properties::new() }
 }
 
 pub struct LightStrategies;

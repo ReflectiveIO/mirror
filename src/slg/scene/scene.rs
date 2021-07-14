@@ -9,7 +9,8 @@ use crate::slg::bsdf::BSDF;
 use crate::slg::cameras::{Camera, CameraTrait, CameraType, EnvironmentCamera};
 use crate::slg::film::SampleResult;
 use crate::slg::image_map::{ChannelSelectionType, ImageMap, ImageMapCache, WrapType};
-use crate::slg::light::{LightSource, LightSourceDefinitions, NotIntersectableLightSource};
+use crate::slg::light::traits::{LightSource, NotIntersectableLightSource};
+use crate::slg::light::LightSourceDefinitions;
 use crate::slg::material::{Material, MaterialDefinitions};
 use crate::slg::scene::{ExtMeshCache, SceneObject, SceneObjectDefinitions};
 use crate::slg::shape::TessellationType;
@@ -22,6 +23,7 @@ type SceneRayType = i8;
 
 pub const TRIANGLE_LIGHT_POSTFIX: &str = "__triangle__light__";
 
+#[derive(Clone)]
 pub struct Scene {
     // This volume is applied to rays hitting nothing
     pub default_world_volume: Option<Volume>,

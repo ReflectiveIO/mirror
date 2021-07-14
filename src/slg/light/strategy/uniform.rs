@@ -3,7 +3,7 @@ use crate::rays::Properties;
 use crate::slg::light::strategy::{
     DistributionLightStrategy, LightStrategy, LightStrategyTask, LightStrategyType,
 };
-use crate::slg::light::LightSource;
+use crate::slg::light::traits::LightSource;
 use crate::slg::Scene;
 
 pub struct LightStrategyUniform {

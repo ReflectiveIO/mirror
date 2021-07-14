@@ -1,6 +1,3 @@
-use crate::rays::color::Spectrum;
-use crate::rays::geometry::Vector;
-
 pub use self::arch_glass::ArchGlassMaterial;
 pub use self::car_paint::CarPaintMaterial;
 pub use self::cloth::ClothMaterial;
@@ -10,10 +7,7 @@ pub use self::glass::GlassMaterial;
 pub use self::glossy2::Glossy2Material;
 pub use self::glossy_coating::GlossyCoatingMaterial;
 pub use self::glossy_translucent::GlossyTranslucentMaterial;
-pub use self::material::Material;
-pub use self::material::MaterialEmissionDLSType;
-pub use self::material::MaterialTrait;
-pub use self::material::MaterialType;
+pub use self::material::{Material, MaterialEmissionDLSType, MaterialTrait, MaterialType};
 pub use self::matte::MatteMaterial;
 pub use self::matte_translucent::MatteTranslucentMaterial;
 pub use self::metal2::Metal2Material;
@@ -25,6 +19,8 @@ pub use self::rough_matte::RoughMatteMaterial;
 pub use self::rough_matte_translucent::RoughMatteTranslucentMaterial;
 pub use self::two_sided::TwoSidedMaterial;
 pub use self::velvet::VelvetMaterial;
+use crate::rays::color::Spectrum;
+use crate::rays::geometry::Vector;
 
 mod arch_glass;
 mod car_paint;

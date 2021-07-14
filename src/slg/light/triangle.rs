@@ -3,11 +3,13 @@ use std::f32::consts::PI;
 
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Normal, Point, Ray};
+use crate::rays::mesh::Mesh;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDF;
 use crate::slg::image_map::ImageMap;
-use crate::slg::light::{IntersectableLightSource, LightSource, LightSourceType};
-use crate::slg::material::{Material, MaterialTrait};
+use crate::slg::light::traits::{IntersectableLightSource, LightSource};
+use crate::slg::light::LightSourceType;
+use crate::slg::material::{Material, MaterialEmissionDLSType, MaterialTrait};
 use crate::slg::scene::SceneObject;
 use crate::slg::Scene;
 
@@ -41,41 +43,10 @@ impl TriangleLight {
     pub fn get_area(&self) -> f32 { self.triangle_area }
 }
 
-impl IntersectableLightSource for TriangleLight {
-    fn preprocess(&self) { todo!() }
-
+impl LightSource for TriangleLight {
     fn get_type(&self) -> LightSourceType { LightSourceType::TriangleLight }
 
-    fn get_power(&self, scene: &Scene) -> f32 {
-        let emitted_radiance_y: f32 = self
-            .light_material
-            .get_emitted_radiance_y(self.inv_mesh_area);
-
-        if self.light_material.get_emitted_theta() == 0.0 {
-            self.triangle_area * emitted_radiance_y
-        } else if self.light_material.get_emitted_theta() < 90.0 {
-            self.triangle_area
-                * (2.0 * PI)
-                * (1.0 - self.light_material.get_emitted_cos_theta_max())
-                * emitted_radiance_y
-        } else {
-            self.triangle_area * PI * emitted_radiance_y
-        }
-    }
-
-    fn is_direct_light_sampling_enabled(&self) -> bool {
-        match self.light_material.get_direct_light_sampling_type() {
-            DLS_AUTO => {
-                if self.scene_object.get_ext_mesh().get_total_triangle_count > 256 {
-                    false
-                } else {
-                    true
-                }
-            },
-            DLS_ENABLED => true,
-            DLS_DISABLED => false,
-        }
-    }
+    fn preprocess(&self) { todo!() }
 
     fn emit(
         &mut self,
@@ -110,7 +81,38 @@ impl IntersectableLightSource for TriangleLight {
         todo!()
     }
 
-    fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool { todo!() }
+    fn is_direct_light_sampling_enabled(&self) -> bool {
+        match self.light_material.get_direct_light_sampling_type() {
+            MaterialEmissionDLSType::Auto => {
+                if self.scene_object.get_ext_mesh().get_total_triangle_count() > 256 {
+                    false
+                } else {
+                    true
+                }
+            },
+            MaterialEmissionDLSType::Enabled => true,
+            MaterialEmissionDLSType::Disabled => false,
+        }
+    }
+}
+
+impl IntersectableLightSource for TriangleLight {
+    fn get_power(&self, scene: &Scene) -> f32 {
+        let emitted_radiance_y: f32 = self
+            .light_material
+            .get_emitted_radiance_y(self.inv_mesh_area);
+
+        if self.light_material.get_emitted_theta() == 0.0 {
+            self.triangle_area * emitted_radiance_y
+        } else if self.light_material.get_emitted_theta() < 90.0 {
+            self.triangle_area
+                * (2.0 * PI)
+                * (1.0 - self.light_material.get_emitted_cos_theta_max())
+                * emitted_radiance_y
+        } else {
+            self.triangle_area * PI * emitted_radiance_y
+        }
+    }
 
     fn get_radiance(
         &self,

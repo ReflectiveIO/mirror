@@ -2,10 +2,9 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 use crate::rays::Properties;
-use crate::slg::light::strategy::{
-    LightStrategies, LightStrategy, LightStrategyType, LightStrategyUniform,
-};
-use crate::slg::light::{EnvLightSource, LightSource, LightSourceType, TriangleLight};
+use crate::slg::light::strategy::*;
+use crate::slg::light::traits::{EnvLightSource, LightSource};
+use crate::slg::light::{LightSourceType, TriangleLight};
 use crate::slg::material::Material;
 use crate::slg::Scene;
 

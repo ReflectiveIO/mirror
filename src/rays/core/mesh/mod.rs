@@ -1,19 +1,21 @@
-pub use self::ext::ExtMesh;
-pub use self::ext::ExtTriangleMesh;
+pub use self::ext::{ExtMesh, ExtTriangleMesh};
 
 ///
 /// * The inheritance scheme used here:
 /// *
-/// *         | =>    TriangleMesh      => |
+/// * | =>    TriangleMesh      => |
 /// * Mesh => |                            | => ExtTriangleMesh
-/// *         | =>       ExtMesh        => |
+/// * | =>       ExtMesh        => |
 /// *
-/// *         | => InstanceTriangleMesh => |
+/// * | => InstanceTriangleMesh => |
 /// * Mesh => |                            | => ExtInstanceTriangleMesh
-/// *         | =>       ExtMesh        => |
+/// * | =>       ExtMesh        => |
 /// *
-/// *         | => MotionTriangleMesh   => |
+/// * | => MotionTriangleMesh   => |
 /// * Mesh => |                            | => ExtMotionTriangleMesh
-/// *         | =>       ExtMesh        => |
-///
+/// * | =>       ExtMesh        => |
 pub mod ext;
+
+pub trait Mesh {
+    fn get_total_triangle_count(&self) -> u32;
+}
