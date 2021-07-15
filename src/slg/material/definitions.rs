@@ -1,47 +1,37 @@
-use super::material::Material;
-use super::material::MaterialTrait;
+use super::material::{Material, MaterialTrait};
+use crate::rays::object::{GetIndex, GetObject, NamedObject, NamedObjectVector};
 
 #[derive(Default)]
 pub struct MaterialDefinitions {
-    materials: Vec<Material>,
+    mats: NamedObjectVector<Box<dyn MaterialTrait>>,
 }
 
 impl MaterialDefinitions {
-    pub fn is_material_defined(&self, name: String) -> bool {
-        self.materials.is_obj_defined(name)
-    }
+    pub fn define(&mut self, t: &Box<dyn MaterialTrait>) { self.mats.define(t); }
 
-    pub fn define_material(&mut self, t: Material) {}
+    pub fn defined(&self, name: &String) -> bool { self.mats.defined(name) }
 
-    pub fn get_material(&self, name: String) -> &Box<dyn MaterialTrait> {
-        self.materials.get_obj_by_name(name)
-    }
+    pub fn size(&self) -> usize { self.mats.size() }
 
-    pub fn get_material_idx(&self, index: usize) -> &Box<dyn MaterialTrait> {
-        self.materials.get_obj_by_index(index)
-    }
+    pub fn names(&self) -> Vec<String> { self.mats.names() }
 
-    pub fn get_material_index(&self, name: String) -> usize {
-        self.materials.get_index_by_name(name)
-    }
+    pub fn delete(&mut self, name: &String) { self.mats.delete(name) }
 
-    pub fn get_material_index_t(&self, t: &Box<dyn MaterialTrait>) -> usize {
-        self.materials.get_index_by_obj(t)
-    }
+    pub fn sorted_names(&self) -> Vec<String> { vec![] }
+}
 
-    pub fn get_size(&self) -> usize {
-        self.materials.len()
-    }
+impl GetObject<String, Box<dyn MaterialTrait>> for MaterialDefinitions {
+    fn get(&self, key: &String) -> &Box<dyn MaterialTrait> { self.mats.get(key) }
+}
 
-    pub fn get_material_names(&self) -> Vec<String> {
-        self.materials.get_names()
-    }
+impl GetObject<usize, Box<dyn MaterialTrait>> for MaterialDefinitions {
+    fn get(&self, key: &usize) -> &Box<dyn MaterialTrait> { self.mats.get(key) }
+}
 
-    pub fn delete_material(&mut self, name: String) {
-        self.materials.delete_obj(name)
-    }
+impl GetIndex<String> for MaterialDefinitions {
+    fn index(&self, key: &String) -> usize { self.mats.index(key) }
+}
 
-    pub fn get_material_sorted_names(&self) -> Vec<String> {
-        vec![]
-    }
+impl GetIndex<Box<dyn MaterialTrait>> for MaterialDefinitions {
+    fn index(&self, key: &Box<dyn MaterialTrait>) -> usize { self.mats.index(key) }
 }

@@ -1,13 +1,13 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
-
-use super::material::MaterialTrait;
 
 #[derive(Default)]
 pub struct Glossy2Material {
@@ -41,51 +41,29 @@ impl Glossy2Material {
         }
     }
 
-    pub fn get_kd(&self) -> &Texture {
-        &self.kd
-    }
+    pub fn get_kd(&self) -> &Texture { &self.kd }
 
-    pub fn get_ks(&self) -> &Texture {
-        &self.ks
-    }
+    pub fn get_ks(&self) -> &Texture { &self.ks }
 
-    pub fn get_nu(&self) -> &Texture {
-        &self.nu
-    }
+    pub fn get_nu(&self) -> &Texture { &self.nu }
 
-    pub fn get_nv(&self) -> &Texture {
-        &self.nv
-    }
+    pub fn get_nv(&self) -> &Texture { &self.nv }
 
-    pub fn get_ka(&self) -> &Texture {
-        &self.ka
-    }
+    pub fn get_ka(&self) -> &Texture { &self.ka }
 
-    pub fn get_depth(&self) -> &Texture {
-        &self.depth
-    }
+    pub fn get_depth(&self) -> &Texture { &self.depth }
 
-    pub fn get_index(&self) -> &Texture {
-        &self.index
-    }
+    pub fn get_index(&self) -> &Texture { &self.index }
 
-    pub fn is_multi_bounce(&self) -> bool {
-        self.multi_bounce
-    }
+    pub fn is_multi_bounce(&self) -> bool { self.multi_bounce }
 }
 
 impl MaterialTrait for Glossy2Material {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::Glossy2
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::Glossy2 }
 
-    fn get_event_types(&self) -> BSDFEvent {
-        BSDFEventType::GLOSSY | BSDFEventType::REFLECT
-    }
+    fn get_event_types(&self) -> BSDFEvent { BSDFEventType::GLOSSY | BSDFEventType::REFLECT }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -124,15 +102,15 @@ impl MaterialTrait for Glossy2Material {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
+}
+
+impl NamedObject for Glossy2Material {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

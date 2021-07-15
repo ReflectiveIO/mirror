@@ -5,26 +5,28 @@
 /*
  * The inheritance scheme used here:
  *
- *  Device => | =>                  IntersectionDevice                   => | => NativeIntersectionDevice
+ *  Device => | =>                  IntersectionDevice                   => |
+ * => NativeIntersectionDevice
  *
  *            | =>   HardwareDevice   => | =>        OpenCLDevice        => |
- *  Device => |                                                             | => OpenCLIntersectionDevice
- *            | =>   HardwareDevice   => |                                  |
- *            |                          | => HardwareIntersectionDevice => |
- *            | => IntersectionDevice => |
+ *  Device => |                                                             |
+ * => OpenCLIntersectionDevice            | =>   HardwareDevice   => |
+ * |            |                          | => HardwareIntersectionDevice =>
+ * |            | => IntersectionDevice => |
  *
  *            | =>   HardwareDevice   => | =>         CudaDevice         => |
- *  Device => |					                                            | => CudaIntersectionDevice
- *            | =>   HardwareDevice   => |                                  |
- *            |                          | => HardwareIntersectionDevice => |
- *            | => IntersectionDevice => |
+ *  Device => |					                                            | =>
+ * CudaIntersectionDevice            | =>   HardwareDevice   => |
+ * |            |                          | => HardwareIntersectionDevice =>
+ * |            | => IntersectionDevice => |
  */
+use std::convert::TryFrom;
+
 use config::Value;
 use downcast_rs::Downcast;
 use serde::{Deserialize, Serialize};
 
 use super::context::Context;
-use std::convert::TryFrom;
 
 pub trait Device: Downcast {
     fn name(&self) -> &String;
@@ -45,21 +47,11 @@ impl_downcast!(Device);
 pub trait DeviceDescription {
     fn name(&self) -> &String;
     fn get_type(&self) -> DeviceType;
-    fn get_compute_units(&self) -> i32 {
-        1
-    }
-    fn get_native_vector_width_float(&self) -> u32 {
-        4
-    }
-    fn get_max_memory(&self) -> usize {
-        usize::MAX
-    }
-    fn get_max_memory_alloc_size(&self) -> usize {
-        usize::MAX
-    }
-    fn has_out_of_core_memory_support(&self) -> bool {
-        false
-    }
+    fn get_compute_units(&self) -> i32 { 1 }
+    fn get_native_vector_width_float(&self) -> u32 { 4 }
+    fn get_max_memory(&self) -> usize { usize::MAX }
+    fn get_max_memory_alloc_size(&self) -> usize { usize::MAX }
+    fn has_out_of_core_memory_support(&self) -> bool { false }
 
     fn get_force_workgroup_size(&self) -> u32;
     fn set_force_workgroup_size(&mut self, size: u32);
@@ -83,7 +75,5 @@ bitflags! {
 }
 
 impl Into<Value> for DeviceType {
-    fn into(self) -> Value {
-        Value::try_from(self).unwrap()
-    }
+    fn into(self) -> Value { Value::try_from(self).unwrap() }
 }

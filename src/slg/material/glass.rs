@@ -1,11 +1,11 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::textures::Texture;
-
-use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
+use crate::slg::textures::Texture;
 
 #[derive(Default)]
 pub struct GlassMaterial {
@@ -37,33 +37,19 @@ impl GlassMaterial {
         }
     }
 
-    pub fn get_kr(&self) -> &Texture {
-        &self.kr
-    }
+    pub fn get_kr(&self) -> &Texture { &self.kr }
 
-    pub fn get_kt(&self) -> &Texture {
-        &self.kt
-    }
+    pub fn get_kt(&self) -> &Texture { &self.kt }
 
-    pub fn get_exterior_ior(&self) -> &Texture {
-        &self.exterior_ior
-    }
+    pub fn get_exterior_ior(&self) -> &Texture { &self.exterior_ior }
 
-    pub fn get_interior_ior(&self) -> &Texture {
-        &self.interior_ior
-    }
+    pub fn get_interior_ior(&self) -> &Texture { &self.interior_ior }
 
-    pub fn get_cauchy_b(&self) -> &Texture {
-        &self.cauchy_b
-    }
+    pub fn get_cauchy_b(&self) -> &Texture { &self.cauchy_b }
 
-    pub fn get_film_thickness(&self) -> &Texture {
-        &self.film_thickness
-    }
+    pub fn get_film_thickness(&self) -> &Texture { &self.film_thickness }
 
-    pub fn get_film_ior(&self) -> &Texture {
-        &self.film_ior
-    }
+    pub fn get_film_ior(&self) -> &Texture { &self.film_ior }
 
     pub fn eval_specular_reflection(
         hp: &HitPoint,
@@ -93,9 +79,7 @@ impl GlassMaterial {
 }
 
 impl MaterialTrait for GlassMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::Glass
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::Glass }
 
     fn get_event_types(&self) -> BSDFEvent {
         BSDFEventType::SPECULAR | BSDFEventType::REFLECT | BSDFEventType::TRANSMIT
@@ -137,4 +121,10 @@ impl MaterialTrait for GlassMaterial {
     ) {
         todo!()
     }
+}
+
+impl NamedObject for GlassMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

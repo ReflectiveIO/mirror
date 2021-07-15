@@ -1,13 +1,13 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::Texture;
-
-use super::material::MaterialTrait;
 use crate::slg::material::MaterialType;
+use crate::slg::textures::Texture;
 
 #[derive(Default)]
 pub struct NullMaterial;
@@ -21,17 +21,11 @@ impl NullMaterial {
 }
 
 impl MaterialTrait for NullMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::NullMat
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::NullMat }
 
-    fn get_event_types(&self) -> BSDFEvent {
-        BSDFEventType::SPECULAR | BSDFEventType::TRANSMIT
-    }
+    fn get_event_types(&self) -> BSDFEvent { BSDFEventType::SPECULAR | BSDFEventType::TRANSMIT }
 
-    fn is_delta(&self) -> bool {
-        todo!()
-    }
+    fn is_delta(&self) -> bool { todo!() }
 
     fn get_pass_through_transparency(
         &self,
@@ -43,9 +37,7 @@ impl MaterialTrait for NullMaterial {
         todo!()
     }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -84,11 +76,13 @@ impl MaterialTrait for NullMaterial {
         todo!()
     }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
-    fn update_avg_pass_through_transparency(&mut self) {
-        todo!()
-    }
+    fn update_avg_pass_through_transparency(&mut self) { todo!() }
+}
+
+impl NamedObject for NullMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

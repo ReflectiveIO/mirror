@@ -49,23 +49,41 @@ impl Color {
     }
 
     pub fn is_nan(&self) -> bool {
-        if self.0.is_nan() { return true; }
-        if self.1.is_nan() { return true; }
-        if self.2.is_nan() { return true; }
+        if self.0.is_nan() {
+            return true;
+        }
+        if self.1.is_nan() {
+            return true;
+        }
+        if self.2.is_nan() {
+            return true;
+        }
         false
     }
 
     pub fn is_infinite(&self) -> bool {
-        if self.0.is_infinite() { return true; }
-        if self.1.is_infinite() { return true; }
-        if self.2.is_infinite() { return true; }
+        if self.0.is_infinite() {
+            return true;
+        }
+        if self.1.is_infinite() {
+            return true;
+        }
+        if self.2.is_infinite() {
+            return true;
+        }
         false
     }
 
     pub fn is_sign_negative(&self) -> bool {
-        if self.0.is_sign_negative() { return true; }
-        if self.1.is_sign_negative() { return true; }
-        if self.2.is_sign_negative() { return true; }
+        if self.0.is_sign_negative() {
+            return true;
+        }
+        if self.1.is_sign_negative() {
+            return true;
+        }
+        if self.2.is_sign_negative() {
+            return true;
+        }
         false
     }
 
@@ -75,9 +93,7 @@ impl Color {
 }
 
 impl From<f32> for Color {
-    fn from(f: f32) -> Self {
-        Self { 0: f, 1: f, 2: f }
-    }
+    fn from(f: f32) -> Self { Self { 0: f, 1: f, 2: f } }
 }
 
 pub struct RGBColor {
@@ -86,16 +102,16 @@ pub struct RGBColor {
 
 impl RGBColor {
     pub fn new() -> Self {
-        Self { color: Color::new() }
+        Self {
+            color: Color::new(),
+        }
     }
 
     pub fn y(&self) -> f32 {
         0.212671 * self.color.0 + 0.715160 * self.color.1 + 0.072169 * self.color.2
     }
 
-    pub fn filter(&self) -> f32 {
-        (self.color.0 + self.color.1 + self.color.2) * (1.0 / 3.0)
-    }
+    pub fn filter(&self) -> f32 { (self.color.0 + self.color.1 + self.color.2) * (1.0 / 3.0) }
 
     /// Required by OpenSubdivide interface
     pub fn clear(&mut self) {
@@ -114,19 +130,19 @@ impl RGBColor {
 impl From<f32> for RGBColor {
     fn from(f: f32) -> Self {
         Self {
-            color: Color::from(f)
+            color: Color::from(f),
         }
     }
 }
 
-impl From<(f32, f32,f32)> for RGBColor {
+impl From<(f32, f32, f32)> for RGBColor {
     fn from(v: (f32, f32, f32)) -> Self {
         Self {
             color: Color {
                 0: v.0,
                 1: v.1,
-                2: v.2
-            }
+                2: v.2,
+            },
         }
     }
 }
@@ -138,15 +154,13 @@ impl From<&Color> for RGBColor {
                 0: color.0,
                 1: color.1,
                 2: color.2,
-            }
+            },
         }
     }
 }
 
 impl Default for RGBColor {
-    fn default() -> Self {
-        Self::new()
-    }
+    fn default() -> Self { Self::new() }
 }
 
 pub type Spectrum = RGBColor;

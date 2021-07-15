@@ -1,13 +1,13 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Point, Vector, UV};
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
-
-use super::material::MaterialTrait;
 
 pub enum ClothPreset {
     Denim,
@@ -19,9 +19,7 @@ pub enum ClothPreset {
 }
 
 impl Default for ClothPreset {
-    fn default() -> Self {
-        ClothPreset::Denim
-    }
+    fn default() -> Self { ClothPreset::Denim }
 }
 
 pub enum YarnType {
@@ -88,51 +86,36 @@ impl ClothMaterial {
         }
     }
 
-    pub fn get_preset(&self) -> &ClothPreset {
-        &self.preset
-    }
+    pub fn get_preset(&self) -> &ClothPreset { &self.preset }
 
-    pub fn get_weft_kd(&self) -> &Texture {
-        &self.weft_kd
-    }
+    pub fn get_weft_kd(&self) -> &Texture { &self.weft_kd }
 
-    pub fn get_weft_ks(&self) -> &Texture {
-        &self.weft_ks
-    }
+    pub fn get_weft_ks(&self) -> &Texture { &self.weft_ks }
 
-    pub fn get_warp_kd(&self) -> &Texture {
-        &self.warp_kd
-    }
+    pub fn get_warp_kd(&self) -> &Texture { &self.warp_kd }
 
-    pub fn get_warp_ks(&self) -> &Texture {
-        &self.warp_ks
-    }
+    pub fn get_warp_ks(&self) -> &Texture { &self.warp_ks }
 
-    pub fn get_repeat_u(&self) -> f32 {
-        self.repeat_u
-    }
+    pub fn get_repeat_u(&self) -> f32 { self.repeat_u }
 
-    pub fn get_repeat_v(&self) -> f32 {
-        self.repeat_v
-    }
+    pub fn get_repeat_v(&self) -> f32 { self.repeat_v }
 
-    pub fn get_specular_normalization(&self) -> f32 {
-        self.specular_normalization
-    }
+    pub fn get_specular_normalization(&self) -> f32 { self.specular_normalization }
 
     fn set_preset(&mut self) {}
+
     fn get_yarn(&self, u_i: f32, v_i: f32, uv: &UV, umax: f32, scale: f32) -> Yarn {
         Yarn::default()
     }
 
     fn get_yarn_uv(&self, yarn: &Yarn, center: &Point, xy: &Point, uv: &UV, umax_mod: f32) {}
 
-    fn radius_of_curvature(&self, yarn: &Yarn, u: f32, umax_mod: f32) -> f32 {
-        0.0
-    }
+    fn radius_of_curvature(&self, yarn: &Yarn, u: f32, umax_mod: f32) -> f32 { 0.0 }
+
     fn eval_specular(&self, yarn: &Yarn, uv: &UV, umax: f32, wo: &Vector, vi: &Vector) -> f32 {
         0.0
     }
+
     fn eval_integrand(
         &self,
         yarn: &Yarn,
@@ -170,17 +153,11 @@ impl ClothMaterial {
 }
 
 impl MaterialTrait for ClothMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::Cloth
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::Cloth }
 
-    fn get_event_types(&self) -> BSDFEvent {
-        BSDFEventType::GLOSSY | BSDFEventType::REFLECT
-    }
+    fn get_event_types(&self) -> BSDFEvent { BSDFEventType::GLOSSY | BSDFEventType::REFLECT }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -219,15 +196,15 @@ impl MaterialTrait for ClothMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
+}
+
+impl NamedObject for ClothMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

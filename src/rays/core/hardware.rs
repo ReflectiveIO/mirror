@@ -1,6 +1,6 @@
 use crate::rays::device::Device;
 
-pub trait HardwareDevice : Device {
+pub trait HardwareDevice: Device {
     /* Kernels handling for hardware (aka GPU) only applications */
 
     fn set_additional_compile_opts(&self, opts: Vec<String>);

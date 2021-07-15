@@ -2,7 +2,7 @@ use crate::rays::geometry::{Normal, Point};
 use crate::rays::utils::Distribution1D;
 use crate::rays::Properties;
 use crate::slg::light::strategy::{LightStrategy, LightStrategyTask, LightStrategyType};
-use crate::slg::light::LightSource;
+use crate::slg::light::traits::LightSource;
 use crate::slg::Scene;
 
 pub struct DistributionLightStrategy {
@@ -22,16 +22,12 @@ impl DistributionLightStrategy {
 }
 
 impl LightStrategy for DistributionLightStrategy {
-    fn get_type(&self) -> &LightStrategyType {
-        &self.light_strategy_type
-    }
+    fn get_type(&self) -> &LightStrategyType { &self.light_strategy_type }
 
-    fn get_tag(&self) -> &String {
-        todo!()
-    }
+    fn get_tag(&self) -> &String { todo!() }
 
-    fn preprocess(&mut self, scene: &Scene, task_type: LightStrategyTask, real_time: bool) {
-        self.scene = Some(scene.into())
+    fn preprocess(&mut self, scene: Scene, task_type: LightStrategyTask, real_time: bool) {
+        self.scene = Some(scene)
     }
 
     fn sample_lights(
@@ -52,26 +48,28 @@ impl LightStrategy for DistributionLightStrategy {
         n: &Normal,
         is_volume: bool,
     ) -> f32 {
-        match &self.lights_distribution {
-            Some(lightsDistribution) => {
-                lightsDistribution.pdf_discrete(self.light.light_scene_index)
-            }
-            None => 0.0,
-        }
+        // match &self.lights_distribution {
+        //     Some(lightsDistribution) => {
+        //         lightsDistribution.pdf_discrete(self.light.light_scene_index)
+        //     },
+        //     None => 0.0,
+        // }
+        0.0
     }
 
     fn sample_lights2(&self, u: f32, pdf: f32) -> Option<Box<dyn LightSource>> {
-        match &self.lights_distribution {
-            Some(lightsDistribution) => {
-                let light_index = lightsDistribution.sample_discrete(u, pdf);
-                if pdf > 0.0 {
-                    self.scene.light_defs.get_light_sources()[light_index]
-                } else {
-                    None
-                }
-            }
-            None => None,
-        }
+        // match &self.lights_distribution {
+        //     Some(lightsDistribution) => {
+        //         let light_index = lightsDistribution.sample_discrete(u, pdf);
+        //         if pdf > 0.0 {
+        //             self.scene.light_defs.get_light_sources()[light_index]
+        //         } else {
+        //             None
+        //         }
+        //     },
+        //     None => None,
+        // }
+        None
     }
 
     fn to_properties(&self) -> Properties {

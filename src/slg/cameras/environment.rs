@@ -1,5 +1,5 @@
 use crate::rays;
-use crate::rays::geometry::{Point, Transform, Vector, normalize};
+use crate::rays::geometry::{normalize, Point, Transform, Vector};
 use crate::rays::Properties;
 use crate::slg::cameras::CameraType;
 use crate::slg::image_map::ImageMapCache;
@@ -131,7 +131,7 @@ impl CameraTrait for EnvironmentCamera {
         self.rotate(-angle, &Vector::from(self.x))
     }
 
-    fn update(&self, film_width: u32, film_height: u32, film_sub_region: &[u32]) {
+    fn update(&self, film_width: u32, film_height: u32, film_sub_region: [u32; 4]) {
         todo!()
     }
 

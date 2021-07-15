@@ -1,3 +1,4 @@
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::image_map::ImageMapCache;
 
@@ -12,4 +13,10 @@ impl Texture {
     ) -> Properties {
         todo!()
     }
+}
+
+impl NamedObject for Texture {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

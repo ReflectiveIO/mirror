@@ -1,46 +1,37 @@
+use crate::rays::object::{GetIndex, GetObject, NamedObject, NamedObjectVector};
 use crate::slg::scene::SceneObject;
 
 #[derive(Default)]
 pub struct SceneObjectDefinitions {
-    scene_objects: Vec<SceneObject>,
+    objs: NamedObjectVector<SceneObject>,
 }
 
 impl SceneObjectDefinitions {
-    pub fn is_scene_object_defined(&self, name: String) -> bool {
-        self.scene_objects.is_obj_defined(name)
-    }
+    pub fn define(&mut self, t: &SceneObject) { self.objs.define(t); }
 
-    pub fn define_scene_object(&mut self, t: SceneObject) {}
+    pub fn defined(&self, name: &String) -> bool { self.objs.defined(name) }
 
-    pub fn get_scene_object(&self, name: String) -> &SceneObject {
-        self.scene_objects.get_obj_by_name(name)
-    }
+    pub fn size(&self) -> usize { self.objs.size() }
 
-    pub fn get_scene_object_idx(&self, index: usize) -> &SceneObject {
-        self.scene_objects.get_obj_by_index(index)
-    }
+    pub fn names(&self) -> Vec<String> { self.objs.names() }
 
-    pub fn get_scene_object_index(&self, name: String) -> usize {
-        self.scene_objects.get_index_by_name(name)
-    }
+    pub fn delete(&mut self, name: &String) { self.objs.delete(name) }
 
-    pub fn get_scene_object_index_t(&self, t: &SceneObject) -> usize {
-        self.scene_objects.get_index_by_obj(t)
-    }
+    pub fn sorted_names(&self) -> Vec<String> { vec![] }
+}
 
-    pub fn get_size(&self) -> usize {
-        self.scene_objects.len()
-    }
+impl GetObject<String, SceneObject> for SceneObjectDefinitions {
+    fn get(&self, key: &String) -> &SceneObject { self.objs.get(key) }
+}
 
-    pub fn get_scene_object_names(&self) -> Vec<String> {
-        self.scene_objects.get_names()
-    }
+impl GetObject<usize, SceneObject> for SceneObjectDefinitions {
+    fn get(&self, key: &usize) -> &SceneObject { self.objs.get(key) }
+}
 
-    pub fn delete_scene_object(&mut self, name: String) {
-        self.scene_objects.delete_obj(name)
-    }
+impl GetIndex<String> for SceneObjectDefinitions {
+    fn index(&self, key: &String) -> usize { self.objs.index(key) }
+}
 
-    pub fn get_scene_object_sorted_names(&self) -> Vec<String> {
-        vec![]
-    }
+impl GetIndex<SceneObject> for SceneObjectDefinitions {
+    fn index(&self, key: &SceneObject) -> usize { self.objs.index(key) }
 }

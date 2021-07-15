@@ -50,9 +50,7 @@ impl Archiver {
         Self { file, data, stats }
     }
 
-    pub fn data(&self) -> &Vec<u8> {
-        &self.data
-    }
+    pub fn data(&self) -> &Vec<u8> { &self.data }
 
     pub fn serialize<T: Serialize>(&mut self, value: &T) -> Result<()> {
         let result = bincode::serialize(value);
@@ -60,7 +58,7 @@ impl Archiver {
             Ok(encoded) => {
                 self.data = encoded;
                 Ok(())
-            }
+            },
             Err(_) => Err(ArchiveError::SerializeError),
         }
     }

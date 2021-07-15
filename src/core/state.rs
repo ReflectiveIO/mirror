@@ -15,12 +15,8 @@ impl State {
     }
 
     /// Creates a new State from a file.
-    pub fn load(&mut self, filename: &str) {
-        self.state = slg::State::load(filename).unwrap()
-    }
+    pub fn load(&mut self, filename: &str) { self.state = slg::State::load(filename).unwrap() }
 
     /// Serializes a State in a file.
-    pub fn save(&self, filename: &str) {
-        self.state.save(filename)
-    }
+    pub fn save(&self, filename: &str) { self.state.save(filename) }
 }

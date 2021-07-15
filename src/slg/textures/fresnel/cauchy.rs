@@ -1,7 +1,6 @@
-use crate::slg::textures::fresnel::texture::FresnelTextureTrait;
-
 use super::texture::FresnelTexture;
 use crate::rays::Properties;
+use crate::slg::textures::fresnel::texture::FresnelTextureTrait;
 
 pub fn alloc_fresnel_cauchy_texture(
     props: &Properties,

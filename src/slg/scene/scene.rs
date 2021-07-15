@@ -2,14 +2,16 @@ use crate::core::SceneTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::device::IntersectionDevice;
 use crate::rays::geometry::*;
-use crate::rays::mesh::{ExtMesh, ExtTriangleMesh};
+use crate::rays::mesh::{ExtMesh, ExtTriangleMesh, Mesh};
+use crate::rays::object::{GetIndex, GetObject, NamedObject};
 use crate::rays::utils::HairFile;
-use crate::rays::{Context, Dataset, NamedObject, Properties};
+use crate::rays::{Context, Dataset, Properties};
 use crate::slg::bsdf::BSDF;
 use crate::slg::cameras::{Camera, CameraTrait, CameraType, EnvironmentCamera};
 use crate::slg::film::SampleResult;
 use crate::slg::image_map::{ChannelSelectionType, ImageMap, ImageMapCache, WrapType};
-use crate::slg::light::{LightSource, LightSourceDefinitions, NotIntersectableLightSource};
+use crate::slg::light::traits::{LightSource, NotIntersectableLightSource};
+use crate::slg::light::LightSourceDefinitions;
 use crate::slg::material::{Material, MaterialDefinitions};
 use crate::slg::scene::{ExtMeshCache, SceneObject, SceneObjectDefinitions};
 use crate::slg::shape::TessellationType;
@@ -58,7 +60,7 @@ impl Scene {
 
         let mut img_map_cache = ImageMapCache::default();
         img_map_cache.set_image_resize(scale);
-        img_map_cache.define_image_map(ImageMap::random());
+        img_map_cache.define_image_map(&ImageMap::random());
 
         Scene {
             default_world_volume: None,
@@ -117,69 +119,68 @@ impl Scene {
         // Write the camera information
         if self.camera.is_some() {
             props.merge(
-                self.camera
+                &self
+                    .camera
                     .unwrap()
                     .to_properties(&self.img_map_cache, real_filename),
             );
         }
 
         // Save all not intersectable light sources
-        for name in self.light_defs.get_light_source_names() {
+        for name in self.light_defs.names() {
             let light_source = self.light_defs.get_light_source(name.as_str());
             let light_source = light_source.downcast_ref::<dyn NotIntersectableLightSource>();
             if light_source {
-                props.merge(light_source.to_properties(&self.img_map_cache, real_filename));
+                props.merge(&light_source.to_properties(&self.img_map_cache, real_filename));
             }
         }
 
         // Get the sorted list of texture names according their dependencies
-        for name in self.tex_defs.get_texture_sorted_names() {
+        for name in self.tex_defs.sorted_names() {
             // Skip all textures starting with Implicit-ConstFloatTexture(3)
             // because they are expanded inline
             if name.starts_with("Implicit-ConstFloatTexture") {
                 continue;
             }
-            let texture = self.tex_defs.get_texture(name);
-            props.merge(texture.to_properties(&self.img_map_cache, real_filename));
+            let texture = self.tex_defs.get(&name);
+            props.merge(&texture.to_properties(&self.img_map_cache, real_filename));
         }
 
         // Get the sorted list of material names according their dependencies
-        let mat_names = self.mat_defs.get_material_sorted_names();
+        let mat_names = self.mat_defs.sorted_names();
 
         for name in mat_names {
-            let material = self.mat_defs.get_material(name);
+            let material = self.mat_defs.get(&name);
             // Check if it is a volume
             let volume = material.downcast_ref::<Volume>();
             if volume {
-                props.merge(volume.to_properties());
+                props.merge(&volume.to_properties());
             }
         }
 
         // Set the default world interior/exterior volume if required
         if self.default_world_volume.is_some() {
-            let index = self
-                .mat_defs
-                .get_material_index_t(&self.default_world_volume.unwrap());
+            let index = self.mat_defs.index(&self.default_world_volume.unwrap());
             props.set(
                 "scene.world.volume.default",
-                self.mat_defs.get_material_idx(index).get_name(),
+                self.mat_defs.get(&index).get_name().as_str(),
             );
         }
 
         // Writes the materials information
         for name in mat_names {
-            let material = self.mat_defs.get_material(name);
+            let material = self.mat_defs.get(&name);
             // Check if it is a volume
             let volume = material.downcast_ref::<Volume>();
             if !volume {
-                props.merge(material.to_properties(&self.img_map_cache, real_filename));
+                props.merge(&material.to_properties(&self.img_map_cache, real_filename));
             }
         }
 
         // Write the object information
-        for i in 0..self.obj_defs.get_size() {
-            let object = self.obj_defs.get_scene_object_idx(i);
-            props.merge(object.to_properties(&self.ext_mesh_cache, real_filename));
+        for i in 0..self.obj_defs.size() {
+            let object = self.obj_defs.get(&i);
+            props.merge(&object.to_properties(&self.ext_mesh_cache, real_filename));
         }
 
         return props;
@@ -218,10 +219,11 @@ impl Scene {
     }
 
     // Mesh shape
-    // Use one of the following methods, do not directly call extMeshCache.DefineExtMesh()
+    // Use one of the following methods, do not directly call
+    // extMeshCache.DefineExtMesh()
 
     pub fn define_mesh(&mut self, mesh: &ExtMesh) {
-        let shape_name = mesh.get_name();
+        let shape_name: &String = mesh.get_name();
 
         if self.ext_mesh_cache.is_ext_mesh_defined(shape_name) {
             // A replacement for an existing mesh
@@ -256,7 +258,8 @@ impl Scene {
             }
         }
 
-        // This is the only place where it is safe to all ext_mesh_cache.define_ext_mesh()
+        // This is the only place where it is safe to all
+        // ext_mesh_cache.define_ext_mesh()
         self.ext_mesh_cache.define_ext_mesh(mesh);
         self.edit_actions.add_action(EditAction::GeometryEdit);
     }
@@ -301,7 +304,7 @@ impl Scene {
         mesh_name: &str,
         trans: &Transform,
     ) -> Result<(), String> {
-        let mesh = self.ext_mesh_cache.get_ext_mesh(mesh_name);
+        let mesh = self.ext_mesh_cache.get_ext_mesh(&mesh_name.to_string());
         if !mesh.is_some() {
             return Err(format!(
                 "Unknown mesh is Scene::define_mesh(): {}",
@@ -324,13 +327,14 @@ impl Scene {
 
         Ok(())
     }
+
     pub fn define_mesh_ms(
         &mut self,
         mot_mesh_name: &str,
         mesh_name: &str,
         ms: &MotionSystem,
     ) -> Result<(), String> {
-        let mesh = self.ext_mesh_cache.get_ext_mesh(mesh_name);
+        let mesh = self.ext_mesh_cache.get_ext_mesh(&mesh_name.to_string());
         if !mesh.is_some() {
             return Err(format!(
                 "Unknown mesh in Scene:define_ext_mesh(): {}",
@@ -354,12 +358,12 @@ impl Scene {
         Ok(())
     }
 
-    pub fn set_mesh_vertex_aov(&self, mesh_name: &str, index: u32, data: Vec<f32>) {
+    pub fn set_mesh_vertex_aov(&mut self, mesh_name: &str, index: u32, data: Vec<f32>) {
         self.ext_mesh_cache
             .set_mesh_vertex_aov(mesh_name, index, data);
     }
 
-    pub fn set_mesh_triangle_aov(&self, mesh_name: &str, index: u32, data: Vec<f32>) {
+    pub fn set_mesh_triangle_aov(&mut self, mesh_name: &str, index: u32, data: Vec<f32>) {
         self.ext_mesh_cache
             .set_mesh_triangle_aov(mesh_name, index, data);
     }
@@ -396,15 +400,15 @@ impl Scene {
     }
 
     pub fn is_texture_defined(&self, name: &str) -> bool {
-        self.tex_defs.is_texture_defined(name.to_string())
+        self.tex_defs.defined(&name.to_string())
     }
 
     pub fn is_material_defined(&self, name: &str) -> bool {
-        self.mat_defs.is_material_defined(name.to_string())
+        self.mat_defs.defined(&name.to_string())
     }
 
     pub fn is_mesh_defined(&self, name: &str) -> bool {
-        self.ext_mesh_cache.is_ext_mesh_defined(name.to_string())
+        self.ext_mesh_cache.is_ext_mesh_defined(&name.to_string())
     }
 
     pub fn parse(&self, props: &Properties) {
@@ -428,11 +432,11 @@ impl Scene {
     }
 
     pub fn delete_object(&mut self, obj_name: &str) {
-        if !self.obj_defs.is_scene_object_defined(obj_name.to_string()) {
+        if !self.obj_defs.defined(&obj_name.to_string()) {
             return;
         }
 
-        let old = self.obj_defs.get_scene_object(obj_name.to_string());
+        let old = self.obj_defs.get(&obj_name.to_string());
         let was_light_source = old.get_material().is_light_source();
 
         if was_light_source {
@@ -440,17 +444,17 @@ impl Scene {
             self.edit_actions.add_actions(action);
 
             let mesh = old.get_ext_mesh();
-            for i in mesh.get_total_triangle_count() {
+            for i in 0..mesh.get_total_triangle_count() {
                 let light_source_name =
                     format!("{}{}{}", old.get_name(), TRIANGLE_LIGHT_POSTFIX, i);
-                self.light_defs.delete_light_source(light_source_name.as_str());
+                self.light_defs.delete(light_source_name.as_str());
             }
         }
     }
 
     pub fn delete_light(&mut self, light_name: &str) {
-        if self.light_defs.is_light_source_defined(light_name) {
-            self.light_defs.delete_light_source(light_name);
+        if self.light_defs.defined(light_name) {
+            self.light_defs.delete(light_name);
             let action = EditAction::LightsEdit | EditAction::LightTypesEdit;
             self.edit_actions.add_actions(action);
         }
@@ -464,55 +468,41 @@ impl Scene {
         todo!()
     }
 
-    pub fn update_object_material(&mut self, obj_name: &str, mat_name: &str) {
-        todo!()
-    }
+    pub fn update_object_material(&mut self, obj_name: &str, mat_name: &str) { todo!() }
 
-    pub fn update_object_transformation(&mut self, obj_name: &str, trans_mat: Vec<f32>) {
-        todo!()
-    }
+    pub fn update_object_transformation(&mut self, obj_name: &str, trans_mat: Vec<f32>) { todo!() }
 
-    pub fn remove_unused_image_maps(&mut self) {
-        todo!()
-    }
+    pub fn remove_unused_image_maps(&mut self) { todo!() }
 
-    pub fn remove_unused_textures(&mut self) {
-        todo!()
-    }
+    pub fn remove_unused_textures(&mut self) { todo!() }
 
-    pub fn remove_unused_materials(&mut self) {
-        todo!()
-    }
+    pub fn remove_unused_materials(&mut self) { todo!() }
 
-    pub fn remove_unused_meshes(&mut self) {
-        todo!()
-    }
+    pub fn remove_unused_meshes(&mut self) { todo!() }
 
-    pub fn load(filename: &str) -> Scene {
-        Scene::default()
-    }
+    pub fn load(filename: &str) -> Scene { Scene::default() }
 
-    pub fn save(filename: &str, scene: &Scene) {
-        todo!()
-    }
+    pub fn save(filename: &str, scene: &Scene) { todo!() }
 
     /* private methods */
 
     fn parse_camera(&self, props: &Properties) {}
+
     fn parse_textures(&self, props: &Properties) {}
+
     fn parse_volumes(&self, props: &Properties) {}
+
     fn parse_materials(&self, props: &Properties) {}
+
     fn parse_shapes(&self, props: &Properties) {}
+
     fn parse_objects(&self, props: &Properties) {}
+
     fn parse_lights(&self, props: &Properties) {}
 
-    fn get_texture(&self, name: &str) -> Texture {
-        Texture::default()
-    }
+    fn get_texture(&self, name: &str) -> Texture { Texture::default() }
 
-    fn create_camera(&self, props: &Properties) -> Camera {
-        Camera::new(CameraType::ENVIRONMENT)
-    }
+    fn create_camera(&self, props: &Properties) -> Camera { Camera::new(CameraType::ENVIRONMENT) }
 
     fn create_texture_mapping_2d(&self, prefix: &str, props: &Properties) -> TextureMapping2D {
         TextureMapping2D::default()
@@ -522,13 +512,9 @@ impl Scene {
         TextureMapping3D::default()
     }
 
-    fn create_texture(&self, name: &str, props: &Properties) -> Texture {
-        Texture::default()
-    }
+    fn create_texture(&self, name: &str, props: &Properties) -> Texture { Texture::default() }
 
-    fn create_volume(&self, id: u32, name: &str, props: &Properties) -> Volume {
-        Volume::default()
-    }
+    fn create_volume(&self, id: u32, name: &str, props: &Properties) -> Volume { Volume::default() }
 
     fn create_material(&self, id: u32, name: &str, props: &Properties) -> Material {
         Material::default()
@@ -546,9 +532,7 @@ impl Scene {
         ImageMap::default()
     }
 
-    fn create_light_source(&self, name: &str, props: &Properties) -> &dyn LightSource {
-        LightSource::default()
-    }
+    fn create_light_source(&self, name: &str, props: &Properties) -> &dyn LightSource { todo!() }
 
     fn create_inlined_mesh(
         &self,
@@ -561,7 +545,5 @@ impl Scene {
 }
 
 impl Default for Scene {
-    fn default() -> Self {
-        Self::new(1.0)
-    }
+    fn default() -> Self { Self::new(1.0) }
 }

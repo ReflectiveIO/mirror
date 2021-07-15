@@ -1,13 +1,13 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::Texture;
-
-use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
+use crate::slg::textures::Texture;
 
 /// Disney BRDF
 /// Based on "Physically Based Shading at Disney" presentet SIGGRAPH 2012
@@ -68,62 +68,41 @@ impl DisneyMaterial {
         }
     }
 
-    pub fn get_base_color(&self) -> &Texture {
-        &self.base_color
-    }
-    pub fn get_sub_surface(&self) -> &Texture {
-        &self.sub_surface
-    }
-    pub fn get_roughness(&self) -> &Texture {
-        &self.roughness
-    }
-    pub fn get_metallic(&self) -> &Texture {
-        &self.metallic
-    }
-    pub fn get_specular(&self) -> &Texture {
-        &self.specular
-    }
-    pub fn get_specular_tint(&self) -> &Texture {
-        &self.specular_tint
-    }
-    pub fn get_clear_coat(&self) -> &Texture {
-        &self.clear_coat
-    }
-    pub fn get_clear_coat_gloss(&self) -> &Texture {
-        &self.clear_coat_gloss
-    }
-    pub fn get_anisotropic(&self) -> &Texture {
-        &self.anisotropic
-    }
-    pub fn get_sheen(&self) -> &Texture {
-        &self.sheen
-    }
-    pub fn get_sheen_tint(&self) -> &Texture {
-        &self.sheen_tint
-    }
-    pub fn get_film_amount(&self) -> &Texture {
-        &self.film_amount
-    }
-    pub fn get_film_thickness(&self) -> &Texture {
-        &self.film_thickness
-    }
-    pub fn get_film_ior(&self) -> &Texture {
-        &self.film_ior
-    }
+    pub fn get_base_color(&self) -> &Texture { &self.base_color }
+
+    pub fn get_sub_surface(&self) -> &Texture { &self.sub_surface }
+
+    pub fn get_roughness(&self) -> &Texture { &self.roughness }
+
+    pub fn get_metallic(&self) -> &Texture { &self.metallic }
+
+    pub fn get_specular(&self) -> &Texture { &self.specular }
+
+    pub fn get_specular_tint(&self) -> &Texture { &self.specular_tint }
+
+    pub fn get_clear_coat(&self) -> &Texture { &self.clear_coat }
+
+    pub fn get_clear_coat_gloss(&self) -> &Texture { &self.clear_coat_gloss }
+
+    pub fn get_anisotropic(&self) -> &Texture { &self.anisotropic }
+
+    pub fn get_sheen(&self) -> &Texture { &self.sheen }
+
+    pub fn get_sheen_tint(&self) -> &Texture { &self.sheen_tint }
+
+    pub fn get_film_amount(&self) -> &Texture { &self.film_amount }
+
+    pub fn get_film_thickness(&self) -> &Texture { &self.film_thickness }
+
+    pub fn get_film_ior(&self) -> &Texture { &self.film_ior }
 }
 
 impl MaterialTrait for DisneyMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::Disney
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::Disney }
 
-    fn get_event_types(&self) -> BSDFEvent {
-        BSDFEventType::GLOSSY | BSDFEventType::REFLECT
-    }
+    fn get_event_types(&self) -> BSDFEvent { BSDFEventType::GLOSSY | BSDFEventType::REFLECT }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -162,15 +141,15 @@ impl MaterialTrait for DisneyMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
+}
+
+impl NamedObject for DisneyMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

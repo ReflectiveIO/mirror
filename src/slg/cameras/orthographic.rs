@@ -72,7 +72,7 @@ impl CameraTrait for OrthographicCamera {
         todo!()
     }
 
-    fn update(&self, film_width: u32, film_height: u32, film_sub_region: &[u32]) {
+    fn update(&self, film_width: u32, film_height: u32, film_sub_region: [u32; 4]) {
         todo!()
     }
 

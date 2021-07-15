@@ -24,12 +24,8 @@ pub trait CPUTileRenderEngine: CPURenderEngine + Downcast {
         self.tile_repository().get_converged_tiles(tiles)
     }
 
-    fn get_tile_width(&self) -> u32 {
-        self.tile_repository().tile_width
-    }
+    fn get_tile_width(&self) -> u32 { self.tile_repository().tile_width }
 
-    fn get_tile_height(&self) -> u32 {
-        self.tile_repository().tile_height
-    }
+    fn get_tile_height(&self) -> u32 { self.tile_repository().tile_height }
 }
 impl_downcast!(CPUTileRenderEngine);

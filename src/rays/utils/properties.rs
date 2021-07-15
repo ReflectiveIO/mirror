@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter};
 use std::result::Result;
 
 use config::{ConfigError, Value};
@@ -38,7 +39,7 @@ impl Properties {
         self.props.get_str(name).is_ok()
     }
 
-    pub fn merge(&mut self, source: Properties) {
+    pub fn merge(&mut self, source: &Properties) {
         self.props.merge(source.props);
     }
 }
@@ -46,5 +47,11 @@ impl Properties {
 impl Default for Properties {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl Display for Properties {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Properties")
     }
 }

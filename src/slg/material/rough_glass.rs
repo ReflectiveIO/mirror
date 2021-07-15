@@ -1,13 +1,13 @@
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::Texture;
-
-use super::material::MaterialTrait;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
+use crate::slg::textures::Texture;
 
 #[derive(Default)]
 pub struct RoughGlassMaterial {
@@ -41,54 +41,33 @@ impl RoughGlassMaterial {
         }
     }
 
-    pub fn get_kr(&self) -> &Texture {
-        &self.kr
-    }
+    pub fn get_kr(&self) -> &Texture { &self.kr }
 
-    pub fn get_kt(&self) -> &Texture {
-        &self.kt
-    }
+    pub fn get_kt(&self) -> &Texture { &self.kt }
 
-    pub fn get_exterior_ior(&self) -> &Texture {
-        &self.exterior_ior
-    }
+    pub fn get_exterior_ior(&self) -> &Texture { &self.exterior_ior }
 
-    pub fn get_interior_ior(&self) -> &Texture {
-        &self.interior_ior
-    }
+    pub fn get_interior_ior(&self) -> &Texture { &self.interior_ior }
 
-    pub fn get_nu(&self) -> &Texture {
-        &self.nu
-    }
-    pub fn get_nv(&self) -> &Texture {
-        &self.nv
-    }
+    pub fn get_nu(&self) -> &Texture { &self.nu }
 
-    pub fn get_film_thickness(&self) -> &Texture {
-        &self.film_thickness
-    }
+    pub fn get_nv(&self) -> &Texture { &self.nv }
 
-    pub fn get_film_ior(&self) -> &Texture {
-        &self.film_ior
-    }
+    pub fn get_film_thickness(&self) -> &Texture { &self.film_thickness }
+
+    pub fn get_film_ior(&self) -> &Texture { &self.film_ior }
 }
 
 impl MaterialTrait for RoughGlassMaterial {
-    fn get_type(&self) -> MaterialType {
-        MaterialType::RoughGlass
-    }
+    fn get_type(&self) -> MaterialType { MaterialType::RoughGlass }
 
     fn get_event_types(&self) -> BSDFEvent {
         BSDFEventType::GLOSSY | BSDFEventType::REFLECT | BSDFEventType::TRANSMIT
     }
 
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
-    fn evaluate_total(&self, hit_point: &HitPoint) -> Spectrum {
-        todo!()
-    }
+    fn evaluate_total(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 
     fn evaluate(
         &self,
@@ -127,15 +106,15 @@ impl MaterialTrait for RoughGlassMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {
-        todo!()
-    }
+    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {
-        todo!()
-    }
+    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
-        todo!()
-    }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
+}
+
+impl NamedObject for RoughGlassMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

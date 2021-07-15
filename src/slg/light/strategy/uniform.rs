@@ -3,7 +3,7 @@ use crate::rays::Properties;
 use crate::slg::light::strategy::{
     DistributionLightStrategy, LightStrategy, LightStrategyTask, LightStrategyType,
 };
-use crate::slg::light::LightSource;
+use crate::slg::light::traits::LightSource;
 use crate::slg::Scene;
 
 pub struct LightStrategyUniform {
@@ -17,37 +17,29 @@ impl LightStrategyUniform {
         }
     }
 
-    pub fn get_object_type() -> &'static LightStrategyType {
-        &LightStrategyType::Uniform
-    }
+    pub fn get_object_type() -> &'static LightStrategyType { &LightStrategyType::Uniform }
 
-    pub fn get_object_tag() -> &'static str {
-        "UNIFORM"
-    }
+    pub fn get_object_tag() -> &'static str { "UNIFORM" }
 }
 
 impl From<&Properties> for LightStrategyUniform {
-    fn from(_: &Properties) -> Self {
-        todo!()
-    }
+    fn from(_: &Properties) -> Self { todo!() }
 }
 
 impl Into<Properties> for LightStrategyUniform {
     fn into(self) -> Properties {
-        todo!()
+        let mut props = Properties::new();
+        props.set("light.strategy.type", self.get_type().to_string());
+        props
     }
 }
 
 impl LightStrategy for LightStrategyUniform {
-    fn get_type(&self) -> &LightStrategyType {
-        Self::get_object_type()
-    }
+    fn get_type(&self) -> &LightStrategyType { Self::get_object_type() }
 
-    fn get_tag(&self) -> &String {
-        &Self::get_object_tag().to_string()
-    }
+    fn get_tag(&self) -> &String { &Self::get_object_tag().to_string() }
 
-    fn preprocess(&mut self, scene: &Scene, task_type: LightStrategyTask, real_time: bool) {
+    fn preprocess(&mut self, scene: Scene, task_type: LightStrategyTask, real_time: bool) {
         todo!()
     }
 
@@ -74,11 +66,5 @@ impl LightStrategy for LightStrategyUniform {
 
     fn sample_lights2(&self, u: f32, pdf: f32) -> Option<Box<dyn LightSource>> {
         self.inner.sample_lights2(u, pdf)
-    }
-
-    fn to_properties(&self) -> Properties {
-        let mut props = Properties::new();
-        props.set("light.strategy.type", self.get_type().to_string());
-        props
     }
 }
