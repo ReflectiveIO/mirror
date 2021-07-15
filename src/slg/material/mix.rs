@@ -1,6 +1,7 @@
 use super::material::{Material, MaterialTrait};
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDFEvent;
@@ -9,7 +10,6 @@ use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
-#[derive(Default)]
 pub struct MixMaterial {
     a: Box<dyn MaterialTrait>,
     b: Box<dyn MaterialTrait>,
@@ -25,12 +25,18 @@ impl MixMaterial {
         back_transp: &Texture,
         emitted: &Texture,
         bump: &Texture,
-        a: &Box<dyn MaterialTrait>,
-        b: &Box<dyn MaterialTrait>,
-        mix: &Texture,
+        a: Box<dyn MaterialTrait>,
+        b: Box<dyn MaterialTrait>,
+        mix: Texture,
     ) -> Self {
         Self {
-            ..Default::default()
+            a,
+            b,
+            mix_factor: mix,
+
+            event_types: Default::default(),
+            is_light_source: false,
+            is_delta: false,
         }
     }
 
@@ -129,7 +135,13 @@ impl MaterialTrait for MixMaterial {
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
     fn update_avg_pass_through_transparency(&mut self) { todo!() }
+}
+
+impl NamedObject for MixMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

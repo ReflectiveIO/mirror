@@ -1,6 +1,7 @@
 use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
@@ -9,9 +10,8 @@ use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
-#[derive(Default)]
 pub struct GlossyCoatingMaterial {
-    mat_base: Texture,
+    mat_base: Box<dyn MaterialTrait>,
     ks: Texture,
     nu: Texture,
     nv: Texture,
@@ -27,21 +27,28 @@ impl GlossyCoatingMaterial {
         back_transp: &Texture,
         emitted: &Texture,
         bump: &Texture,
-        mb: &Texture,
-        ks: &Texture,
-        u: &Texture,
-        v: &Texture,
-        ka: &Texture,
-        d: &Texture,
-        i: &Texture,
+        mb: Box<dyn MaterialTrait>,
+        ks: Texture,
+        u: Texture,
+        v: Texture,
+        ka: Texture,
+        d: Texture,
+        i: Texture,
         multi_bounce: bool,
     ) -> Self {
         Self {
-            ..Default::default()
+            mat_base: mb,
+            ks,
+            nu: u,
+            nv: v,
+            ka,
+            depth: d,
+            index: i,
+            multi_bounce,
         }
     }
 
-    pub fn get_material_base(&self) -> &Texture { &self.mat_base }
+    pub fn get_material_base(&self) -> &Box<dyn MaterialTrait> { &self.mat_base }
 
     pub fn get_ks(&self) -> &Texture { &self.ks }
 
@@ -148,7 +155,13 @@ impl MaterialTrait for GlossyCoatingMaterial {
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
     fn update_avg_pass_through_transparency(&mut self) { todo!() }
+}
+
+impl NamedObject for GlossyCoatingMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

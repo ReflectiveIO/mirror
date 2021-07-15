@@ -1,6 +1,7 @@
 use super::material::{Material, MaterialTrait};
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDFEvent;
@@ -9,7 +10,6 @@ use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
-#[derive(Default)]
 pub struct TwoSidedMaterial {
     front_mat: Box<dyn MaterialTrait>,
     back_mat: Box<dyn MaterialTrait>,
@@ -24,11 +24,15 @@ impl TwoSidedMaterial {
         back_transp: &Texture,
         emitted: &Texture,
         bump: &Texture,
-        front_mat: &Box<dyn MaterialTrait>,
-        back_mat: &Box<dyn MaterialTrait>,
+        front_mat: Box<dyn MaterialTrait>,
+        back_mat: Box<dyn MaterialTrait>,
     ) -> Self {
         Self {
-            ..Default::default()
+            front_mat,
+            back_mat,
+            event_types: Default::default(),
+            is_light_source: false,
+            is_delta: false,
         }
     }
 
@@ -127,7 +131,13 @@ impl MaterialTrait for TwoSidedMaterial {
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
     fn update_avg_pass_through_transparency(&mut self) { todo!() }
+}
+
+impl NamedObject for TwoSidedMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

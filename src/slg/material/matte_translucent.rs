@@ -1,6 +1,7 @@
 use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
@@ -84,5 +85,11 @@ impl MaterialTrait for MatteTranslucentMaterial {
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
+}
+
+impl NamedObject for MatteTranslucentMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

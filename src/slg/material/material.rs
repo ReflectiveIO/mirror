@@ -1,5 +1,6 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDFEvent;
@@ -347,7 +348,7 @@ impl MaterialTrait for Material {
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties { todo!() }
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }
 
 pub trait MaterialTrait {
@@ -450,9 +451,15 @@ pub trait MaterialTrait {
 
     fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {}
 
-    fn to_properties(&self, imc: ImageMapCache, real_filename: bool) -> Properties {
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties {
         Properties::default()
     }
 
     fn update_avg_pass_through_transparency(&mut self) {}
+}
+
+impl NamedObject for Box<dyn MaterialTrait> {
+    fn get_name(&self) -> &String { self.get_name() }
+
+    fn set_name(&mut self, name: &str) { self.set_name(name) }
 }

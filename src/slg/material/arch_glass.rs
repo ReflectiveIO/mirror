@@ -1,6 +1,7 @@
 use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
+use crate::rays::object::NamedObject;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
@@ -120,4 +121,10 @@ impl MaterialTrait for ArchGlassMaterial {
     ) {
         todo!()
     }
+}
+
+impl NamedObject for ArchGlassMaterial {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

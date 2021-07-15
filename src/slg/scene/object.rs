@@ -1,6 +1,9 @@
 use crate::rays::mesh::ExtMesh;
+use crate::rays::object::NamedObject;
+use crate::rays::Properties;
 use crate::slg::image_map::ImageMap;
 use crate::slg::material::MaterialTrait;
+use crate::slg::scene::ExtMeshCache;
 
 pub struct SceneObject {
     mesh: ExtMesh,
@@ -12,7 +15,16 @@ pub struct SceneObject {
 }
 
 impl SceneObject {
-    pub fn new(m: &ExtMesh, mt: &Box<dyn MaterialTrait>, id: u32, visible: bool) -> Self { Self {} }
+    pub fn new(m: ExtMesh, mt: Box<dyn MaterialTrait>, id: u32, visible: bool) -> Self {
+        Self {
+            mesh: m,
+            material: mt,
+            object_id: id,
+            bake_map: ImageMap::default(),
+            bake_map_uv_index: 0,
+            camera_in_visible: visible,
+        }
+    }
 
     pub fn get_ext_mesh(&self) -> &ExtMesh { &self.mesh }
 
@@ -21,6 +33,8 @@ impl SceneObject {
     pub fn get_id(&self) -> u32 { self.object_id }
 
     pub fn is_camera_in_visible(&self) -> bool { self.camera_in_visible }
+
+    pub fn to_properties(&self, imc: &ExtMeshCache, real_filename: bool) -> Properties { todo!() }
 }
 
 impl Default for SceneObject {
@@ -29,4 +43,10 @@ impl Default for SceneObject {
             ..Default::default()
         }
     }
+}
+
+impl NamedObject for SceneObject {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }

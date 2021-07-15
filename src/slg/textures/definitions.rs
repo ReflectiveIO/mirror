@@ -1,46 +1,37 @@
+use crate::rays::object::{GetIndex, GetObject, NamedObject, NamedObjectVector};
 use crate::slg::textures::Texture;
 
 #[derive(Default)]
 pub struct TextureDefinitions {
-    textures: Vec<Texture>,
+    textures: NamedObjectVector<Texture>,
 }
 
 impl TextureDefinitions {
-    pub fn is_texture_defined(&self, name: String) -> bool {
-        self.textures.is_obj_defined(name)
-    }
+    pub fn define(&mut self, t: &Texture) { self.textures.define(t); }
 
-    pub fn define_texture(&mut self, t: Texture) {}
+    pub fn defined(&self, name: &String) -> bool { self.textures.defined(name) }
 
-    pub fn get_texture(&self, name: String) -> &Texture {
-        self.textures.get_obj_by_name(name)
-    }
+    pub fn size(&self) -> usize { self.textures.size() }
 
-    pub fn get_texture_idx(&self, index: usize) -> &Texture {
-        self.textures.get_obj_by_index(index)
-    }
+    pub fn names(&self) -> Vec<String> { self.textures.names() }
 
-    pub fn get_texture_index(&self, name: String) -> usize {
-        self.textures.get_index_by_name(name)
-    }
+    pub fn delete(&mut self, name: &String) { self.textures.delete(name) }
 
-    pub fn get_texture_index_t(&self, t: &Texture) -> usize {
-        self.textures.get_index_by_obj(t)
-    }
+    pub fn sorted_names(&self) -> Vec<String> { vec![] }
+}
 
-    pub fn get_size(&self) -> usize {
-        self.textures.len()
-    }
+impl GetObject<String, Texture> for TextureDefinitions {
+    fn get(&self, key: &String) -> &Texture { self.textures.get(key) }
+}
 
-    pub fn get_texture_names(&self) -> Vec<String> {
-        self.textures.get_names()
-    }
+impl GetObject<usize, Texture> for TextureDefinitions {
+    fn get(&self, key: &usize) -> &Texture { self.textures.get(key) }
+}
 
-    pub fn delete_texture(&mut self, name: String) {
-        self.textures.delete_obj(name)
-    }
+impl GetIndex<String> for TextureDefinitions {
+    fn index(&self, key: &String) -> usize { self.textures.index(key) }
+}
 
-    pub fn get_texture_sorted_names(&self) -> Vec<String> {
-        vec![]
-    }
+impl GetIndex<Texture> for TextureDefinitions {
+    fn index(&self, key: &Texture) -> usize { self.textures.index(key) }
 }

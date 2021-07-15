@@ -39,7 +39,7 @@ impl LightStrategy for LightStrategyUniform {
 
     fn get_tag(&self) -> &String { &Self::get_object_tag().to_string() }
 
-    fn preprocess(&mut self, scene: &Scene, task_type: LightStrategyTask, real_time: bool) {
+    fn preprocess(&mut self, scene: Scene, task_type: LightStrategyTask, real_time: bool) {
         todo!()
     }
 

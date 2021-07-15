@@ -57,7 +57,7 @@ pub trait LightStrategy {
     fn get_type(&self) -> &LightStrategyType;
     fn get_tag(&self) -> &String;
 
-    fn preprocess(&mut self, scene: &Scene, task_type: LightStrategyTask, real_time: bool);
+    fn preprocess(&mut self, scene: Scene, task_type: LightStrategyTask, real_time: bool);
 
     fn sample_lights(
         &self,

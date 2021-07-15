@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
+use crate::rays::object::{GetObject, NamedObjectVector};
 use crate::rays::Properties;
 use crate::slg::light::strategy::*;
 use crate::slg::light::traits::{EnvLightSource, LightSource};
@@ -9,10 +10,9 @@ use crate::slg::material::Material;
 use crate::slg::Scene;
 
 pub struct LightSourceDefinitions {
-    map: HashMap<String, Box<dyn LightSource>>,
     light_group_count: usize,
     light_type_count: Vec<usize>,
-    lights: Vec<Box<dyn LightSource>>,
+    lights: NamedObjectVector<Box<dyn LightSource>>,
     intersectable_light_sources: Vec<TriangleLight>,
     env_light_sources: Vec<Box<dyn EnvLightSource>>,
 
@@ -28,10 +28,8 @@ pub struct LightSourceDefinitions {
 impl LightSourceDefinitions {
     pub fn new() -> Self {
         Self {
-            map: HashMap::new(),
-
             light_type_count: vec![],
-            lights: vec![],
+            lights: NamedObjectVector::new(),
             intersectable_light_sources: vec![],
             env_light_sources: vec![],
             light_index_offset_by_mesh_index: vec![],
@@ -44,6 +42,16 @@ impl LightSourceDefinitions {
             light_group_count: 1,
         }
     }
+
+    pub fn define(&mut self, l: &Box<dyn LightSource>) { self.lights.define(l); }
+
+    pub fn defined(&self, name: &str) -> bool { self.lights.defined(&name.to_string()) }
+
+    pub fn size(&self) -> usize { self.lights.size() }
+
+    pub fn names(&self) -> Vec<String> { self.lights.names() }
+
+    pub fn delete(&mut self, name: &str) { self.lights.delete(&name.to_string()) }
 
     pub fn set_light_strategy(&mut self, props: &Properties) {
         if let Some(t) = LightStrategies::parse(props) {
@@ -63,19 +71,9 @@ impl LightSourceDefinitions {
 
     pub fn update_visibility_maps(&mut self, scene: &Scene, rt: bool) {}
 
-    pub fn define_light_source(&mut self, l: &Box<dyn LightSource>) {}
-
-    pub fn is_light_source_defined(&self, name: &str) -> bool { false }
-
     pub fn get_light_source(&self, name: &str) -> Box<dyn LightSource> {
         Box::new(TriangleLight::new())
     }
-
-    pub fn get_size(&self) -> usize { self.map.len() }
-
-    pub fn get_light_source_names(&self) -> Vec<String> { vec![] }
-
-    pub fn delete_light_source(&mut self, name: &str) {}
 
     pub fn delete_light_source_start_with(&mut self, prefix: &str) {}
 
@@ -97,7 +95,7 @@ impl LightSourceDefinitions {
 
     pub fn get_light_type_counts(&self) -> &Vec<usize> { &self.light_type_count }
 
-    pub fn get_light_sources(&self) -> &Vec<Box<dyn LightSource>> { &self.lights }
+    pub fn get_light_sources(&self) -> Vec<Box<dyn LightSource>> { self.lights.values() }
 
     pub fn get_env_light_sources(&self) -> &Vec<Box<dyn EnvLightSource>> { &self.env_light_sources }
 
@@ -129,4 +127,8 @@ impl LightSourceDefinitions {
 
 impl Default for LightSourceDefinitions {
     fn default() -> Self { LightSourceDefinitions::new() }
+}
+
+impl GetObject<String, Box<dyn LightSource>> for LightSourceDefinitions {
+    fn get(&self, key: &String) -> &Box<dyn LightSource> { self.lights.get(key) }
 }

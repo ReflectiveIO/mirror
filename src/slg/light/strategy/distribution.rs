@@ -26,8 +26,8 @@ impl LightStrategy for DistributionLightStrategy {
 
     fn get_tag(&self) -> &String { todo!() }
 
-    fn preprocess(&mut self, scene: &Scene, task_type: LightStrategyTask, real_time: bool) {
-        self.scene = Some(scene.clone())
+    fn preprocess(&mut self, scene: Scene, task_type: LightStrategyTask, real_time: bool) {
+        self.scene = Some(scene)
     }
 
     fn sample_lights(

@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Normal, Point, Ray};
+use crate::rays::object::NamedObject;
 use crate::slg::bsdf::BSDF;
 use crate::slg::image_map::ImageMap;
 use crate::slg::light::LightSourceType;
@@ -65,4 +66,10 @@ pub trait LightSource {
     fn is_always_in_shadow(&self, scene: &Scene, p: &Point, n: &Normal) -> bool { false }
 
     fn add_referenced_image_maps(&mut self, maps: HashSet<ImageMap>) {}
+}
+
+impl NamedObject for Box<dyn LightSource> {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
 }
