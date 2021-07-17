@@ -1,5 +1,6 @@
 use crate::rays::color::Spectrum;
-use crate::rays::geometry::{spherical_phi, spherical_theta, Vector};
+use crate::rays::geometry::vector::{spherical_phi, spherical_theta};
+use crate::rays::geometry::Vector;
 use crate::rays::utils::Distribution2D;
 
 /// A simple interface for functions on a sphere.

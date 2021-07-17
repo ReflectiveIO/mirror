@@ -1,9 +1,7 @@
-use crate::rays::geometry::Vector;
-use crate::slg::cameras::CameraTrait as slgCameraTrait;
-use crate::slg::cameras::CameraType as slgCameraType;
-use crate::slg::EditAction::CameraEdit;
-
 use super::Scene;
+use crate::rays::geometry::Vector;
+use crate::slg::cameras::{Camera as slgCameraTrait, CameraType as slgCameraType};
+use crate::slg::EditAction::CameraEdit;
 
 /// Camera stores camera definition.
 
@@ -19,10 +17,10 @@ pub enum CameraType {
 impl From<slgCameraType> for CameraType {
     fn from(t: slgCameraType) -> Self {
         match t {
-            slgCameraType::PERSPECTIVE => CameraType::PERSPECTIVE,
-            slgCameraType::ORTHOGRAPHIC => CameraType::ORTHOGRAPHIC,
-            slgCameraType::STEREO => CameraType::STEREO,
-            slgCameraType::ENVIRONMENT => CameraType::ENVIRONMENT,
+            slgCameraType::Perspective => CameraType::PERSPECTIVE,
+            slgCameraType::Orthographic => CameraType::ORTHOGRAPHIC,
+            slgCameraType::Stereo => CameraType::STEREO,
+            slgCameraType::Environment => CameraType::ENVIRONMENT,
         }
     }
 }
@@ -77,9 +75,7 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(scene: Scene) -> Self {
-        Camera { scene }
-    }
+    pub fn new(scene: Scene) -> Self { Camera { scene } }
 }
 
 impl CameraTrait for Camera {

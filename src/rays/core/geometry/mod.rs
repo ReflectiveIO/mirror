@@ -7,15 +7,15 @@ pub use self::ray::{Ray, RayHit};
 pub use self::transform::Transform;
 pub use self::triangle::Triangle;
 pub use self::uv::UV;
-pub use self::vector::{normalize, spherical_phi, spherical_theta, Vector};
+pub use self::vector::Vector;
 
 mod bsphere;
 mod matrix4x4;
 mod motion;
-mod normal;
+pub mod normal;
 mod point;
 mod ray;
 mod transform;
 mod triangle;
 mod uv;
-mod vector;
+pub mod vector;

@@ -35,23 +35,15 @@ impl Properties {
         }
     }
 
-    pub fn has(&self, name: &str) -> bool {
-        self.props.get_str(name).is_ok()
-    }
+    pub fn has(&self, name: &str) -> bool { self.props.get_str(name).is_ok() }
 
-    pub fn merge(&mut self, source: &Properties) {
-        self.props.merge(source.props);
-    }
+    pub fn merge(&mut self, source: &Properties) { self.props.merge(&source.props); }
 }
 
 impl Default for Properties {
-    fn default() -> Self {
-        Self::new()
-    }
+    fn default() -> Self { Self::new() }
 }
 
 impl Display for Properties {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Properties")
-    }
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "Properties") }
 }

@@ -72,6 +72,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "delegate"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f76f9eae170d46f87b0c34cc3b29d411dbdef329e1afd85132cece3da62edd9"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "downcast-rs"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -184,6 +195,7 @@ dependencies = [
  "bincode",
  "bitflags",
  "config",
+ "delegate",
  "downcast-rs",
  "env_logger",
  "log",

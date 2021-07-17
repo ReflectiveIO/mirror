@@ -7,7 +7,7 @@ use crate::rays::object::{GetIndex, GetObject, NamedObject};
 use crate::rays::utils::HairFile;
 use crate::rays::{Context, Dataset, Properties};
 use crate::slg::bsdf::BSDF;
-use crate::slg::cameras::{Camera, CameraTrait, CameraType, EnvironmentCamera};
+use crate::slg::cameras::{BaseCamera, Camera, CameraType, EnvironmentCamera};
 use crate::slg::film::SampleResult;
 use crate::slg::image_map::{ChannelSelectionType, ImageMap, ImageMapCache, WrapType};
 use crate::slg::light::traits::{LightSource, NotIntersectableLightSource};
@@ -28,7 +28,7 @@ pub struct Scene {
     // This volume is applied to rays hitting nothing
     pub default_world_volume: Option<Volume>,
 
-    pub camera: Option<Box<dyn CameraTrait>>,
+    pub camera: Option<Box<dyn Camera>>,
 
     // Mesh objects cache,
     pub ext_mesh_cache: ExtMeshCache,
@@ -502,7 +502,9 @@ impl Scene {
 
     fn get_texture(&self, name: &str) -> Texture { Texture::default() }
 
-    fn create_camera(&self, props: &Properties) -> Camera { Camera::new(CameraType::ENVIRONMENT) }
+    fn create_camera(&self, props: &Properties) -> BaseCamera {
+        BaseCamera::new(CameraType::Environment)
+    }
 
     fn create_texture_mapping_2d(&self, prefix: &str, props: &Properties) -> TextureMapping2D {
         TextureMapping2D::default()

@@ -12,23 +12,15 @@ pub struct Vector {
 }
 
 impl Vector {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
-        Vector { x, y, z }
-    }
+    pub fn new(x: f32, y: f32, z: f32) -> Self { Vector { x, y, z } }
 
-    pub fn length_squared(&self) -> f32 {
-        self.x * self.x + self.y * self.y + self.z * self.z
-    }
+    pub fn length_squared(&self) -> f32 { self.x * self.x + self.y * self.y + self.z * self.z }
 
-    pub fn length(&self) -> f32 {
-        f32::sqrt(self.length_squared())
-    }
+    pub fn length(&self) -> f32 { f32::sqrt(self.length_squared()) }
 }
 
 impl From<f32> for Vector {
-    fn from(v: f32) -> Self {
-        Vector::new(v, v, v)
-    }
+    fn from(v: f32) -> Self { Vector::new(v, v, v) }
 }
 
 impl From<Point> for Vector {
@@ -92,29 +84,24 @@ impl SubAssign for Vector {
 impl Mul<f32> for Vector {
     type Output = Vector;
 
-    fn mul(self, rhs: f32) -> Self::Output {
-        Self::new(self.x * rhs, self.y * rhs, self.z * rhs)
-    }
+    fn mul(self, rhs: f32) -> Self::Output { Self::new(self.x * rhs, self.y * rhs, self.z * rhs) }
 }
 
 /// The division operator /.
 impl Div<f32> for Vector {
     type Output = Vector;
 
-    fn div(self, rhs: f32) -> Self::Output {
-        Self::new(self.x / rhs, self.y / rhs, self.z / rhs)
-    }
+    fn div(self, rhs: f32) -> Self::Output { Self::new(self.x / rhs, self.y / rhs, self.z / rhs) }
 }
 
 #[inline]
-pub fn normalize(v: &Vector) -> Vector {
-    v.clone() / v.length()
-}
+pub fn dot(v1: &Vector, v2: &Vector) -> f32 { v1.x * v2.x + v1.y * v2.y + v1.z * v2.z }
 
 #[inline]
-pub fn spherical_theta(v: &Vector) -> f32 {
-    clamp(v.z, -1.0, 1.0).acos()
-}
+pub fn normalize(v: &Vector) -> Vector { v.clone() / v.length() }
+
+#[inline]
+pub fn spherical_theta(v: &Vector) -> f32 { clamp(v.z, -1.0, 1.0).acos() }
 
 #[inline]
 pub fn spherical_phi(v: &Vector) -> f32 {

@@ -1,6 +1,4 @@
-pub use camera::Camera;
-pub use camera::CameraTrait;
-pub use camera::CameraType;
+pub use camera::{BaseCamera, Camera, CameraType};
 pub use environment::EnvironmentCamera;
 pub use orthographic::OrthographicCamera;
 pub use perspective::PerspectiveCamera;
