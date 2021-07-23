@@ -1,3 +1,4 @@
+use std::f32::consts::PI;
 use std::path::{Path, PathBuf};
 
 pub fn clamp<T: std::cmp::PartialOrd>(val: T, low: T, high: T) -> T {
@@ -11,6 +12,8 @@ pub fn clamp<T: std::cmp::PartialOrd>(val: T, low: T, high: T) -> T {
         low
     }
 }
+
+pub fn radians(deg: f32) -> f32 { (PI / 180.0) * deg }
 
 // TODO: This should probably be a crate
 // https://github.com/rust-lang/rust/blob/master/src/librustc_trans/back/rpath.rs#L128
@@ -34,7 +37,7 @@ pub fn path_relative_from(path: &Path, base: &Path) -> Option<PathBuf> {
                     comps.push(a);
                     comps.extend(ita.by_ref());
                     break;
-                }
+                },
                 (None, _) => comps.push(Component::ParentDir),
                 (Some(a), Some(b)) if comps.is_empty() && a == b => (),
                 (Some(a), Some(b)) if b == Component::CurDir => comps.push(a),
@@ -47,7 +50,7 @@ pub fn path_relative_from(path: &Path, base: &Path) -> Option<PathBuf> {
                     comps.push(a);
                     comps.extend(ita.by_ref());
                     break;
-                }
+                },
             }
         }
         Some(comps.iter().map(|c| c.as_os_str()).collect())

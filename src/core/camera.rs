@@ -14,8 +14,8 @@ pub enum CameraType {
     ENVIRONMENT,
 }
 
-impl From<slgCameraType> for CameraType {
-    fn from(t: slgCameraType) -> Self {
+impl From<&slgCameraType> for CameraType {
+    fn from(t: &slgCameraType) -> Self {
         match t {
             slgCameraType::Perspective => CameraType::PERSPECTIVE,
             slgCameraType::Orthographic => CameraType::ORTHOGRAPHIC,

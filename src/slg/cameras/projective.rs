@@ -3,8 +3,7 @@ use std::sync::Arc;
 
 use delegate::delegate;
 
-use crate::rays::geometry::vector::{dot, normalize};
-use crate::rays::geometry::{vector, Normal, Point, Ray, Transform, Vector};
+use crate::rays::geometry::{rotate, Normal, Point, Ray, Transform, Vector};
 use crate::rays::Properties;
 use crate::slg::cameras::camera::Camera;
 use crate::slg::cameras::{BaseCamera, CameraType};
@@ -68,9 +67,9 @@ impl ProjectiveCamera {
 
         Self {
             base: Arc::new(BaseCamera::new(t)),
-            orig: *orig,
-            target: *target,
-            up: normalize(up),
+            orig: orig.clone(),
+            target: target.clone(),
+            up: up.normalize(),
             clipping_plane_center: Point::new(0.0, 0.0, 0.0),
             clipping_plane_normal: Normal::new(1.0, 0.0, 0.0),
             enable_clipping_plane: false,
@@ -117,36 +116,24 @@ impl Camera for ProjectiveCamera {
         self.target += t;
     }
 
-    fn translate_left(&mut self, k: f32) {
-        let t = -k * normalize(&self.x);
-        self.translate(t);
-    }
+    fn translate_left(&mut self, k: f32) { self.translate(&(-k * self.x.normalize())); }
 
-    fn translate_right(&mut self, k: f32) {
-        let t = k * normalize(&self.x);
-        self.translate(t);
-    }
+    fn translate_right(&mut self, k: f32) { self.translate(&(k * self.x.normalize())); }
 
-    fn translate_forward(&mut self, k: f32) {
-        let t = k * self.dir;
-        self.translate(t);
-    }
+    fn translate_forward(&mut self, k: f32) { self.translate(&(k * self.dir)); }
 
-    fn translate_backward(&mut self, k: f32) {
-        let t = -k * self.dir;
-        self.translate(t);
-    }
+    fn translate_backward(&mut self, k: f32) { self.translate(&(-k * self.dir)); }
 
     fn rotate(&mut self, angle: f32, axis: &Vector) {
-        let mut dir = self.target - self.orig;
+        let mut dir = &self.target - &self.orig;
         let t = rotate(angle, axis);
-        let dir = t * dir;
+        let dir: Vector = t * dir;
 
         // Check if the up vector is the same of view direction. If they are,
         // skip this operation (it would trigger a Singular matrix in
         // MatrixInvert)
-        if dot(&normalize(dir), &self.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
-            self.target = self.orig + dir;
+        if dir.normalize().dot(&self.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
+            self.target = &self.orig + dir;
         }
     }
 
@@ -163,7 +150,7 @@ impl Camera for ProjectiveCamera {
         time: f32,
         film_x: f32,
         film_y: f32,
-        ray: &Ray,
+        ray: &mut Ray,
         vol_info: &PathVolumeInfo,
         u0: f32,
         u1: f32,
@@ -171,9 +158,11 @@ impl Camera for ProjectiveCamera {
         todo!()
     }
 
-    fn get_sample_position(&self, eye_ray: &Ray, film_x: f32, film_y: f32) -> bool { todo!() }
+    fn get_sample_position(&self, eye_ray: &Ray, film_x: &mut f32, film_y: &mut f32) -> bool {
+        todo!()
+    }
 
-    fn sample_lens(&self, time: f32, u1: f32, u2: f32, lens_point: &Point) -> bool { todo!() }
+    fn sample_lens(&self, time: f32, u1: f32, u2: f32, lens_point: &mut Point) -> bool { todo!() }
 
     fn get_pdf(
         &self,
@@ -181,8 +170,8 @@ impl Camera for ProjectiveCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        pdf_w: f32,
-        flux_to_radiance_factor: f32,
+        pdf_w: Option<&mut f32>,
+        flux_to_radiance_factor: Option<&mut f32>,
     ) {
         todo!()
     }
@@ -190,8 +179,8 @@ impl Camera for ProjectiveCamera {
     fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties {
         let mut props = self.base.to_properties();
 
-        props.set("scene.camera.lookat.orig", self.orig);
-        props.set("scene.camera.lookat.target", self.target);
+        props.set("scene.camera.lookat.orig", &self.orig);
+        props.set("scene.camera.lookat.target", &self.target);
         props.set("scene.camera.up", self.up);
 
         if !self.auto_update_screen_window {

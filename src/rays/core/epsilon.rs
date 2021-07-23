@@ -1,16 +1,16 @@
 use crate::rays::geometry::{Normal, Point, Vector};
 use crate::rays::utils::clamp;
 
-const DEFAULT_EPSILON_MIN: f32 = 1e-5f32;
-const DEFAULT_EPSILON_MAX: f32 = 1e-1f32;
-const DEFAULT_EPSILON_STATIC: f32 = 1e-5f32;
+pub const DEFAULT_EPSILON_MIN: f32 = 1e-5f32;
+pub const DEFAULT_EPSILON_MAX: f32 = 1e-1f32;
+pub const DEFAULT_EPSILON_STATIC: f32 = 1e-5f32;
 
 // An epsilon that can be used as threshold for cos(theta). For instance:
 // if (dot(N, LightDir) < DEFAULT_COS_EPSILON_STATIC) return Spectrum();
-const DEFAULT_COS_EPSILON_STATIC: f32 = 1e-4f32;
+pub const DEFAULT_COS_EPSILON_STATIC: f32 = 1e-4f32;
 
 // This is about 1e-5f for values near 1.f
-const DEFAULT_EPSILON_DISTANCE_FROM_VALUE: u8 = 0x80;
+pub const DEFAULT_EPSILON_DISTANCE_FROM_VALUE: u8 = 0x80;
 
 pub struct MachineEpsilon {
     min: f32,
@@ -71,32 +71,8 @@ impl Epsilon<f32> for MachineEpsilon {
     }
 }
 
-impl Epsilon<Vector> for MachineEpsilon {
-    fn epsilon(value: &Vector) -> f32 {
-        f32::max(
-            MachineEpsilon::epsilon(&value.x),
-            f32::max(
-                MachineEpsilon::epsilon(&value.y),
-                MachineEpsilon::epsilon(&value.z),
-            ),
-        )
-    }
-}
-
 impl Epsilon<Point> for MachineEpsilon {
     fn epsilon(value: &Point) -> f32 {
-        f32::max(
-            MachineEpsilon::epsilon(&value.x),
-            f32::max(
-                MachineEpsilon::epsilon(&value.y),
-                MachineEpsilon::epsilon(&value.z),
-            ),
-        )
-    }
-}
-
-impl Epsilon<Normal> for MachineEpsilon {
-    fn epsilon(value: &Normal) -> f32 {
         f32::max(
             MachineEpsilon::epsilon(&value.x),
             f32::max(

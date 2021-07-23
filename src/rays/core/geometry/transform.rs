@@ -1,136 +1,39 @@
-use std::ops::{Div, Mul};
-use std::sync::Arc;
-
-use crate::rays::geometry::vector::normalize;
 use crate::rays::geometry::{Matrix4x4, Point, Vector};
 
-pub struct InvTransform {
-    reference: Transform,
+pub type Transform = na::Transform3<f32>;
+
+/// Builds a translation 4 * 4 matrix created from a vector of 3 components
+pub fn translate(delta: &Vector) -> Transform {
+    Transform::from_matrix_unchecked(Matrix4x4::identity().prepend_translation(delta))
 }
 
-impl From<Transform> for InvTransform {
-    fn from(t: Transform) -> Self { Self { reference: t } }
+/// Builds a scale 4 * 4 matrix created from 3 scalars
+
+pub fn scale(x: f32, y: f32, z: f32) -> Transform {
+    Transform::from_matrix_unchecked(
+        Matrix4x4::identity().prepend_nonuniform_scaling(&Vector::new(x, y, z)),
+    )
 }
 
-/// Transform Declarations
-#[derive(Clone, Debug, Default)]
-pub struct Transform {
-    pub m: Matrix4x4,
-    pub m_inv: Matrix4x4,
+/// Build a look at view matrix based on the right handedness.
+pub fn look_at(eye: &Point, center: &Point, up: &Vector) -> Transform {
+    Transform::from_matrix_unchecked(Matrix4x4::look_at_rh(eye, center, up))
 }
 
-impl Transform {
-    const TRANS_IDENTITY: Transform = Transform::new();
-
-    pub fn new() -> Self {
-        Self {
-            m: Matrix4x4::MAT_IDENTITY,
-            m_inv: Matrix4x4::MAT_IDENTITY,
-        }
-    }
-
-    pub fn get_matrix(&self) -> &Matrix4x4 { &self.m }
-
-    pub fn has_scale(&self) -> bool {
-        let det = (self.m.m[0][0]
-            * (self.m.m[1][1] * self.m.m[2][2] - self.m.m[1][2] * self.m.m[2][1]))
-            .abs()
-            - (self.m.m[0][1]
-                * (self.m.m[1][0] * self.m.m[2][2] - self.m.m[1][2] * self.m.m[2][0]))
-            + (self.m.m[0][2]
-                * (self.m.m[1][0] * self.m.m[2][1] - self.m.m[1][1] * self.m.m[2][0]));
-        return det < 0.999 || det > 1.001;
-    }
-
-    #[inline]
-    pub fn swaps_handedness(&self) -> bool {
-        let det = self.m.m[0][0]
-            * (self.m.m[1][1] * self.m.m[2][2] - self.m.m[1][2] * self.m.m[2][1])
-            - (self.m.m[0][1]
-                * (self.m.m[1][0] * self.m.m[2][2] - self.m.m[1][2] * self.m.m[2][0]))
-            + (self.m.m[0][2]
-                * (self.m.m[1][0] * self.m.m[2][1] - self.m.m[1][1] * self.m.m[2][0]));
-        return det < 0.0;
-    }
+/// Builds a rotation 4 * 4 matrix created from an axis vector and an angle
+pub fn rotate(angle: f32, axis: &Vector) -> Transform {
+    Transform::from_matrix_unchecked(
+        Matrix4x4::identity()
+            * na::Rotation3::from_axis_angle(&na::Unit::new_normalize(*axis), angle)
+                .to_homogeneous(),
+    )
 }
 
-impl From<[[f32; 4]; 4]> for Transform {
-    fn from(mat: [[f32; 4]; 4]) -> Self {
-        let matrix = Matrix4x4::from(mat);
-        Self {
-            m: matrix,
-            m_inv: matrix.inverse(),
-        }
-    }
-}
+/// Builds a rotation 4 * 4 matrix around the X axis
+pub fn rotate_x(angle: f32) -> Transform { rotate(angle, &Vector::x()) }
 
-impl From<Matrix4x4> for Transform {
-    fn from(mat: Matrix4x4) -> Self {
-        Self {
-            m: mat,
-            m_inv: mat.inverse(),
-        }
-    }
-}
+/// Builds a rotation 4 * 4 matrix around the Y axis
+pub fn rotate_y(angle: f32) -> Transform { rotate(angle, &Vector::y()) }
 
-impl From<(Matrix4x4, Matrix4x4)> for Transform {
-    fn from((m, m_inv): (Matrix4x4, Matrix4x4)) -> Self { Self { m, m_inv } }
-}
-
-impl From<InvTransform> for Transform {
-    fn from(t: InvTransform) -> Self {
-        Self {
-            m: t.reference.m_inv,
-            m_inv: t.reference.m,
-        }
-    }
-}
-
-impl Mul for Transform {
-    type Output = Transform;
-
-    fn mul(self, rhs: Self) -> Self::Output {
-        Transform::from((self.m * &rhs.m, rhs.m_inv * &self.m_inv))
-    }
-}
-
-impl Div for Transform {
-    type Output = Transform;
-
-    fn div(self, rhs: Self) -> Self::Output {
-        Transform::from((self.m * &rhs.m_inv, rhs.m * &self.m_inv))
-    }
-}
-
-#[inline]
-pub fn inverse(t: Transform) -> InvTransform { InvTransform::from(t) }
-
-pub fn look_at(pos: &Point, look: &Point, up: &Vector) -> Transform {
-    let mut m: [[f32; 4]; 4] = Default::default();
-
-    // Initialize fourth column of viewing matrix
-    m[0][3] = pos.x;
-    m[1][3] = pos.y;
-    m[2][3] = pos.z;
-    m[3][3] = 1.0;
-
-    let dir = normalize(look - pos);
-    let right = normalize(cross(dir, up));
-    let up = cross(right, dir);
-
-    m[0][0] = right.x;
-    m[1][0] = right.y;
-    m[2][0] = right.z;
-    m[3][0] = 0.;
-    m[0][1] = up.x;
-    m[1][1] = up.y;
-    m[2][1] = up.z;
-    m[3][1] = 0.;
-    m[0][2] = dir.x;
-    m[1][2] = dir.y;
-    m[2][2] = dir.z;
-    m[3][2] = 0.0;
-
-    let cam_to_world = Matrix4x4::from(m);
-    return Transform::from((cam_to_world.inverse(), cam_to_world));
-}
+/// Builds a rotation 4 * 4 matrix around the Z axis
+pub fn rotate_z(angle: f32) -> Transform { rotate(angle, &Vector::z()) }

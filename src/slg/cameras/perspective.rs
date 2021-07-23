@@ -117,7 +117,7 @@ impl Camera for PerspectiveCamera {
             global_dir *= self.inner.motion_system.sample(ray.time);
         }
 
-        let cosi: f32 = vector::dot(&ray.direction, &global_dir);
+        let cosi: f32 = ray.direction.dot(&global_dir);
         if cosi <= 0.0
             || (!ray.end.is_infinite()
                 && (ray.end * cosi < self.inner.clip_hither
@@ -129,14 +129,14 @@ impl Camera for PerspectiveCamera {
         let mut p0: Point;
 
         if self.inner.lens_radius > 0.0 {
-            p0 = ray.origin + ray.direction * (self.inner.focal_distance / cosi)
+            p0 = &ray.origin + ray.direction * (self.inner.focal_distance / cosi)
         } else {
-            p0 = ray.origin + ray.direction
+            p0 = &ray.origin + ray.direction
         }
         if self.inner.motion_system.is_some() {
             p0 *= self.inner.motion_system.sample_inverse(ray.time);
         }
-        p0 *= inverse(&self.inner.trans.raster_to_world);
+        p0 *= self.inner.trans.raster_to_world.inverse();
 
         *x = p0.x;
         *y = self.inner.film_height - 1 - p0.y;
@@ -153,10 +153,11 @@ impl Camera for PerspectiveCamera {
             if self.inner.enable_clipping_plane {
                 // check if the ray end point is on the not visible side of the plane
                 let endpoint = ray.end;
-                if normal::dot(
-                    &self.inner.clipping_plane_normal,
-                    endpoint - *self.inner.clipping_plane_center,
-                ) <= 0.0
+                if self
+                    .inner
+                    .clipping_plane_normal
+                    .dot(endpoint - &self.inner.clipping_plane_center)
+                    <= 0.0
                 {
                     return false;
                 }
@@ -196,7 +197,7 @@ impl Camera for PerspectiveCamera {
             global_dir *= self.inner.motion_system.sample(eye_ray.time);
         }
 
-        let cos_at_camera = vector::dot(&eye_ray.direction, &global_dir);
+        let cos_at_camera = eye_ray.direction.dot(&global_dir);
         if cos_at_camera <= 0.0 {
             if pdf_w.is_some() {
                 *pdf_w = 0.0;
@@ -250,3 +251,5 @@ impl Camera for PerspectiveCamera {
         return props;
     }
 }
+
+fn apply_arbitrary_clipping_plane(p0: &Ray) { todo!() }

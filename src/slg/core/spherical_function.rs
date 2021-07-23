@@ -1,7 +1,22 @@
+use std::f32::consts::PI;
+
 use crate::rays::color::Spectrum;
-use crate::rays::geometry::vector::{spherical_phi, spherical_theta};
 use crate::rays::geometry::Vector;
-use crate::rays::utils::Distribution2D;
+use crate::rays::utils::{clamp, Distribution2D};
+
+#[inline]
+pub fn spherical_theta(v: &Vector) -> f32 { clamp(v.z, -1.0, 1.0).acos() }
+
+#[inline]
+pub fn spherical_phi(v: &Vector) -> f32 {
+    let p: f32 = v.y.atan2(v.x);
+
+    if p < 0.0 {
+        p + 2.0 * PI
+    } else {
+        p
+    }
+}
 
 /// A simple interface for functions on a sphere.
 pub trait SphericalFunction {

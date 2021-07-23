@@ -77,7 +77,7 @@ impl Config {
         self.scene
             .camera
             .unwrap()
-            .update(film_full_width, film_full_height, film_sub_region);
+            .update(film_full_width, film_full_height, Some(film_sub_region));
     }
 
     pub fn delete_all_film_image_pipelines_properties(&self) {}

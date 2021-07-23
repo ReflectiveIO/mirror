@@ -5,10 +5,9 @@ use std::sync::Arc;
 
 use super::camera::Camera;
 use crate::rays;
-use crate::rays::epsilon::{Epsilon, MachineEpsilon};
-use crate::rays::geometry::vector::{dot, normalize};
-use crate::rays::geometry::{inverse, look_at, Point, Ray, Transform, Vector};
-use crate::rays::utils::clamp;
+use crate::rays::epsilon::{Epsilon, MachineEpsilon, DEFAULT_EPSILON_STATIC};
+use crate::rays::geometry::{rotate, scale, translate, Matrix4x4, Point, Ray, Transform, Vector};
+use crate::rays::utils::{clamp, radians};
 use crate::rays::Properties;
 use crate::slg::cameras::{BaseCamera, CameraType};
 use crate::slg::image_map::ImageMapCache;
@@ -65,10 +64,10 @@ impl EnvironmentCamera {
             degrees: 360.0,
             screen_window,
             auto_update_screen_window,
-            orig: *orig,
-            target: *target,
+            orig: orig.clone(),
+            target: target.clone(),
             ray_origin: Point::new(0.0, 0.0, 0.0),
-            up: normalize(up),
+            up: up.normalize(),
             pixel_area: 0.0,
             dir: Vector::default(),
             x: Vector::default(),
@@ -92,8 +91,8 @@ impl EnvironmentCamera {
         if self.orig == self.target {
             trans.camera_to_world = Transform::default();
         } else {
-            let world_to_camera = look_at(&self.orig, &self.target, &self.up);
-            trans.camera_to_world = inverse(world_to_camera);
+            let world_to_camera = Matrix4x4::look_at_rh(&self.orig, &self.target, &self.up);
+            trans.camera_to_world = world_to_camera.inverse();
         }
 
         // Compute environment camera transformations
@@ -131,7 +130,11 @@ impl EnvironmentCamera {
 
         ray.update(
             &self.ray_origin,
-            &Vector::new(-theta.sin() * phi.sin(), theta.cos(), -theta.sin() * phi.cos()),
+            &Vector::new(
+                -theta.sin() * phi.sin(),
+                theta.cos(),
+                -theta.sin() * phi.cos(),
+            ),
         );
     }
 }
@@ -157,11 +160,11 @@ impl Camera for EnvironmentCamera {
     }
 
     fn translate_left(&mut self, k: f32) {
-        self.translate(&(normalize(&Vector::from(self.x)) * -k));
+        self.translate(&(Vector::from(self.x).normalize() * -k));
     }
 
     fn translate_right(&mut self, k: f32) {
-        self.translate(&(normalize(&Vector::from(self.x)) * k))
+        self.translate(&(Vector::from(self.x).normalize() * k))
     }
 
     fn translate_forward(&mut self, k: f32) { self.translate(&(self.dir * k)) }
@@ -169,14 +172,14 @@ impl Camera for EnvironmentCamera {
     fn translate_backward(&mut self, k: f32) { self.translate(&(self.dir * -k)) }
 
     fn rotate(&mut self, angle: f32, axis: &Vector) {
-        let dir: Vector = self.target - self.orig;
+        let dir: Vector = &self.target - &self.orig;
         let t: Transform = rotate(angle, axis);
-        let dir = t * dir;
+        let dir: Vector = t * dir;
 
         // Check if the up vector is the same of view direction. If they are, skip this
         // operation (it would trigger a Singular matrix in MatrixInvert)
-        if dot(normalize(&dir), &self.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
-            self.target = self.orig + dir;
+        if dir.normalize().dot(&self.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
+            self.target = &self.orig + dir;
         }
     }
 
@@ -192,9 +195,9 @@ impl Camera for EnvironmentCamera {
         self.base.update(film_width, film_height, film_sub_region);
 
         // Used to translate the camera
-        self.dir = normalize(self.target - self.orig);
-        self.x = normalize(cross(self.dir, self.up));
-        self.y = normalize(cross(self.x, self.dir));
+        self.dir = (&self.target - &self.orig).normalize();
+        self.x = self.dir.cross(&self.up).normalize();
+        self.y = self.x.cross(&self.dir).normalize();
 
         // Initialize screen information
         let frame: f32 = film_width as f32 / film_height as f32;
@@ -238,7 +241,7 @@ impl Camera for EnvironmentCamera {
             *ray = self.base.motion_system.sample(ray.time) * &self.trans.camera_to_world * ray;
             // I need to normalize the direction vector again because the motion system
             // could include some kind of scale
-            ray.direction = normalize(&ray.direction);
+            ray.direction = ray.direction.normalize();
         } else {
             *ray = &self.trans.camera_to_world * ray;
         }
@@ -256,7 +259,7 @@ impl Camera for EnvironmentCamera {
             return false;
         }
 
-        let w = Vector::new(inverse(&self.trans.camera_to_world) * ray.direction);
+        let w = Vector::from(self.trans.camera_to_world.inverse() * ray.direction);
         let cos_theta = w.y;
         let theta = f32::min(1.0, cos_theta).acos();
         *y = self.base.film_height - 1 - (theta * self.base.film_height * PI);
@@ -292,18 +295,18 @@ impl Camera for EnvironmentCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        mut pdf_w: Option<f32>,
-        mut flux_to_radiance_factor: Option<f32>,
+        mut pdf_w: Option<&mut f32>,
+        mut flux_to_radiance_factor: Option<&mut f32>,
     ) {
-        let theta: f32 = PI * (self.base.film_height - film_y - 1.0) / self.base.film_height;
+        let theta: f32 = PI * (self.base.film_height as f32 - film_y - 1.0) / self.base.film_height;
         let camera_pdf_w = 1.0 / (2.0 * PI * PI * theta.sin());
 
         if pdf_w.is_some() {
-            pdf_w = Some(camera_pdf_w);
+            pdf_w = Some(&mut camera_pdf_w);
         }
 
         if flux_to_radiance_factor.is_some() {
-            flux_to_radiance_factor = Some(camera_pdf_w / (eye_distance * eye_distance));
+            flux_to_radiance_factor = Some(&mut (camera_pdf_w / (eye_distance * eye_distance)));
         }
     }
 
@@ -311,8 +314,8 @@ impl Camera for EnvironmentCamera {
         let mut props = self.base.to_properties();
 
         props.set("scene.camera.type", "environment");
-        props.set("scene.camera.lookat.orig", self.orig);
-        props.set("scene.camera.lookat.target", self.target);
+        props.set("scene.camera.lookat.orig", &self.orig);
+        props.set("scene.camera.lookat.target", &self.target);
         props.set("scene.camera.up", self.up);
 
         if !self.auto_update_screen_window {

@@ -8,7 +8,7 @@ const RAY_FLAGS_MASKED: u8 = 0x00000001;
 
 #[derive(TypedBuilder)]
 pub struct Ray {
-    #[builder(default)]
+    #[builder(default=Point::new(0.0, 0.0, 0.0))]
     pub origin: Point,
 
     #[builder(default)]

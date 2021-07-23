@@ -2,14 +2,14 @@
 #![allow(missing_docs)]
 #![allow(unused_variables, dead_code, unused_imports)]
 
-#[macro_use]
-extern crate bitflags;
+#[macro_use] extern crate bitflags;
 extern crate config;
-#[macro_use]
-extern crate downcast_rs;
-#[macro_use]
-extern crate log;
+#[macro_use] extern crate downcast_rs;
+#[macro_use] extern crate log;
 
 pub mod core;
 pub mod rays;
 pub mod slg;
+
+extern crate nalgebra as na;
+extern crate nalgebra_glm as glm;

@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use delegate::delegate;
 
-use crate::rays::geometry::vector::normalize;
 use crate::rays::geometry::{Point, Ray, Transform, Vector};
 use crate::rays::Properties;
 use crate::slg::cameras::camera::Camera;
@@ -103,24 +102,26 @@ impl Camera for StereoCamera {
 
     fn update(&mut self, film_width: u32, film_height: u32, film_sub_region: Option<[u32; 4]>) {
         // used to translate the camera
-        self.dir = normalize(self.target - self.orig);
-        self.x = normalize(&cross(self.dir, self.up));
-        self.y = normalize(&cross(self.x, self.dir));
+        self.dir = (self.target - self.orig).normalize();
+        self.x = self.dir.cross(&self.up).normalize();
+        self.y = self.x.cross(&self.dir).normalize();
 
         match self.stereo_type {
             StereoCameraType::StereoPerspective => {
                 // create left eye camera
                 let mut left = PerspectiveCamera::new(
+                    CameraType::Stereo,
                     self.orig - 0.5 * self.horiz_stereo_eyes_distance * self.x,
                     self.target,
                     self.up,
+                    None,
                 );
                 left.base().clip_hither = self.base.clip_hither;
                 left.base().clip_yon = self.base.clip_yon;
                 left.base().shutter_open = self.base.shutter_open;
                 left.base().shutter_close = self.base.shutter_close;
                 left.base().auto_volume = self.base.auto_volume;
-                left.base().volume = self.base.volume;
+                left.base().volume = self.base.volume.clone();
 
                 left.base().clipping_plane_center = self.base.clipping_plane_center;
                 left.base().clipping_plane_normal = self.base.clipping_plane_normal;
@@ -135,13 +136,15 @@ impl Camera for StereoCamera {
                 left.base().enable_oculus_rift_barrel = self.base.enable_oculus_rift_barrel;
 
                 left.base().update(film_width / 2, film_height, None);
-                self.left_eye = Box::new(left);
+                self.left_eye = Some(Box::new(left));
 
                 // Create right eye camera
                 let mut right = PerspectiveCamera::new(
+                    CameraType::Stereo,
                     self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.x,
                     self.base.target,
                     self.base.up,
+                    None,
                 );
 
                 right.base().clip_hither = self.clip_hither;
@@ -164,7 +167,7 @@ impl Camera for StereoCamera {
                 right.base().enable_oculus_rift_barrel = self.enable_oculus_rift_barrel;
 
                 right.base().update(film_width / 2, film_height, None);
-                self.right_eye = Box::new(right);
+                self.right_eye = Some(Box::new(right));
             },
             StereoCameraType::StereoEnvironment180 => {
                 // Create left eye camera
@@ -172,22 +175,24 @@ impl Camera for StereoCamera {
                     self.orig - 0.5 * self.horiz_stereo_eyes_distance * self.x,
                     self.target,
                     self.up,
+                    None,
                 );
                 left.base().screen_offset_x = -self.horiz_stereo_lens_distance * 0.5;
                 left.base().degrees = 180.0;
                 left.base().update(film_width / 2, film_height, None);
-                self.left_eye = Box::new(left);
+                self.left_eye = Some(Box::new(left));
 
                 // Create right eye camera
                 let mut right = EnvironmentCamera::new(
                     self.orig + 0.5 * self.horiz_stereo_eyes_distance * self.x,
                     self.target,
                     self.up,
+                    None,
                 );
                 right.base().screen_offset_x = self.horiz_stereo_lens_distance * 0.5;
                 right.base().degrees = 180.0;
                 right.base().update(film_width / 2, film_height, None);
-                self.right_eye = Box::new(right);
+                self.right_eye = Some(Box::new(right));
             },
             StereoCameraType::StereoEnvironment360 => {
                 // Create left eye camera
@@ -195,22 +200,24 @@ impl Camera for StereoCamera {
                     self.orig - 0.5 * self.horiz_stereo_eyes_distance * self.x,
                     self.target,
                     self.up,
+                    None,
                 );
                 left.base().screen_offset_x = -self.horiz_stereo_lens_distance * 0.5;
                 left.base().degrees = 360.0;
                 left.base().update(film_width, film_height / 2, None);
-                self.left_eye = Box::new(left);
+                self.left_eye = Some(Box::new(left));
 
                 // Create right eye camera
                 let mut right = EnvironmentCamera::new(
                     self.orig + 0.5 * self.horiz_stereo_eyes_distance * self.x,
                     self.target,
                     self.up,
+                    None,
                 );
                 right.base().screen_offset_x = self.horiz_stereo_lens_distance * 0.5;
                 right.base().degrees = 360.0;
                 right.base().update(film_width, film_height / 2, None);
-                self.right_eye = Box::new(right);
+                self.right_eye = Some(Box::new(right));
             },
         }
     }
@@ -220,7 +227,7 @@ impl Camera for StereoCamera {
         time: f32,
         film_x: f32,
         film_y: f32,
-        ray: &Ray,
+        ray: &mut Ray,
         vol_info: &PathVolumeInfo,
         u0: f32,
         u1: f32,
@@ -249,13 +256,13 @@ impl Camera for StereoCamera {
         }
     }
 
-    fn get_sample_position(&self, eye_ray: &Ray, film_x: f32, film_y: f32) -> bool {
+    fn get_sample_position(&self, eye_ray: &Ray, film_x: &mut f32, film_y: &mut f32) -> bool {
         self.left_eye
             .unwrap()
             .get_sample_position(eye_ray, film_x, film_y)
     }
 
-    fn sample_lens(&self, time: f32, u1: f32, u2: f32, lens_point: &Point) -> bool {
+    fn sample_lens(&self, time: f32, u1: f32, u2: f32, lens_point: &mut Point) -> bool {
         self.left_eye.unwrap().sample_lens(time, u1, u2, lens_point)
     }
 
