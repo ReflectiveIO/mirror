@@ -9,3 +9,5 @@ pub mod intersection;
 pub mod mesh;
 
 pub mod named_object;
+
+pub mod epsilon;

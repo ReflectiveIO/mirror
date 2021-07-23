@@ -2,7 +2,7 @@
 
 pub use self::core::context::Context;
 pub use self::core::dataset::Dataset;
-pub use self::core::{color, geometry, mesh};
+pub use self::core::{color, epsilon, geometry, mesh};
 pub use self::utils::properties::Properties;
 
 pub mod device {

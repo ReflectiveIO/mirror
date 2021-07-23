@@ -10,9 +10,7 @@ pub struct Point {
 }
 
 impl Point {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
-        Point { x, y, z }
-    }
+    pub fn new(x: f32, y: f32, z: f32) -> Self { Point { x, y, z } }
 
     /// Required by OpenSubdiv interface
     pub fn clear(&mut self) {
@@ -70,6 +68,19 @@ impl AddAssign<&Vector> for Point {
             y: self.y + rhs.y,
             z: self.z + rhs.z,
         };
+    }
+}
+
+/// The addition operator +.
+impl Add<Vector> for Point {
+    type Output = Self;
+
+    fn add(self, rhs: Vector) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
     }
 }
 

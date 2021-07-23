@@ -11,4 +11,5 @@ reorder_imports = true
 group_imports = "StdExternalCrate"
 report_fixme = "Always"
 report_todo = "Always"
+use_small_heuristics = "Default"
 wrap_comments = true

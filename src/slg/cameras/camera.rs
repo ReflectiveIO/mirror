@@ -108,13 +108,16 @@ impl BaseCamera {
         }
     }
 
+    #[inline]
+    pub fn get_type(&self) -> &CameraType { &self.camera_type }
+
     pub fn to_properties(&self) -> Properties {
         let mut props = Properties::new();
 
-        props.set("scene.camera.clip-hither", self.clip_hither);
-        props.set("scene.camera.clip-yon", self.clip_yon);
-        props.set("scene.camera.shutter-open", self.shutter_open);
-        props.set("scene.camera.shutter-close", self.shutter_close);
+        props.set("scene.camera.clip-hither", self.clip_hither as f64);
+        props.set("scene.camera.clip-yon", self.clip_yon as f64);
+        props.set("scene.camera.shutter-open", self.shutter_open as f64);
+        props.set("scene.camera.shutter-close", self.shutter_close as f64);
         props.set("scene.camera.auto-volume.enable", self.auto_volume);
 
         if self.volume.is_some() {

@@ -4,7 +4,7 @@ pub use self::motion::MotionSystem;
 pub use self::normal::Normal;
 pub use self::point::Point;
 pub use self::ray::{Ray, RayHit};
-pub use self::transform::Transform;
+pub use self::transform::*;
 pub use self::triangle::Triangle;
 pub use self::uv::UV;
 pub use self::vector::Vector;

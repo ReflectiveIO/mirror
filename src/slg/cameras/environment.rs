@@ -5,8 +5,9 @@ use std::sync::Arc;
 
 use super::camera::Camera;
 use crate::rays;
+use crate::rays::epsilon::{Epsilon, MachineEpsilon};
 use crate::rays::geometry::vector::{dot, normalize};
-use crate::rays::geometry::{Point, Ray, Transform, Vector};
+use crate::rays::geometry::{inverse, look_at, Point, Ray, Transform, Vector};
 use crate::rays::utils::clamp;
 use crate::rays::Properties;
 use crate::slg::cameras::{BaseCamera, CameraType};
@@ -91,7 +92,7 @@ impl EnvironmentCamera {
         if self.orig == self.target {
             trans.camera_to_world = Transform::default();
         } else {
-            let world_to_camera = lookat(self.orig, self.target, self.up);
+            let world_to_camera = look_at(&self.orig, &self.target, &self.up);
             trans.camera_to_world = inverse(world_to_camera);
         }
 
@@ -130,11 +131,7 @@ impl EnvironmentCamera {
 
         ray.update(
             &self.ray_origin,
-            Vector::new(
-                -theta.sin() * phi.sin(),
-                theta.cos(),
-                -theta.sin() * phi.cos(),
-            ),
+            &Vector::new(-theta.sin() * phi.sin(), theta.cos(), -theta.sin() * phi.cos()),
         );
     }
 }
@@ -233,35 +230,35 @@ impl Camera for EnvironmentCamera {
         self.init_ray(ray, film_x, film_y);
         vol_info.add_volume(&self.base.volume);
 
-        ray.mint = MachineEpsilon::E(ray.o);
-        ray.maxt = self.base.clip_yon - self.base.clip_hither;
+        ray.start = MachineEpsilon::epsilon(&ray.origin);
+        ray.end = self.base.clip_yon - self.base.clip_hither;
         ray.time = time;
 
         if self.base.motion_system.is_some() {
             *ray = self.base.motion_system.sample(ray.time) * &self.trans.camera_to_world * ray;
             // I need to normalize the direction vector again because the motion system
             // could include some kind of scale
-            ray.d = normalize(ray.d);
+            ray.direction = normalize(&ray.direction);
         } else {
             *ray = &self.trans.camera_to_world * ray;
         }
     }
 
     fn clamp_ray(&self, ray: &mut Ray) {
-        *ray.mint = max(ray.mint, &self.base.clip_hither);
-        *ray.maxt = min(ray.maxt, &self.base.clip_yon);
+        ray.start = f32::max(ray.start, self.base.clip_hither);
+        ray.end = f32::min(ray.end, self.base.clip_yon);
     }
 
     fn get_sample_position(&self, ray: &Ray, x: &mut f32, y: &mut f32) -> bool {
-        if ray.maxt.is_infinate()
-            && (ray.maxt < self.base.clip_hither || ray.maxt > self.base.clip_yon)
+        if ray.end.is_infinite()
+            && (ray.end < self.base.clip_hither || ray.end > self.base.clip_yon)
         {
             return false;
         }
 
-        let w = Vector::new(inverse(&self.trans.camera_to_world) * ray.d);
+        let w = Vector::new(inverse(&self.trans.camera_to_world) * ray.direction);
         let cos_theta = w.y;
-        let theta = min(1.0, cos_theta).acos();
+        let theta = f32::min(1.0, cos_theta).acos();
         *y = self.base.film_height - 1 - (theta * self.base.film_height * PI);
         let sin_theta = clamp(1.0 - cos_theta * cos_theta, 1e-5f32, 1.0).sqrt();
 
@@ -295,18 +292,18 @@ impl Camera for EnvironmentCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        pdf_w: Option<&mut f32>,
-        flux_to_radiance_factor: Option<&mut f32>,
+        mut pdf_w: Option<f32>,
+        mut flux_to_radiance_factor: Option<f32>,
     ) {
         let theta: f32 = PI * (self.base.film_height - film_y - 1.0) / self.base.film_height;
         let camera_pdf_w = 1.0 / (2.0 * PI * PI * theta.sin());
 
         if pdf_w.is_some() {
-            *pdf_w = camera_pdf_w;
+            pdf_w = Some(camera_pdf_w);
         }
 
         if flux_to_radiance_factor.is_some() {
-            *flux_to_radiance_factor = camera_pdf_w / (eye_distance * eye_distance);
+            flux_to_radiance_factor = Some(camera_pdf_w / (eye_distance * eye_distance));
         }
     }
 
@@ -322,7 +319,7 @@ impl Camera for EnvironmentCamera {
             props.set("scene.camera.screen-window", &self.screen_window);
         }
 
-        props.set("scene.camera.environment.degrees", self.degrees);
+        props.set("scene.camera.environment.degrees", self.degrees as f64);
 
         return props;
     }

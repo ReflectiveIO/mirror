@@ -117,11 +117,11 @@ impl Camera for PerspectiveCamera {
             global_dir *= self.inner.motion_system.sample(ray.time);
         }
 
-        let cosi: f32 = vector::dot(&ray.d, &global_dir);
+        let cosi: f32 = vector::dot(&ray.direction, &global_dir);
         if cosi <= 0.0
-            || (!ray.maxt.is_infinite()
-                && (ray.maxt * cosi < self.inner.clip_hither
-                    || ray.maxt * cosi > self.inner.clip_yon))
+            || (!ray.end.is_infinite()
+                && (ray.end * cosi < self.inner.clip_hither
+                    || ray.end * cosi > self.inner.clip_yon))
         {
             return false;
         }
@@ -129,9 +129,9 @@ impl Camera for PerspectiveCamera {
         let mut p0: Point;
 
         if self.inner.lens_radius > 0.0 {
-            p0 = ray.o + ray.d * (self.inner.focal_distance / cosi)
+            p0 = ray.origin + ray.direction * (self.inner.focal_distance / cosi)
         } else {
-            p0 = ray.o + ray.d
+            p0 = ray.origin + ray.direction
         }
         if self.inner.motion_system.is_some() {
             p0 *= self.inner.motion_system.sample_inverse(ray.time);
@@ -152,7 +152,7 @@ impl Camera for PerspectiveCamera {
             // World arbitrary clipping plane support
             if self.inner.enable_clipping_plane {
                 // check if the ray end point is on the not visible side of the plane
-                let endpoint = ray.maxt;
+                let endpoint = ray.end;
                 if normal::dot(
                     &self.inner.clipping_plane_normal,
                     endpoint - *self.inner.clipping_plane_center,
@@ -196,7 +196,7 @@ impl Camera for PerspectiveCamera {
             global_dir *= self.inner.motion_system.sample(eye_ray.time);
         }
 
-        let cos_at_camera = vector::dot(&eye_ray.d, &global_dir);
+        let cos_at_camera = vector::dot(&eye_ray.direction, &global_dir);
         if cos_at_camera <= 0.0 {
             if pdf_w.is_some() {
                 *pdf_w = 0.0;
