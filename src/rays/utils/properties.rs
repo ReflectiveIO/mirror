@@ -29,8 +29,8 @@ impl Properties {
         self.props.get(name)
     }
 
-    pub fn set<T: Into<Value>>(&mut self, name: &str, value: T) {
-        if let Err(err) = self.props.set(name, value) {
+    pub fn set<S: Into<String>, T: Into<Value>>(&mut self, name: S, value: T) {
+        if let Err(err) = self.props.set(name.into().as_str(), value) {
             error!("set value to properties error: {}", err);
         }
     }

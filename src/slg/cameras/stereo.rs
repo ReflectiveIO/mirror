@@ -299,11 +299,11 @@ impl Camera for StereoCamera {
 
         props.set(
             "scene.camera.eyes-distance",
-            self.horiz_stereo_eyes_distance,
+            self.horiz_stereo_eyes_distance as f64,
         );
         props.set(
             "scene.camera.lens-distance",
-            self.horiz_stereo_lens_distance,
+            self.horiz_stereo_lens_distance as f64,
         );
 
         return props;
