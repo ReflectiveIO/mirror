@@ -1,3 +1,7 @@
+use std::any::Any;
+
+use downcast_rs::Downcast;
+
 use crate::core::SceneTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::device::IntersectionDevice;
@@ -10,9 +14,11 @@ use crate::slg::bsdf::BSDF;
 use crate::slg::cameras::{BaseCamera, Camera, CameraType, EnvironmentCamera};
 use crate::slg::film::SampleResult;
 use crate::slg::image_map::{ChannelSelectionType, ImageMap, ImageMapCache, WrapType};
-use crate::slg::light::traits::{LightSource, NotIntersectableLightSource};
-use crate::slg::light::LightSourceDefinitions;
-use crate::slg::material::{Material, MaterialDefinitions};
+use crate::slg::light::traits::{
+    IntersectableLightSource, LightSource, NotIntersectableLightSource,
+};
+use crate::slg::light::{LightSourceDefinitions, Spotlight, TriangleLight};
+use crate::slg::material::{Material, MaterialDefinitions, MaterialTrait};
 use crate::slg::scene::{ExtMeshCache, SceneObject, SceneObjectDefinitions};
 use crate::slg::shape::TessellationType;
 use crate::slg::textures::{Texture, TextureDefinitions, TextureMapping2D, TextureMapping3D};
@@ -129,8 +135,7 @@ impl Scene {
         // Save all not intersectable light sources
         for name in self.light_defs.names() {
             let light_source = self.light_defs.get_light_source(name.as_str());
-            let light_source = light_source.downcast_ref::<dyn NotIntersectableLightSource>();
-            if light_source {
+            if let Some(light_source) = light_source.downcast_ref::<Spotlight>() {
                 props.merge(&light_source.to_properties(&self.img_map_cache, real_filename));
             }
         }
@@ -152,15 +157,15 @@ impl Scene {
         for name in mat_names {
             let material = self.mat_defs.get(&name);
             // Check if it is a volume
-            let volume = material.downcast_ref::<Volume>();
-            if volume {
-                props.merge(&volume.to_properties());
+            if let Some(volume) = material.downcast_ref::<Volume>() {
+                props.merge(&volume.to_properties(&self.img_map_cache, real_filename));
             }
         }
 
         // Set the default world interior/exterior volume if required
         if self.default_world_volume.is_some() {
-            let index = self.mat_defs.index(&self.default_world_volume.unwrap());
+            let vol: Box<dyn MaterialTrait> = Box::new(self.default_world_volume.unwrap());
+            let index = self.mat_defs.index(&vol);
             props.set(
                 "scene.world.volume.default",
                 self.mat_defs.get(&index).get_name().as_str(),
@@ -170,9 +175,8 @@ impl Scene {
         // Writes the materials information
         for name in mat_names {
             let material = self.mat_defs.get(&name);
-            // Check if it is a volume
-            let volume = material.downcast_ref::<Volume>();
-            if !volume {
+            // Check if it is not a volume
+            if !material.is::<Volume>() {
                 props.merge(&material.to_properties(&self.img_map_cache, real_filename));
             }
         }
@@ -222,7 +226,7 @@ impl Scene {
     // Use one of the following methods, do not directly call
     // extMeshCache.DefineExtMesh()
 
-    pub fn define_mesh(&mut self, mesh: &ExtMesh) {
+    pub fn define_mesh(&mut self, mesh: &Box<dyn ExtMesh>) {
         let shape_name: &String = mesh.get_name();
 
         if self.ext_mesh_cache.is_ext_mesh_defined(shape_name) {
@@ -241,8 +245,10 @@ impl Scene {
                 let obj_name = object.get_name();
 
                 // Delete all old triangle lights
-                self.light_defs
-                    .delete_light_source_start_with(obj_name + TRIANGLE_LIGHT_POSTFIX);
+                self.light_defs.delete_light_source_start_with(&*format!(
+                    "{}{}",
+                    obj_name, TRIANGLE_LIGHT_POSTFIX
+                ));
 
                 // Add all new triangle lights
                 info!(
@@ -276,9 +282,19 @@ impl Scene {
         cols: Box<Spectrum>,
         alphas: Vec<f32>,
     ) {
-        let mesh = ExtTriangleMesh::new(ply_nb_tris, ply_nb_verts, p, vi, n, uvs, cols, alphas);
+        let mut mesh = ExtTriangleMesh::new(
+            ply_nb_tris,
+            ply_nb_verts,
+            p,
+            vi,
+            n,
+            vec![uvs],
+            vec![cols],
+            vec![alphas],
+        );
         mesh.set_name(shape_name);
-        self.define_mesh(mesh);
+        let mesh: Box<dyn ExtMesh> = Box::new(mesh);
+        self.define_mesh(&mesh);
     }
 
     pub fn define_mesh_ext(
@@ -293,9 +309,10 @@ impl Scene {
         cols: Vec<Box<Spectrum>>,
         alphas: Vec<Vec<f32>>,
     ) {
-        let mesh = ExtTriangleMesh::new(ply_nb_verts, ply_nb_tris, p, vi, n, uvs, cols, alphas);
+        let mut mesh = ExtTriangleMesh::new(ply_nb_verts, ply_nb_tris, p, vi, n, uvs, cols, alphas);
         mesh.set_name(shape_name);
-        self.define_mesh(mesh);
+        let mesh: Box<dyn ExtMesh> = Box::new(mesh);
+        self.define_mesh(&mesh);
     }
 
     pub fn define_mesh_trans(
@@ -312,8 +329,7 @@ impl Scene {
             ));
         }
 
-        let et_mesh = mesh.downcast_ref::<ExtTriangleMesh>();
-        if !et_mesh {
+        if !mesh.unwrap().is::<ExtTriangleMesh>() {
             return Err(format!(
                 "Wrong mesh type in Scene::define_mesh(): {}",
                 mesh_name
@@ -342,8 +358,7 @@ impl Scene {
             ));
         }
 
-        let et_mesh = mesh.downcast_ref::<ExtTriangleMesh>();
-        if !et_mesh {
+        if !mesh.unwrap().is::<ExtTriangleMesh>() {
             return Err(format!(
                 "Wrong mesh type in Scene::define_mesh(): {}",
                 mesh_name

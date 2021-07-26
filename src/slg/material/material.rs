@@ -1,3 +1,5 @@
+use downcast_rs::Downcast;
+
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
@@ -248,6 +250,12 @@ impl Material {
     fn update_emitted_factor(&mut self) {}
 }
 
+impl NamedObject for Material {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
+}
+
 impl MaterialTrait for Material {
     fn get_type(&self) -> MaterialType { todo!() }
 
@@ -351,7 +359,7 @@ impl MaterialTrait for Material {
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }
 
-pub trait MaterialTrait {
+pub trait MaterialTrait: Downcast + NamedObject {
     fn get_type(&self) -> MaterialType;
     fn get_event_types(&self) -> BSDFEvent;
     fn is_light_source(&self) -> bool { false }
@@ -457,6 +465,7 @@ pub trait MaterialTrait {
 
     fn update_avg_pass_through_transparency(&mut self) {}
 }
+impl_downcast!(MaterialTrait);
 
 impl NamedObject for Box<dyn MaterialTrait> {
     fn get_name(&self) -> &String { self.get_name() }

@@ -6,7 +6,7 @@ use crate::slg::material::MaterialTrait;
 use crate::slg::scene::ExtMeshCache;
 
 pub struct SceneObject {
-    mesh: ExtMesh,
+    mesh: Box<dyn ExtMesh>,
     material: Box<dyn MaterialTrait>,
     object_id: u32,
     bake_map: ImageMap,
@@ -15,7 +15,7 @@ pub struct SceneObject {
 }
 
 impl SceneObject {
-    pub fn new(m: ExtMesh, mt: Box<dyn MaterialTrait>, id: u32, visible: bool) -> Self {
+    pub fn new(m: Box<dyn ExtMesh>, mt: Box<dyn MaterialTrait>, id: u32, visible: bool) -> Self {
         Self {
             mesh: m,
             material: mt,
@@ -26,7 +26,7 @@ impl SceneObject {
         }
     }
 
-    pub fn get_ext_mesh(&self) -> &ExtMesh { &self.mesh }
+    pub fn get_ext_mesh(&self) -> &Box<dyn ExtMesh> { &self.mesh }
 
     pub fn get_material(&self) -> &Box<dyn MaterialTrait> { &self.material }
 

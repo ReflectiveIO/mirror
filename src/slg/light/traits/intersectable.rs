@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use downcast_rs::Downcast;
+
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Normal, Point, Ray};
 use crate::slg::bsdf::hitpoint::HitPoint;
@@ -11,7 +13,7 @@ use crate::slg::material::{Material, MaterialTrait};
 use crate::slg::Scene;
 
 /// Intersectable LightSource interface
-pub trait IntersectableLightSource: LightSource {
+pub trait IntersectableLightSource: LightSource + Downcast {
     fn is_intersectable(&self) -> bool { true }
 
     fn get_avg_pass_through_transparency(&self) -> f32 {
@@ -43,3 +45,4 @@ pub trait IntersectableLightSource: LightSource {
 
     fn light_material(&self) -> &Material;
 }
+impl_downcast!(IntersectableLightSource);

@@ -1,8 +1,7 @@
+use downcast_rs::Downcast;
+
 use crate::rays::mesh::Mesh;
+use crate::rays::object::NamedObject;
 
-#[derive(Default)]
-pub struct ExtMesh;
-
-impl Mesh for ExtMesh {
-    fn get_total_triangle_count(&self) -> u32 { 0 }
-}
+pub trait ExtMesh: Mesh + Downcast {}
+impl_downcast!(ExtMesh);

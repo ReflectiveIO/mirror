@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use downcast_rs::Downcast;
+
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Normal, Point, Ray, Transform};
 use crate::rays::Properties;
@@ -11,7 +13,7 @@ use crate::slg::light::LightSourceType;
 use crate::slg::material::{Material, MaterialTrait};
 use crate::slg::Scene;
 
-pub trait NotIntersectableLightSource: LightSource {
+pub trait NotIntersectableLightSource: LightSource + Downcast {
     fn preprocess(&self);
     fn get_type(&self) -> LightSourceType;
 
@@ -79,3 +81,4 @@ pub trait NotIntersectableLightSource: LightSource {
     fn normalize_temperature(&self) -> bool;
     fn to_properties(&self, img_map_cache: &ImageMapCache, real_filename: bool) -> Properties;
 }
+impl_downcast!(NotIntersectableLightSource);

@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use downcast_rs::Downcast;
+
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Normal, Point, Ray};
 use crate::rays::object::NamedObject;
@@ -8,7 +10,7 @@ use crate::slg::image_map::ImageMap;
 use crate::slg::light::LightSourceType;
 use crate::slg::Scene;
 
-pub trait LightSource {
+pub trait LightSource: Downcast {
     fn get_type(&self) -> LightSourceType;
 
     fn is_environmental(&self) -> bool { false }
@@ -67,6 +69,7 @@ pub trait LightSource {
 
     fn add_referenced_image_maps(&mut self, maps: HashSet<ImageMap>) {}
 }
+impl_downcast!(LightSource);
 
 impl NamedObject for Box<dyn LightSource> {
     fn get_name(&self) -> &String { todo!() }

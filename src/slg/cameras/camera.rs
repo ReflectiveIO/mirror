@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::rays::geometry::{MotionSystem, Point, Ray, Transform, Vector};
+use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::utils::PathVolumeInfo;
@@ -121,7 +122,10 @@ impl BaseCamera {
         props.set("scene.camera.auto-volume.enable", self.auto_volume);
 
         if self.volume.is_some() {
-            props.set("scene.camera.volume", self.volume.unwrap().get_name())
+            props.set(
+                "scene.camera.volume",
+                self.volume.unwrap().get_name().to_string(),
+            )
         }
 
         if self.motion_system.is_some() {
