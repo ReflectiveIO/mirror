@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use delegate::delegate;
 
-use crate::rays::geometry::{normal, vector, Dot, Point, Ray, Transform, Vector};
+use crate::rays::geometry::{Dot, Point, Ray, Transform, Vector};
 use crate::rays::utils::Distribution2D;
 use crate::rays::Properties;
 use crate::slg::cameras::camera::Camera;

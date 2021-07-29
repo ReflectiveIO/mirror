@@ -1,4 +1,3 @@
-use crate::na::storage::ContiguousStorage;
 use crate::rays::geometry::{Matrix4x4, Transform};
 use crate::rays::Properties;
 

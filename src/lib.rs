@@ -10,6 +10,3 @@ extern crate config;
 pub mod core;
 pub mod rays;
 pub mod slg;
-
-extern crate nalgebra as na;
-extern crate nalgebra_glm as glm;
