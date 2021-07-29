@@ -18,4 +18,13 @@ mod ray;
 mod transform;
 mod triangle;
 mod uv;
-pub mod vector;
+mod vector;
+
+pub trait Cross<Rhs = Self> {
+    type Output;
+    fn cross(&self, rhs: &Rhs) -> Self::Output;
+}
+
+pub trait Dot<Rhs = Self> {
+    fn dot(&self, rhs: &Rhs) -> f32;
+}

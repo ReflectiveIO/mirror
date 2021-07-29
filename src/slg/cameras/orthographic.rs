@@ -59,7 +59,7 @@ impl Camera for OrthographicCamera {
             fn rotate_down(&mut self, angle: f32);
             fn update(&mut self, film_width: u32, film_height: u32, film_sub_region: Option<[u32; 4]>);
             fn update_auto(&self);
-            fn generate_ray(&self,time: f32, film_x: f32, film_y: f32, ray: &mut Ray, vol_info: &PathVolumeInfo, u0: f32, u1: f32);
+            fn generate_ray(&self,time: f32, film_x: f32, film_y: f32, ray: &mut Ray, vol_info: &mut PathVolumeInfo, u0: f32, u1: f32);
         }
     }
 

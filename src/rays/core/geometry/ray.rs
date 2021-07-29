@@ -1,7 +1,9 @@
+use std::ops::Mul;
+
 use typed_builder::TypedBuilder;
 
 use crate::rays::epsilon::{Epsilon, MachineEpsilon};
-use crate::rays::geometry::{Point, Vector};
+use crate::rays::geometry::{Matrix4x4, Point, Vector};
 
 const RAY_FLAGS_NONE: u8 = 0x00000000;
 const RAY_FLAGS_MASKED: u8 = 0x00000001;
@@ -56,6 +58,12 @@ impl Ray {
 
 impl Default for Ray {
     fn default() -> Self { Ray::builder().build() }
+}
+
+impl Mul<Matrix4x4> for Ray {
+    type Output = Ray;
+
+    fn mul(self, rhs: Matrix4x4) -> Self::Output { todo!() }
 }
 
 #[derive(Default)]

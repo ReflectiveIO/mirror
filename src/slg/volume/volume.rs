@@ -7,8 +7,16 @@ use crate::slg::bsdf::BSDFEvent;
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::{MaterialTrait, MaterialType};
 
-#[derive(Default)]
-pub struct Volume;
+#[derive(Default, Clone, PartialEq)]
+pub struct Volume {
+    priority: i8,
+}
+
+impl Volume {
+    pub fn set_priority(&mut self, p: i8) { self.priority = p; }
+
+    pub const fn get_priority(&self) -> i8 { self.priority }
+}
 
 impl NamedObject for Volume {
     fn get_name(&self) -> &String { todo!() }

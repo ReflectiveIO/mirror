@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use delegate::delegate;
 
-use crate::rays::geometry::{normal, vector, Point, Ray, Transform, Vector};
+use crate::rays::geometry::{normal, vector, Dot, Point, Ray, Transform, Vector};
 use crate::rays::utils::Distribution2D;
 use crate::rays::Properties;
 use crate::slg::cameras::camera::Camera;
@@ -107,13 +107,13 @@ impl Camera for PerspectiveCamera {
             fn rotate_down(&mut self, angle: f32);
             fn update(&mut self, film_width: u32, film_height: u32, film_sub_region: Option<[u32; 4]>);
             fn update_auto(&self);
-            fn generate_ray(&self,time: f32, film_x: f32, film_y: f32, ray: &mut Ray, vol_info: &PathVolumeInfo, u0: f32, u1: f32);
+            fn generate_ray(&self,time: f32, film_x: f32, film_y: f32, ray: &mut Ray, vol_info: &mut PathVolumeInfo, u0: f32, u1: f32);
         }
     }
 
     fn get_sample_position(&self, ray: &Ray, x: &mut f32, y: &mut f32) -> bool {
-        let mut global_dir = Vector::from(0.0);
-        if self.inner.motion_system.is_some() {
+        let mut global_dir = Vector::default();
+        if self.base.motion_system.is_some() {
             global_dir *= self.inner.motion_system.sample(ray.time);
         }
 
@@ -129,9 +129,9 @@ impl Camera for PerspectiveCamera {
         let mut p0: Point;
 
         if self.inner.lens_radius > 0.0 {
-            p0 = &ray.origin + ray.direction * (self.inner.focal_distance / cosi)
+            p0 = ray.origin + ray.direction * (self.inner.focal_distance / cosi)
         } else {
-            p0 = &ray.origin + ray.direction
+            p0 = ray.origin + ray.direction
         }
         if self.inner.motion_system.is_some() {
             p0 *= self.inner.motion_system.sample_inverse(ray.time);

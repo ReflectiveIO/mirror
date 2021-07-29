@@ -52,7 +52,7 @@ pub trait Camera {
         film_x: f32,
         film_y: f32,
         ray: &mut Ray,
-        vol_info: &PathVolumeInfo,
+        vol_info: &mut PathVolumeInfo,
         u0: f32,
         u1: f32,
     );
@@ -111,6 +111,17 @@ impl BaseCamera {
 
     #[inline]
     pub fn get_type(&self) -> &CameraType { &self.camera_type }
+
+    pub fn update(&mut self, width: u32, height: u32, sub_region: Option<[u32; 4]>) {
+        self.film_width = width;
+        self.film_height = height;
+
+        if let Some(region) = sub_region {
+            self.film_sub_region = [region[0], region[1], region[2], region[3]]
+        } else {
+            self.film_sub_region = [0, width - 1, 0, height - 1]
+        }
+    }
 
     pub fn to_properties(&self) -> Properties {
         let mut props = Properties::new();

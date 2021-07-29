@@ -3,10 +3,14 @@ use std::cmp::{max, min};
 use std::f32::consts::PI;
 use std::sync::Arc;
 
+use config::Value;
+
 use super::camera::Camera;
 use crate::rays;
 use crate::rays::epsilon::{Epsilon, MachineEpsilon, DEFAULT_EPSILON_STATIC};
-use crate::rays::geometry::{rotate, scale, translate, Matrix4x4, Point, Ray, Transform, Vector};
+use crate::rays::geometry::{
+    look_at, rotate, scale, translate, Cross, Dot, Matrix4x4, Point, Ray, Transform, Vector,
+};
 use crate::rays::utils::{clamp, radians};
 use crate::rays::Properties;
 use crate::slg::cameras::{BaseCamera, CameraType};
@@ -48,10 +52,7 @@ impl EnvironmentCamera {
         let mut screen_window: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
         if let Some(w) = sw {
             auto_update_screen_window = false;
-            screen_window[0] = w[0];
-            screen_window[1] = w[1];
-            screen_window[2] = w[2];
-            screen_window[3] = w[3];
+            screen_window = w;
         } else {
             auto_update_screen_window = true;
         }
@@ -86,34 +87,41 @@ impl EnvironmentCamera {
     pub fn get_pixel_area(&self) -> f32 { self.pixel_area }
 
     fn init_camera_transforms(&mut self, trans: &mut CameraTransforms) {
-        // This is a trick i use from LuxCoreRender to set camera_to_world to identity
-        // matrix.
-        if self.orig == self.target {
-            trans.camera_to_world = Transform::default();
-        } else {
-            let world_to_camera = Matrix4x4::look_at_rh(&self.orig, &self.target, &self.up);
-            trans.camera_to_world = world_to_camera.inverse();
-        }
-
-        // Compute environment camera transformations
-        trans.screen_to_camera = Transform::default();
-        trans.screen_to_world = &trans.camera_to_world * &trans.screen_to_camera;
-
-        // Compute environment camera screen transformation
-        trans.raster_to_screen = translate(
-            Vector::new(
-                self.screen_window[0] + self.screen_offset_x,
-                self.screen_window[3] + self.screen_offset_y,
-                0.0,
-            ) * scale(
-                self.screen_window[1] - self.screen_window[0],
-                self.screen_window[2] - self.screen_window[3],
-                1.0,
-            ) * scale(1.0 / self.base.film_width, 1.0 / self.base.film_height, 1.0),
-        );
-
-        trans.raster_to_camera = &trans.screen_to_camera * &trans.raster_to_screen;
-        trans.raster_to_world = &trans.screen_to_world * &trans.raster_to_screen;
+        todo!()
+        // // This is a trick i use from LuxCoreRender to set camera_to_world to
+        // identity // matrix.
+        // if self.orig == self.target {
+        //     trans.camera_to_world = Transform::default();
+        // } else {
+        //     let world_to_camera = look_at(&self.orig, &self.target,
+        // &self.up);     trans.camera_to_world =
+        // world_to_camera.inverse(); }
+        //
+        // // Compute environment camera transformations
+        // trans.screen_to_camera = Transform::default();
+        // trans.screen_to_world = &trans.camera_to_world *
+        // &trans.screen_to_camera;
+        //
+        // // Compute environment camera screen transformation
+        // trans.raster_to_screen = translate(
+        //     &(Vector::new(
+        //         self.screen_window[0] + self.screen_offset_x,
+        //         self.screen_window[3] + self.screen_offset_y,
+        //         0.0,
+        //     ) * scale(
+        //         self.screen_window[1] - self.screen_window[0],
+        //         self.screen_window[2] - self.screen_window[3],
+        //         1.0,
+        //     ) * scale(
+        //         1.0 / self.base.film_width as f32,
+        //         1.0 / self.base.film_height as f32,
+        //         1.0,
+        //     )),
+        // );
+        //
+        // trans.raster_to_camera = &trans.screen_to_camera *
+        // &trans.raster_to_screen; trans.raster_to_world =
+        // &trans.screen_to_world * &trans.raster_to_screen;
     }
 
     fn init_pixel_area(&mut self) {
@@ -124,9 +132,11 @@ impl EnvironmentCamera {
     }
 
     fn init_ray(&self, ray: &mut Ray, film_x: f32, film_y: f32) {
-        let theta: f32 = PI * (self.base.film_height - film_y - 1.0) / self.base.film_height;
-        let phi: f32 =
-            radians((360.0 - self.degrees) * 0.5 + self.degrees * film_x / self.base.film_width);
+        let theta: f32 =
+            PI * (self.base.film_height as f32 - film_y - 1.0) / self.base.film_height as f32;
+        let phi: f32 = radians(
+            (360.0 - self.degrees) * 0.5 + self.degrees * film_x / self.base.film_width as f32,
+        );
 
         ray.update(
             &self.ray_origin,
@@ -172,14 +182,14 @@ impl Camera for EnvironmentCamera {
     fn translate_backward(&mut self, k: f32) { self.translate(&(self.dir * -k)) }
 
     fn rotate(&mut self, angle: f32, axis: &Vector) {
-        let dir: Vector = &self.target - &self.orig;
+        let dir: Vector = Vector::from(self.target - self.orig);
         let t: Transform = rotate(angle, axis);
         let dir: Vector = t * dir;
 
         // Check if the up vector is the same of view direction. If they are, skip this
         // operation (it would trigger a Singular matrix in MatrixInvert)
         if dir.normalize().dot(&self.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
-            self.target = &self.orig + dir;
+            self.target = self.orig + dir;
         }
     }
 
@@ -195,7 +205,7 @@ impl Camera for EnvironmentCamera {
         self.base.update(film_width, film_height, film_sub_region);
 
         // Used to translate the camera
-        self.dir = (&self.target - &self.orig).normalize();
+        self.dir = Vector::from(self.target - self.orig).normalize();
         self.x = self.dir.cross(&self.up).normalize();
         self.y = self.x.cross(&self.dir).normalize();
 
@@ -226,7 +236,7 @@ impl Camera for EnvironmentCamera {
         film_x: f32,
         film_y: f32,
         ray: &mut Ray,
-        vol_info: &PathVolumeInfo,
+        vol_info: &mut PathVolumeInfo,
         u0: f32,
         u1: f32,
     ) {
@@ -237,8 +247,8 @@ impl Camera for EnvironmentCamera {
         ray.end = self.base.clip_yon - self.base.clip_hither;
         ray.time = time;
 
-        if self.base.motion_system.is_some() {
-            *ray = self.base.motion_system.sample(ray.time) * &self.trans.camera_to_world * ray;
+        if let Some(motion_system) = &self.base.motion_system {
+            *ray = ray * motion_system.sample(ray.time) * &self.trans.camera_to_world;
             // I need to normalize the direction vector again because the motion system
             // could include some kind of scale
             ray.direction = ray.direction.normalize();
@@ -262,7 +272,7 @@ impl Camera for EnvironmentCamera {
         let w = Vector::from(self.trans.camera_to_world.inverse() * ray.direction);
         let cos_theta = w.y;
         let theta = f32::min(1.0, cos_theta).acos();
-        *y = self.base.film_height - 1 - (theta * self.base.film_height * PI);
+        *y = self.base.film_height as f32 - 1.0 - (theta * self.base.film_height as f32 * PI);
         let sin_theta = clamp(1.0 - cos_theta * cos_theta, 1e-5f32, 1.0).sqrt();
 
         let cos_phi = -w.z / sin_theta;
@@ -271,19 +281,19 @@ impl Camera for EnvironmentCamera {
         if w.x >= 0.0 {
             phi = 2.0 * PI - phi;
         }
-        *x = (phi - radians((360.0 - self.degrees) * 0.5)) * self.base.film_width
+        *x = (phi - radians((360.0 - self.degrees) * 0.5)) * self.base.film_width as f32
             / radians(self.degrees);
 
         return true;
     }
 
     fn sample_lens(&self, time: f32, u1: f32, u2: f32, p: &mut Point) -> bool {
-        let lens_point = Point::new(0.0, 0.0, 0.0);
+        let lens_point: Point = Point::default();
 
-        if self.base.motion_system.is_some() {
-            *p = self.base.motion_system.sample(time) * (&self.trans.camera_to_world * lens_point);
+        if let Some(motion_system) = &self.base.motion_system {
+            *p = lens_point * &self.trans.camera_to_world * motion_system.sample(time);
         } else {
-            *p = &self.trans.camera_to_world * lens_point;
+            *p = lens_point * &self.trans.camera_to_world;
         }
 
         return true;
@@ -298,8 +308,9 @@ impl Camera for EnvironmentCamera {
         mut pdf_w: Option<&mut f32>,
         mut flux_to_radiance_factor: Option<&mut f32>,
     ) {
-        let theta: f32 = PI * (self.base.film_height as f32 - film_y - 1.0) / self.base.film_height;
-        let camera_pdf_w = 1.0 / (2.0 * PI * PI * theta.sin());
+        let theta: f32 =
+            PI * (self.base.film_height as f32 - film_y - 1.0) / self.base.film_height as f32;
+        let mut camera_pdf_w = 1.0 / (2.0 * PI * PI * theta.sin());
 
         if pdf_w.is_some() {
             pdf_w = Some(&mut camera_pdf_w);

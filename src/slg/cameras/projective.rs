@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use delegate::delegate;
 
-use crate::rays::geometry::{rotate, Normal, Point, Ray, Transform, Vector};
+use crate::rays::geometry::{rotate, Dot, Normal, Point, Ray, Transform, Vector};
 use crate::rays::Properties;
 use crate::slg::cameras::camera::Camera;
 use crate::slg::cameras::{BaseCamera, CameraType};
@@ -125,7 +125,7 @@ impl Camera for ProjectiveCamera {
     fn translate_backward(&mut self, k: f32) { self.translate(&(-k * self.dir)); }
 
     fn rotate(&mut self, angle: f32, axis: &Vector) {
-        let mut dir = &self.target - &self.orig;
+        let mut dir = self.target - self.orig;
         let t = rotate(angle, axis);
         let dir: Vector = t * dir;
 
@@ -133,7 +133,7 @@ impl Camera for ProjectiveCamera {
         // skip this operation (it would trigger a Singular matrix in
         // MatrixInvert)
         if dir.normalize().dot(&self.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
-            self.target = &self.orig + dir;
+            self.target = self.orig + dir;
         }
     }
 
@@ -151,7 +151,7 @@ impl Camera for ProjectiveCamera {
         film_x: f32,
         film_y: f32,
         ray: &mut Ray,
-        vol_info: &PathVolumeInfo,
+        vol_info: &mut PathVolumeInfo,
         u0: f32,
         u1: f32,
     ) {

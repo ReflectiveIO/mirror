@@ -228,28 +228,32 @@ impl Camera for StereoCamera {
         film_x: f32,
         film_y: f32,
         ray: &mut Ray,
-        vol_info: &PathVolumeInfo,
+        vol_info: &mut PathVolumeInfo,
         u0: f32,
         u1: f32,
     ) {
         match self.stereo_type {
             StereoCameraType::StereoPerspective | StereoCameraType::StereoEnvironment180 => {
-                if film_x < self.film_width / 2 {
+                if film_x < (self.base.film_width / 2) as f32 {
                     self.left_eye
+                        .unwrap()
                         .generate_ray(time, film_x, film_y, ray, vol_info, u0, u1);
                 } else {
-                    let film_x = film_x - self.film_width / 2;
+                    let film_x = film_x - self.base.film_width as f32 / 2.0;
                     self.right_eye
+                        .unwrap()
                         .generate_ray(time, film_x, film_y, ray, vol_info, u0, u1);
                 }
             },
             StereoCameraType::StereoEnvironment360 => {
-                if film_y < self.film_height / 2 {
+                if film_y < (self.base.film_height / 2) as f32 {
                     self.left_eye
+                        .unwrap()
                         .generate_ray(time, film_x, film_y, ray, vol_info, u0, u1);
                 } else {
-                    let film_y = film_y - self.film_height / 2;
+                    let film_y = film_y - self.base.film_height as f32 / 2.0;
                     self.right_eye
+                        .unwrap()
                         .generate_ray(time, film_x, film_y, ray, vol_info, u0, u1);
                 }
             },
