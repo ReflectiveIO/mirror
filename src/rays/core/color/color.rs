@@ -48,43 +48,14 @@ impl Color {
         }
     }
 
-    pub fn is_nan(&self) -> bool {
-        if self.0.is_nan() {
-            return true;
-        }
-        if self.1.is_nan() {
-            return true;
-        }
-        if self.2.is_nan() {
-            return true;
-        }
-        false
-    }
+    pub fn is_nan(&self) -> bool { self.0.is_nan() || self.1.is_nan() || self.2.is_nan() }
 
     pub fn is_infinite(&self) -> bool {
-        if self.0.is_infinite() {
-            return true;
-        }
-        if self.1.is_infinite() {
-            return true;
-        }
-        if self.2.is_infinite() {
-            return true;
-        }
-        false
+        self.0.is_infinite() || self.1.is_infinite() || self.2.is_infinite()
     }
 
     pub fn is_sign_negative(&self) -> bool {
-        if self.0.is_sign_negative() {
-            return true;
-        }
-        if self.1.is_sign_negative() {
-            return true;
-        }
-        if self.2.is_sign_negative() {
-            return true;
-        }
-        false
+        self.0.is_sign_negative() || self.1.is_sign_negative() || self.2.is_sign_negative()
     }
 
     pub fn is_valid(&self) -> bool {
