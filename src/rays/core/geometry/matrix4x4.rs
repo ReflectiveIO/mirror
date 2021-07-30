@@ -1,5 +1,7 @@
 use std::ops::Mul;
 
+use crate::rays::geometry::{Normal, Point, Ray, Vector};
+
 #[derive(Clone, Debug, Default)]
 pub struct Matrix4x4 {
     pub m: [[f32; 4]; 4],
@@ -46,6 +48,24 @@ impl From<[f32; 16]> for Matrix4x4 {
     }
 }
 
+impl PartialEq for Matrix4x4 {
+    fn eq(&self, other: &Self) -> bool {
+        for i in 0..=4 {
+            for j in 0..=4 {
+                if self.m[i][j] != other.m[i][j] {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    fn ne(&self, other: &Self) -> bool { !(self == other) }
+}
+
+impl Eq for Matrix4x4 {}
+
+/// Matrix4x4 * &Matrix4x4 -> Matrix4x4
 impl Mul<&Matrix4x4> for Matrix4x4 {
     type Output = Matrix4x4;
 
@@ -63,19 +83,60 @@ impl Mul<&Matrix4x4> for Matrix4x4 {
     }
 }
 
-impl PartialEq for Matrix4x4 {
-    fn eq(&self, other: &Self) -> bool {
-        for i in 0..=4 {
-            for j in 0..=4 {
-                if self.m[i][j] != other.m[i][j] {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+/// Matrix4x4 * &Point -> Point
+impl Mul<&Point> for &Matrix4x4 {
+    type Output = Point;
 
-    fn ne(&self, other: &Self) -> bool { !(self == other) }
+    fn mul(self, rhs: &Point) -> Self::Output {
+        let (x, y, z) = (rhs.x, rhs.y, rhs.z);
+        let p = Point::new(
+            self.m[0][0] * x + self.m[0][1] * y + self.m[0][2] * z + self.m[0][3],
+            self.m[1][0] * x + self.m[1][1] * y + self.m[1][2] * z + self.m[1][3],
+            self.m[2][0] * x + self.m[2][1] * y + self.m[2][2] * z + self.m[2][3],
+        );
+        let w = self.m[3][0] * x + self.m[3][1] * y + self.m[3][2] * z + self.m[3][3];
+        return if w != 1.0 { p / w } else { p };
+    }
 }
 
-impl Eq for Matrix4x4 {}
+/// Matrix4x4 * &Vector -> Vector
+impl Mul<&Vector> for &Matrix4x4 {
+    type Output = Vector;
+
+    fn mul(self, rhs: &Vector) -> Self::Output {
+        let (x, y, z) = (rhs.x, rhs.y, rhs.z);
+        Vector::new(
+            self.m[0][0] * x + self.m[0][1] * y + self.m[0][2] * z,
+            self.m[1][0] * x + self.m[1][1] * y + self.m[1][2] * z,
+            self.m[2][0] * x + self.m[2][1] * y + self.m[2][2] * z,
+        )
+    }
+}
+
+/// Matrix4x4 * &Normal -> Normal
+impl Mul<&Normal> for &Matrix4x4 {
+    type Output = Normal;
+
+    fn mul(self, rhs: &Normal) -> Self::Output {
+        let (x, y, z) = (rhs.x, rhs.y, rhs.z);
+        Normal::new(
+            self.m[0][0] * x + self.m[0][1] * y + self.m[0][2] * z,
+            self.m[1][0] * x + self.m[1][1] * y + self.m[1][2] * z,
+            self.m[2][0] * x + self.m[2][1] * y + self.m[2][2] * z,
+        )
+    }
+}
+
+impl Mul<&Ray> for &Matrix4x4 {
+    type Output = Ray;
+
+    fn mul(self, rhs: &Ray) -> Self::Output {
+        Ray::builder()
+            .origin(self * &rhs.origin)
+            .direction(self * &rhs.direction)
+            .start(rhs.start)
+            .end(rhs.end)
+            .time(rhs.time)
+            .build()
+    }
+}

@@ -1,6 +1,7 @@
 use std::ops::*;
 
 use super::{Cross, Dot, Vector};
+use crate::rays::geometry::Matrix4x4;
 
 #[derive(Debug, Copy, Clone, PartialEq, Default)]
 pub struct Normal {
@@ -182,4 +183,15 @@ impl Dot for Normal {
 /// Dot(Normal, Vector)
 impl Dot<Vector> for Normal {
     fn dot(&self, rhs: &Vector) -> f32 { self.x * rhs.x + self.y * rhs.y + self.z * rhs.z }
+}
+
+/// Normal *= &Matrix4x4
+impl MulAssign<&Matrix4x4> for Normal {
+    fn mul_assign(&mut self, rhs: &Matrix4x4) {
+        let (x, y, z) = (self.x, self.y, self.z);
+
+        self.x = rhs.m[0][0] * x + rhs.m[0][1] * y + rhs.m[0][2] * z;
+        self.y = rhs.m[1][0] * x + rhs.m[1][1] * y + rhs.m[1][2] * z;
+        self.z = rhs.m[2][0] * x + rhs.m[2][1] * y + rhs.m[2][2] * z;
+    }
 }

@@ -1,4 +1,4 @@
-use std::ops::Mul;
+use std::ops::{Mul, MulAssign};
 
 use typed_builder::TypedBuilder;
 
@@ -60,10 +60,11 @@ impl Default for Ray {
     fn default() -> Self { Ray::builder().build() }
 }
 
-impl Mul<Matrix4x4> for Ray {
-    type Output = Ray;
-
-    fn mul(self, rhs: Matrix4x4) -> Self::Output { todo!() }
+impl MulAssign<&Matrix4x4> for Ray {
+    fn mul_assign(&mut self, rhs: &Matrix4x4) {
+        self.origin *= rhs;
+        self.direction *= rhs;
+    }
 }
 
 #[derive(Default)]
