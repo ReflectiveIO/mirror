@@ -170,8 +170,8 @@ impl Camera for ProjectiveCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        pdf_w: Option<&mut f32>,
-        flux_to_radiance_factor: Option<&mut f32>,
+        mut pdf_w: Option<f32>,
+        mut flux_to_radiance_factor: Option<f32>,
     ) {
         todo!()
     }

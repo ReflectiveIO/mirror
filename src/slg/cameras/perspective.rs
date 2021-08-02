@@ -25,6 +25,21 @@ impl Default for BokehDistributionType {
     fn default() -> Self { BokehDistributionType::None }
 }
 
+impl ToString for BokehDistributionType {
+    fn to_string(&self) -> String {
+        match self {
+            BokehDistributionType::None => String::from("NONE"),
+            BokehDistributionType::Uniform => String::from("UNIFORM"),
+            BokehDistributionType::Exponential => String::from("EXPONENTIAL"),
+            BokehDistributionType::InverseExponential => String::from("INVERSEEXPONENTIAL"),
+            BokehDistributionType::Gaussian => String::from("GAUSSIAN"),
+            BokehDistributionType::InverseGaussian => String::from("INVERSEGAUSSIAN"),
+            BokehDistributionType::Triangular => String::from("TRIANGULAR"),
+            BokehDistributionType::Custom => String::from("CUSTOM"),
+        }
+    }
+}
+
 pub struct PerspectiveCamera {
     base: Arc<BaseCamera>,
     inner: ProjectiveCamera,
@@ -189,8 +204,8 @@ impl Camera for PerspectiveCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        pdf_w: Option<&mut f32>,
-        factor: Option<&mut f32>,
+        mut pdf_w: Option<f32>,
+        mut factor: Option<f32>,
     ) {
         let mut global_dir = self.get_dir().clone();
         if self.inner.motion_system.is_some() {
@@ -200,21 +215,21 @@ impl Camera for PerspectiveCamera {
         let cos_at_camera = eye_ray.direction.dot(&global_dir);
         if cos_at_camera <= 0.0 {
             if pdf_w.is_some() {
-                *pdf_w = 0.0;
+                pdf_w = Some(0.0);
             }
             if factor.is_some() {
-                *factor = 0.0;
+                factor = Some(0.0);
             }
         } else {
             let camera_pdf_w: f32 =
                 1.0 / (cos_at_camera * cos_at_camera * cos_at_camera * self.pixel_area);
 
             if pdf_w.is_some() {
-                *pdf_w = camera_pdf_w;
+                pdf_w = Some(camera_pdf_w);
             }
 
             if factor.is_some() {
-                *factor = camera_pdf_w / (eye_distance * eye_distance);
+                factor = Some(camera_pdf_w / (eye_distance * eye_distance));
             }
         }
     }

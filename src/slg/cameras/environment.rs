@@ -305,19 +305,19 @@ impl Camera for EnvironmentCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        mut pdf_w: Option<&mut f32>,
-        mut flux_to_radiance_factor: Option<&mut f32>,
+        mut pdf_w: Option<f32>,
+        mut flux_to_radiance_factor: Option<f32>,
     ) {
         let theta: f32 =
             PI * (self.base.film_height as f32 - film_y - 1.0) / self.base.film_height as f32;
         let mut camera_pdf_w = 1.0 / (2.0 * PI * PI * theta.sin());
 
         if pdf_w.is_some() {
-            pdf_w = Some(&mut camera_pdf_w);
+            pdf_w = Some(camera_pdf_w);
         }
 
         if flux_to_radiance_factor.is_some() {
-            flux_to_radiance_factor = Some(&mut (camera_pdf_w / (eye_distance * eye_distance)));
+            flux_to_radiance_factor = Some(camera_pdf_w / (eye_distance * eye_distance));
         }
     }
 

@@ -67,8 +67,8 @@ pub trait Camera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        pdf_w: Option<&mut f32>,
-        factor: Option<&mut f32>,
+        pdf_w: Option<f32>,
+        factor: Option<f32>,
     );
 
     fn generate_ray_time(&self, u: f32) -> f32 { 0.0 }
