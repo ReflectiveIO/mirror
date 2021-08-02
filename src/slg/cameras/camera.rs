@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
-use crate::rays::geometry::{MotionSystem, Point, Ray, Transform, Vector};
+use crate::rays::geometry::{MotionSystem, Normal, Point, Ray, Transform, Vector};
 use crate::rays::object::NamedObject;
+use crate::rays::utils::Distribution2D;
 use crate::rays::Properties;
-use crate::slg::image_map::ImageMapCache;
+use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::utils::PathVolumeInfo;
 use crate::slg::volume::Volume;
 
@@ -23,9 +24,9 @@ pub trait Camera {
     fn get_dir(&self) -> &Vector;
 
     // Used for compiling camera information for OpenCL (and more)
-    fn get_raster_to_camera(&self, idx: u32) -> &Transform;
-    fn get_camera_to_world(&self, idx: u32) -> &Transform;
-    fn get_screen_to_world(&self, idx: u32) -> &Transform;
+    fn get_raster_to_camera(&self, idx: u32) -> Option<&Transform>;
+    fn get_camera_to_world(&self, idx: u32) -> Option<&Transform>;
+    fn get_screen_to_world(&self, idx: u32) -> Option<&Transform>;
 
     // Translate
     fn translate(&mut self, t: &Vector);
@@ -78,6 +79,46 @@ pub trait Camera {
     fn compute_bounding_box(&self, orig: &Point) {}
 }
 
+pub struct CameraTransforms {
+    // Note: all *ToWorld don't include camera motion blur
+    pub camera_to_world: Transform,
+    pub screen_to_camera: Transform,
+    pub screen_to_world: Transform,
+    pub raster_to_screen: Transform,
+    pub raster_to_world: Transform,
+    pub raster_to_camera: Transform,
+}
+
+pub enum BokehDistributionType {
+    None,
+    Uniform,
+    Exponential,
+    InverseExponential,
+    Gaussian,
+    InverseGaussian,
+    Triangular,
+    Custom,
+}
+
+impl Default for BokehDistributionType {
+    fn default() -> Self { BokehDistributionType::None }
+}
+
+impl ToString for BokehDistributionType {
+    fn to_string(&self) -> String {
+        match self {
+            BokehDistributionType::None => String::from("NONE"),
+            BokehDistributionType::Uniform => String::from("UNIFORM"),
+            BokehDistributionType::Exponential => String::from("EXPONENTIAL"),
+            BokehDistributionType::InverseExponential => String::from("INVERSEEXPONENTIAL"),
+            BokehDistributionType::Gaussian => String::from("GAUSSIAN"),
+            BokehDistributionType::InverseGaussian => String::from("INVERSEGAUSSIAN"),
+            BokehDistributionType::Triangular => String::from("TRIANGULAR"),
+            BokehDistributionType::Custom => String::from("CUSTOM"),
+        }
+    }
+}
+
 pub struct BaseCamera {
     pub camera_type: CameraType,
     pub clip_hither: f32,
@@ -90,6 +131,51 @@ pub struct BaseCamera {
     pub film_width: u32,
     pub film_height: u32,
     pub film_sub_region: [u32; 4],
+
+    /* Projective */
+    // User defined values
+    pub orig: Point,
+    pub target: Point,
+    pub up: Vector,
+
+    // World clipping plane
+    pub clipping_plane_center: Point,
+    pub clipping_plane_normal: Normal,
+    pub enable_clipping_plane: bool,
+
+    // User defined values
+    pub lens_radius: f32,
+    pub focal_distance: f32,
+    pub auto_focus: bool,
+
+    pub screen_window: [f32; 4],
+    pub auto_update_screen_window: bool,
+
+    // Calculated values
+    pub dir: Vector,
+    pub x: Vector,
+    pub y: Vector,
+    pub trans: CameraTransforms,
+
+    /* Perspective */
+    pub screen_offset_x: f32,
+    pub screen_offset_y: f32,
+    pub field_of_view: f32,
+
+    pub bokeh_blades: u32,
+    pub bokeh_power: u32,
+    pub bokeh_distribution: BokehDistributionType,
+    pub bokeh_distribution_image_map: Option<ImageMap>,
+    pub bokeh_distribution_map: Option<Distribution2D>,
+    pub bokeh_scale_x: f32,
+    pub bokeh_scale_y: f32,
+
+    pub enable_oculus_rift_barrel: bool,
+    pub pixel_area: f32,
+
+    /* Environment */
+    pub degrees: f32,
+    pub ray_origin: Point,
 }
 
 impl BaseCamera {
@@ -106,6 +192,45 @@ impl BaseCamera {
             film_width: 0,
             film_height: 0,
             film_sub_region: [0, 0, 0, 0],
+
+            orig: Point::default(),
+            target: Point::default(),
+            up: Vector::default(),
+            clipping_plane_center: Point::default(),
+            clipping_plane_normal: Normal::default(),
+            enable_clipping_plane: false,
+            lens_radius: 0.0,
+            focal_distance: 0.0,
+            auto_focus: false,
+            screen_window: Default::default(),
+            auto_update_screen_window: false,
+            dir: Vector::default(),
+            x: Vector::default(),
+            y: Vector::default(),
+            trans: CameraTransforms {
+                camera_to_world: Transform::default(),
+                screen_to_camera: Transform::default(),
+                screen_to_world: Transform::default(),
+                raster_to_screen: Transform::default(),
+                raster_to_world: Transform::default(),
+                raster_to_camera: Transform::default(),
+            },
+
+            screen_offset_x: 0.0,
+            screen_offset_y: 0.0,
+            field_of_view: 0.0,
+            bokeh_blades: 0,
+            bokeh_power: 0,
+            bokeh_distribution: BokehDistributionType::default(),
+            bokeh_distribution_image_map: None,
+            bokeh_distribution_map: None,
+            bokeh_scale_x: 0.0,
+            bokeh_scale_y: 0.0,
+            enable_oculus_rift_barrel: false,
+            pixel_area: 0.0,
+
+            degrees: 0.0,
+            ray_origin: Point::default(),
         }
     }
 

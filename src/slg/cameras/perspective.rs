@@ -3,62 +3,17 @@ use std::sync::Arc;
 use delegate::delegate;
 
 use crate::rays::geometry::{Dot, Point, Ray, Transform, Vector};
+use crate::rays::object::NamedObject;
 use crate::rays::utils::Distribution2D;
 use crate::rays::Properties;
-use crate::slg::cameras::camera::Camera;
+use crate::slg::cameras::camera::{BokehDistributionType, Camera};
 use crate::slg::cameras::{BaseCamera, CameraType, ProjectiveCamera};
 use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::utils::PathVolumeInfo;
 
-pub enum BokehDistributionType {
-    None,
-    Uniform,
-    Exponential,
-    InverseExponential,
-    Gaussian,
-    InverseGaussian,
-    Triangular,
-    Custom,
-}
-
-impl Default for BokehDistributionType {
-    fn default() -> Self { BokehDistributionType::None }
-}
-
-impl ToString for BokehDistributionType {
-    fn to_string(&self) -> String {
-        match self {
-            BokehDistributionType::None => String::from("NONE"),
-            BokehDistributionType::Uniform => String::from("UNIFORM"),
-            BokehDistributionType::Exponential => String::from("EXPONENTIAL"),
-            BokehDistributionType::InverseExponential => String::from("INVERSEEXPONENTIAL"),
-            BokehDistributionType::Gaussian => String::from("GAUSSIAN"),
-            BokehDistributionType::InverseGaussian => String::from("INVERSEGAUSSIAN"),
-            BokehDistributionType::Triangular => String::from("TRIANGULAR"),
-            BokehDistributionType::Custom => String::from("CUSTOM"),
-        }
-    }
-}
-
 pub struct PerspectiveCamera {
     base: Arc<BaseCamera>,
     inner: ProjectiveCamera,
-
-    pub screen_offset_x: f32,
-    pub screen_offset_y: f32,
-    pub field_of_view: f32,
-
-    pub bokeh_blades: u32,
-    pub bokeh_power: u32,
-    pub bokeh_distribution: BokehDistributionType,
-    pub bokeh_distribution_image_map: Option<ImageMap>,
-    pub bokeh_distribution_map: Option<Distribution2D>,
-    pub bokeh_scale_x: f32,
-    pub bokeh_scale_y: f32,
-
-    pub enable_oculus_rift_barrel: bool,
-
-    pixel_area: f32,
 }
 
 impl PerspectiveCamera {
@@ -70,25 +25,14 @@ impl PerspectiveCamera {
         sw: Option<[f32; 4]>,
     ) -> Self {
         let mut inner = ProjectiveCamera::new(t, sw, orig, target, up);
+
         let base = inner.base().clone();
+        base.field_of_view = 45.0;
+        base.bokeh_distribution = BokehDistributionType::Exponential;
+        base.bokeh_scale_x = 1.0;
+        base.bokeh_scale_y = 1.0;
 
-        Self {
-            base,
-            inner,
-
-            screen_offset_x: 0.0,
-            screen_offset_y: 0.0,
-            field_of_view: 45.0,
-            bokeh_blades: 0,
-            bokeh_power: 0,
-            bokeh_distribution: BokehDistributionType::Exponential,
-            bokeh_distribution_image_map: None,
-            bokeh_distribution_map: None,
-            bokeh_scale_x: 1.0,
-            bokeh_scale_y: 1.0,
-            enable_oculus_rift_barrel: false,
-            pixel_area: 0.0,
-        }
+        Self { base, inner }
     }
 }
 
@@ -103,9 +47,9 @@ impl Camera for PerspectiveCamera {
             fn get_dir(&self) -> &Vector;
 
             // Used for compiling camera information for OpenCL (and more)
-            fn get_raster_to_camera(&self, idx: u32) -> &Transform;
-            fn get_camera_to_world(&self, idx: u32) -> &Transform;
-            fn get_screen_to_world(&self, idx: u32) -> &Transform;
+            fn get_raster_to_camera(&self, idx: u32) -> Option<&Transform>;
+            fn get_camera_to_world(&self, idx: u32) -> Option<&Transform>;
+            fn get_screen_to_world(&self, idx: u32) -> Option<&Transform>;
 
             // Translate
             fn translate(&mut self, t: &Vector);
@@ -128,50 +72,51 @@ impl Camera for PerspectiveCamera {
 
     fn get_sample_position(&self, ray: &Ray, x: &mut f32, y: &mut f32) -> bool {
         let mut global_dir = Vector::default();
-        if self.base.motion_system.is_some() {
-            global_dir *= self.inner.motion_system.sample(ray.time);
+
+        if let Some(motion_system) = &self.base.motion_system {
+            global_dir *= motion_system.sample(ray.time);
         }
 
         let cosi: f32 = ray.direction.dot(&global_dir);
         if cosi <= 0.0
             || (!ray.end.is_infinite()
-                && (ray.end * cosi < self.inner.clip_hither
-                    || ray.end * cosi > self.inner.clip_yon))
+                && (ray.end * cosi < self.base.clip_hither || ray.end * cosi > self.base.clip_yon))
         {
             return false;
         }
 
         let mut p0: Point;
 
-        if self.inner.lens_radius > 0.0 {
-            p0 = ray.origin + ray.direction * (self.inner.focal_distance / cosi)
+        if self.base.lens_radius > 0.0 {
+            p0 = ray.origin + ray.direction * (self.base.focal_distance / cosi)
         } else {
             p0 = ray.origin + ray.direction
         }
-        if self.inner.motion_system.is_some() {
-            p0 *= self.inner.motion_system.sample_inverse(ray.time);
+
+        if let Some(motion_system) = &self.base.motion_system {
+            p0 *= motion_system.sample_inverse(ray.time);
         }
-        p0 *= self.inner.trans.raster_to_world.inverse();
+        p0 *= self.base.trans.raster_to_world.inverse();
 
         *x = p0.x;
-        *y = self.inner.film_height - 1 - p0.y;
+        *y = self.base.film_height - 1 - p0.y;
 
         // Check if we are inside the image plane
-        if (x < self.inner.film_sub_region[0])
-            || (x >= self.inner.film_sub_region[1] + 1)
-            || (y < self.inner.film_sub_region[2])
-            || (y >= self.inner.film_sub_region[3] + 1)
+        if (x < self.base.film_sub_region[0])
+            || (x >= self.base.film_sub_region[1] + 1)
+            || (y < self.base.film_sub_region[2])
+            || (y >= self.base.film_sub_region[3] + 1)
         {
             return false;
         } else {
             // World arbitrary clipping plane support
-            if self.inner.enable_clipping_plane {
+            if self.base.enable_clipping_plane {
                 // check if the ray end point is on the not visible side of the plane
                 let endpoint = ray.end;
                 if self
-                    .inner
+                    .base
                     .clipping_plane_normal
-                    .dot(endpoint - &self.inner.clipping_plane_center)
+                    .dot(endpoint - &self.base.clipping_plane_center)
                     <= 0.0
                 {
                     return false;
@@ -188,11 +133,10 @@ impl Camera for PerspectiveCamera {
         let lens_point = Point::new(0.0, 0.0, 0.0);
         self.local_sample_lens(time, u1, u2, &lens_point);
 
-        if self.inner.motion_system {
-            *p = self.inner.motion_system.sample(time)
-                * (&self.inner.trans.camera_to_world * lens_point);
+        if let Some(motion_system) = &self.base.motion_system {
+            *p = motion_system.sample(time) * (&self.base.trans.camera_to_world * lens_point);
         } else {
-            *p = &self.inner.trans.camera_to_world * lens_point;
+            *p = &self.base.trans.camera_to_world * lens_point;
         }
 
         return true;
@@ -208,8 +152,8 @@ impl Camera for PerspectiveCamera {
         mut factor: Option<f32>,
     ) {
         let mut global_dir = self.get_dir().clone();
-        if self.inner.motion_system.is_some() {
-            global_dir *= self.inner.motion_system.sample(eye_ray.time);
+        if let Some(motion_system) = &self.base.motion_system {
+            global_dir *= motion_system.sample(eye_ray.time);
         }
 
         let cos_at_camera = eye_ray.direction.dot(&global_dir);
@@ -222,7 +166,7 @@ impl Camera for PerspectiveCamera {
             }
         } else {
             let camera_pdf_w: f32 =
-                1.0 / (cos_at_camera * cos_at_camera * cos_at_camera * self.pixel_area);
+                1.0 / (cos_at_camera * cos_at_camera * cos_at_camera * self.base.pixel_area);
 
             if pdf_w.is_some() {
                 pdf_w = Some(camera_pdf_w);
@@ -240,28 +184,34 @@ impl Camera for PerspectiveCamera {
         props.set("scene.camera.type", "PERSPECTIVE");
         props.set(
             "scene.camera.oculus-rift.barrel-post-pro",
-            self.enable_oculus_rift_barrel,
+            self.base.enable_oculus_rift_barrel,
         );
-        props.set("scene.camera.field-of-view", self.field_of_view as f64);
-        props.set("scene.camera.bokeh.blades", self.bokeh_blades as f64);
-        props.set("scene.camera.bokeh.power", self.bokeh_power as f64);
+        props.set("scene.camera.field-of-view", self.base.field_of_view as f64);
+        props.set("scene.camera.bokeh.blades", self.base.bokeh_blades as f64);
+        props.set("scene.camera.bokeh.power", self.base.bokeh_power as f64);
         props.set(
             "scene.camera.bokeh.distribution.type",
-            self.bokeh_distribution.to_string(),
+            self.base.bokeh_distribution.to_string(),
         );
 
-        if self.bokeh_distribution_image_map.is_some() {
+        if self.base.bokeh_distribution_image_map.is_some() {
             let mut filename = String::new();
             if real_filename {
-                filename = self.bokeh_distribution_image_map.get_name();
+                filename = self
+                    .base
+                    .bokeh_distribution_image_map
+                    .unwrap()
+                    .get_name()
+                    .clone();
             } else {
-                filename = imc.get_sequence_filename(&self.bokeh_distribution_image_map.unwrap())
+                filename =
+                    imc.get_sequence_filename(&self.base.bokeh_distribution_image_map.unwrap())
             }
             props.set("scene.camera.bokeh.distribution.image", filename);
         }
 
-        props.set("scene.camera.bokeh.scale.x", self.bokeh_scale_x as f64);
-        props.set("scene.camera.bokeh.scale.y", self.bokeh_scale_y as f64);
+        props.set("scene.camera.bokeh.scale.x", self.base.bokeh_scale_x as f64);
+        props.set("scene.camera.bokeh.scale.y", self.base.bokeh_scale_y as f64);
 
         return props;
     }

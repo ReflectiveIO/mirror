@@ -13,37 +13,13 @@ use crate::rays::geometry::{
 };
 use crate::rays::utils::{clamp, radians};
 use crate::rays::Properties;
+use crate::slg::cameras::camera::CameraTransforms;
 use crate::slg::cameras::{BaseCamera, CameraType};
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::utils::PathVolumeInfo;
 
 pub struct EnvironmentCamera {
     base: Arc<BaseCamera>,
-
-    pub screen_offset_x: f32,
-    pub screen_offset_y: f32,
-    pub degrees: f32,
-    screen_window: [f32; 4],
-    auto_update_screen_window: bool,
-    orig: Point,
-    target: Point,
-    ray_origin: Point,
-    up: Vector,
-
-    pixel_area: f32,
-    dir: Vector,
-    x: Vector,
-    y: Vector,
-    trans: CameraTransforms,
-}
-
-struct CameraTransforms {
-    pub camera_to_world: Transform,
-    pub screen_to_camera: Transform,
-    pub screen_to_world: Transform,
-    pub raster_to_screen: Transform,
-    pub raster_to_world: Transform,
-    pub raster_to_camera: Transform,
 }
 
 impl EnvironmentCamera {
@@ -57,34 +33,16 @@ impl EnvironmentCamera {
             auto_update_screen_window = true;
         }
 
-        EnvironmentCamera {
-            base: Arc::new(BaseCamera::new(CameraType::Environment)),
+        let mut base = Arc::new(BaseCamera::new(CameraType::Environment));
+        base.degrees = 360.0;
+        base.screen_window = screen_window;
+        base.auto_update_screen_window = auto_update_screen_window;
+        base.up = up.normalize();
 
-            screen_offset_x: 0.0,
-            screen_offset_y: 0.0,
-            degrees: 360.0,
-            screen_window,
-            auto_update_screen_window,
-            orig: orig.clone(),
-            target: target.clone(),
-            ray_origin: Point::new(0.0, 0.0, 0.0),
-            up: up.normalize(),
-            pixel_area: 0.0,
-            dir: Vector::default(),
-            x: Vector::default(),
-            y: Vector::default(),
-            trans: CameraTransforms {
-                camera_to_world: Transform::default(),
-                screen_to_camera: Transform::default(),
-                screen_to_world: Transform::default(),
-                raster_to_screen: Transform::default(),
-                raster_to_world: Transform::default(),
-                raster_to_camera: Transform::default(),
-            },
-        }
+        EnvironmentCamera { base }
     }
 
-    pub fn get_pixel_area(&self) -> f32 { self.pixel_area }
+    pub fn get_pixel_area(&self) -> f32 { self.base.pixel_area }
 
     fn init_camera_transforms(&mut self, trans: &mut CameraTransforms) {
         todo!()
@@ -125,21 +83,22 @@ impl EnvironmentCamera {
     }
 
     fn init_pixel_area(&mut self) {
-        let x_pixel_width = (self.screen_window[1] - self.screen_window[0]) * 0.5;
-        let y_pixel_height = (self.screen_window[3] - self.screen_window[2]) * 0.5;
+        let x_pixel_width = (self.base.screen_window[1] - self.base.screen_window[0]) * 0.5;
+        let y_pixel_height = (self.base.screen_window[3] - self.base.screen_window[2]) * 0.5;
 
-        self.pixel_area = x_pixel_width * y_pixel_height;
+        self.base.pixel_area = x_pixel_width * y_pixel_height;
     }
 
     fn init_ray(&self, ray: &mut Ray, film_x: f32, film_y: f32) {
         let theta: f32 =
             PI * (self.base.film_height as f32 - film_y - 1.0) / self.base.film_height as f32;
         let phi: f32 = radians(
-            (360.0 - self.degrees) * 0.5 + self.degrees * film_x / self.base.film_width as f32,
+            (360.0 - self.base.degrees) * 0.5
+                + self.base.degrees * film_x / self.base.film_width as f32,
         );
 
         ray.update(
-            &self.ray_origin,
+            &self.base.ray_origin,
             &Vector::new(
                 -theta.sin() * phi.sin(),
                 theta.cos(),
@@ -154,75 +113,81 @@ impl Camera for EnvironmentCamera {
 
     fn get_type(&self) -> &CameraType { self.base.get_type() }
 
-    fn get_bounding_box(&self) { self.compute_bounding_box(&self.orig) }
+    fn get_bounding_box(&self) { self.compute_bounding_box(&self.base.orig) }
 
-    fn get_dir(&self) -> &Vector { &self.dir }
+    fn get_dir(&self) -> &Vector { &self.base.dir }
 
-    fn get_raster_to_camera(&self, idx: u32) -> &Transform { &self.trans.raster_to_camera }
+    fn get_raster_to_camera(&self, idx: u32) -> Option<&Transform> {
+        Some(&self.base.trans.raster_to_camera)
+    }
 
-    fn get_camera_to_world(&self, idx: u32) -> &Transform { &self.trans.camera_to_world }
+    fn get_camera_to_world(&self, idx: u32) -> Option<&Transform> {
+        Some(&self.base.trans.camera_to_world)
+    }
 
-    fn get_screen_to_world(&self, idx: u32) -> &Transform { &self.trans.screen_to_world }
+    fn get_screen_to_world(&self, idx: u32) -> Option<&Transform> {
+        Some(&self.base.trans.screen_to_world)
+    }
 
     fn translate(&mut self, t: &Vector) {
-        self.orig += t;
-        self.target += t;
+        self.base.orig += t;
+        self.base.target += t;
     }
 
     fn translate_left(&mut self, k: f32) {
-        self.translate(&(Vector::from(self.x).normalize() * -k));
+        self.translate(&(Vector::from(self.base.x).normalize() * -k));
     }
 
     fn translate_right(&mut self, k: f32) {
-        self.translate(&(Vector::from(self.x).normalize() * k))
+        self.translate(&(Vector::from(self.base.x).normalize() * k))
     }
 
-    fn translate_forward(&mut self, k: f32) { self.translate(&(self.dir * k)) }
+    fn translate_forward(&mut self, k: f32) { self.translate(&(self.base.dir * k)) }
 
-    fn translate_backward(&mut self, k: f32) { self.translate(&(self.dir * -k)) }
+    fn translate_backward(&mut self, k: f32) { self.translate(&(self.base.dir * -k)) }
 
     fn rotate(&mut self, angle: f32, axis: &Vector) {
-        let dir: Vector = Vector::from(self.target - self.orig);
+        let dir: Vector = Vector::from(self.base.target - self.base.orig);
         let t: Transform = rotate(angle, axis);
         let dir: Vector = t * dir;
 
         // Check if the up vector is the same of view direction. If they are, skip this
         // operation (it would trigger a Singular matrix in MatrixInvert)
-        if dir.normalize().dot(&self.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
-            self.target = self.orig + dir;
+        if dir.normalize().dot(&self.base.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
+            self.base.target = self.base.orig + dir;
         }
     }
 
-    fn rotate_left(&mut self, angle: f32) { self.rotate(angle, &Vector::from(self.y)) }
+    fn rotate_left(&mut self, angle: f32) { self.rotate(angle, &Vector::from(self.base.y)) }
 
-    fn rotate_right(&mut self, angle: f32) { self.rotate(-angle, &Vector::from(self.y)) }
+    fn rotate_right(&mut self, angle: f32) { self.rotate(-angle, &Vector::from(self.base.y)) }
 
-    fn rotate_up(&mut self, angle: f32) { self.rotate(angle, &Vector::from(self.x)) }
+    fn rotate_up(&mut self, angle: f32) { self.rotate(angle, &Vector::from(self.base.x)) }
 
-    fn rotate_down(&mut self, angle: f32) { self.rotate(-angle, &Vector::from(self.x)) }
+    fn rotate_down(&mut self, angle: f32) { self.rotate(-angle, &Vector::from(self.base.x)) }
 
     fn update(&mut self, film_width: u32, film_height: u32, film_sub_region: Option<[u32; 4]>) {
         self.base.update(film_width, film_height, film_sub_region);
 
         // Used to translate the camera
-        self.dir = Vector::from(self.target - self.orig).normalize();
-        self.x = self.dir.cross(&self.up).normalize();
-        self.y = self.x.cross(&self.dir).normalize();
+        self.base.dir = Vector::from(self.base.target - self.base.orig).normalize();
+        self.base.x = self.base.dir.cross(&self.base.up).normalize();
+        self.base.y = self.base.x.cross(&self.base.dir).normalize();
 
         // Initialize screen information
         let frame: f32 = film_width as f32 / film_height as f32;
 
         // Check if i have to update screen_window
-        if self.auto_update_screen_window {
+        if self.base.auto_update_screen_window {
             if frame < 1.0 {
-                self.screen_window = [-frame, frame, -1.0, 1.0];
+                self.base.screen_window = [-frame, frame, -1.0, 1.0];
             } else {
-                self.screen_window = [-1.0, 1.0, -1.0 / frame, 1.0 / frame];
+                self.base.screen_window = [-1.0, 1.0, -1.0 / frame, 1.0 / frame];
             }
         }
 
         // Initialize camera transformations
-        self.init_camera_transforms(&mut self.trans);
+        self.init_camera_transforms(&mut self.base.trans);
 
         // Initialize pixel information
         self.init_pixel_area();
@@ -248,12 +213,12 @@ impl Camera for EnvironmentCamera {
         ray.time = time;
 
         if let Some(motion_system) = &self.base.motion_system {
-            *ray = ray * motion_system.sample(ray.time) * &self.trans.camera_to_world;
+            *ray = ray * motion_system.sample(ray.time) * &self.base.trans.camera_to_world;
             // I need to normalize the direction vector again because the motion system
             // could include some kind of scale
             ray.direction = ray.direction.normalize();
         } else {
-            *ray = &self.trans.camera_to_world * ray;
+            *ray = &self.base.trans.camera_to_world * ray;
         }
     }
 
@@ -269,7 +234,7 @@ impl Camera for EnvironmentCamera {
             return false;
         }
 
-        let w = Vector::from(self.trans.camera_to_world.inverse() * ray.direction);
+        let w = Vector::from(self.base.trans.camera_to_world.inverse() * ray.direction);
         let cos_theta = w.y;
         let theta = f32::min(1.0, cos_theta).acos();
         *y = self.base.film_height as f32 - 1.0 - (theta * self.base.film_height as f32 * PI);
@@ -281,8 +246,8 @@ impl Camera for EnvironmentCamera {
         if w.x >= 0.0 {
             phi = 2.0 * PI - phi;
         }
-        *x = (phi - radians((360.0 - self.degrees) * 0.5)) * self.base.film_width as f32
-            / radians(self.degrees);
+        *x = (phi - radians((360.0 - self.base.degrees) * 0.5)) * self.base.film_width as f32
+            / radians(self.base.degrees);
 
         return true;
     }
@@ -291,9 +256,9 @@ impl Camera for EnvironmentCamera {
         let lens_point: Point = Point::default();
 
         if let Some(motion_system) = &self.base.motion_system {
-            *p = lens_point * &self.trans.camera_to_world * motion_system.sample(time);
+            *p = lens_point * &self.base.trans.camera_to_world * motion_system.sample(time);
         } else {
-            *p = lens_point * &self.trans.camera_to_world;
+            *p = lens_point * &self.base.trans.camera_to_world;
         }
 
         return true;
@@ -325,15 +290,15 @@ impl Camera for EnvironmentCamera {
         let mut props = self.base.to_properties();
 
         props.set("scene.camera.type", "environment");
-        props.set("scene.camera.lookat.orig", &self.orig);
-        props.set("scene.camera.lookat.target", &self.target);
-        props.set("scene.camera.up", self.up);
+        props.set("scene.camera.lookat.orig", &self.base.orig);
+        props.set("scene.camera.lookat.target", &self.base.target);
+        props.set("scene.camera.up", self.base.up);
 
-        if !self.auto_update_screen_window {
-            props.set("scene.camera.screen-window", &self.screen_window);
+        if !self.base.auto_update_screen_window {
+            props.set("scene.camera.screen-window", &self.base.screen_window);
         }
 
-        props.set("scene.camera.environment.degrees", self.degrees as f64);
+        props.set("scene.camera.environment.degrees", self.base.degrees as f64);
 
         return props;
     }

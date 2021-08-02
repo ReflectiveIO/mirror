@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use delegate::delegate;
 
-use crate::rays::geometry::{Point, Ray, Transform, Vector};
+use crate::rays::geometry::{Cross, Point, Ray, Transform, Vector};
 use crate::rays::Properties;
 use crate::slg::cameras::camera::Camera;
 use crate::slg::cameras::{BaseCamera, CameraType, EnvironmentCamera, PerspectiveCamera};
@@ -70,50 +70,53 @@ impl Camera for StereoCamera {
         }
     }
 
-    fn get_raster_to_camera(&self, idx: u32) -> &Transform {
+    fn get_raster_to_camera(&self, idx: u32) -> Option<&Transform> {
         if idx == 0 {
             self.left_eye.unwrap().get_raster_to_camera(0)
         } else if idx == 1 {
             self.right_eye.unwrap().get_raster_to_camera(0)
         } else {
             error!("Unknown index in get_raster_to_camera(): {}", idx);
+            None
         }
     }
 
-    fn get_camera_to_world(&self, idx: u32) -> &Transform {
+    fn get_camera_to_world(&self, idx: u32) -> Option<&Transform> {
         if idx == 0 {
             self.left_eye.unwrap().get_camera_to_world(0)
         } else if idx == 1 {
             self.right_eye.unwrap().get_camera_to_world(0)
         } else {
             error!("Unknown index in get_camera_to_world(): {}", idx);
+            None
         }
     }
 
-    fn get_screen_to_world(&self, idx: u32) -> &Transform {
+    fn get_screen_to_world(&self, idx: u32) -> Option<&Transform> {
         if idx == 0 {
             self.left_eye.unwrap().get_screen_to_world(0)
         } else if idx == 1 {
             self.right_eye.unwrap().get_screen_to_world(0)
         } else {
             error!("Unknown index in get_screen_to_world(): {}", idx);
+            None
         }
     }
 
     fn update(&mut self, film_width: u32, film_height: u32, film_sub_region: Option<[u32; 4]>) {
         // used to translate the camera
-        self.dir = (self.target - self.orig).normalize();
-        self.x = self.dir.cross(&self.up).normalize();
-        self.y = self.x.cross(&self.dir).normalize();
+        self.base.dir = Vector::from(self.base.target - self.base.orig).normalize();
+        self.base.x = self.base.dir.cross(&self.base.up).normalize();
+        self.base.y = self.base.x.cross(&self.base.dir).normalize();
 
         match self.stereo_type {
             StereoCameraType::StereoPerspective => {
                 // create left eye camera
                 let mut left = PerspectiveCamera::new(
                     CameraType::Stereo,
-                    self.orig - 0.5 * self.horiz_stereo_eyes_distance * self.x,
-                    self.target,
-                    self.up,
+                    self.base.orig - 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
+                    &self.base.target,
+                    &self.base.up,
                     None,
                 );
                 left.base().clip_hither = self.base.clip_hither;
@@ -128,7 +131,7 @@ impl Camera for StereoCamera {
                 left.base().enable_clipping_plane = self.base.enable_clipping_plane;
 
                 left.base().lens_radius = self.base.lens_radius;
-                left.base().focal_distance = self.base.focel_distance;
+                left.base().focal_distance = self.base.focal_distance;
                 left.base().auto_focus = self.base.auto_focus;
 
                 left.base().screen_offset_x = -self.horiz_stereo_lens_distance * 0.5;
@@ -141,30 +144,30 @@ impl Camera for StereoCamera {
                 // Create right eye camera
                 let mut right = PerspectiveCamera::new(
                     CameraType::Stereo,
-                    self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.x,
-                    self.base.target,
-                    self.base.up,
+                    self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
+                    &self.base.target,
+                    &self.base.up,
                     None,
                 );
 
-                right.base().clip_hither = self.clip_hither;
-                right.base().clip_yon = self.clip_yon;
-                right.base().shutter_open = self.shutter_open;
-                right.base().shutter_close = self.shutter_close;
-                right.base().auto_volume = self.auto_volume;
-                right.base().volume = self.volume;
+                right.base().clip_hither = self.base.clip_hither;
+                right.base().clip_yon = self.base.clip_yon;
+                right.base().shutter_open = self.base.shutter_open;
+                right.base().shutter_close = self.base.shutter_close;
+                right.base().auto_volume = self.base.auto_volume;
+                right.base().volume = self.base.volume.clone();
 
-                right.base().clipping_plane_center = self.clipping_plane_center;
-                right.base().clipping_plane_normal = self.clipping_plane_normal;
-                right.base().enable_clipping_plane = self.enable_clipping_plane;
+                right.base().clipping_plane_center = self.base.clipping_plane_center;
+                right.base().clipping_plane_normal = self.base.clipping_plane_normal;
+                right.base().enable_clipping_plane = self.base.enable_clipping_plane;
 
-                right.base().lens_radius = self.lens_radius;
-                right.base().focal_distance = self.focal_distance;
-                right.base().auto_focus = self.auto_focus;
+                right.base().lens_radius = self.base.lens_radius;
+                right.base().focal_distance = self.base.focal_distance;
+                right.base().auto_focus = self.base.auto_focus;
 
-                right.base().screen_offset_x = self.screen_offset_x;
-                right.base().filed_of_view = self.field_of_view;
-                right.base().enable_oculus_rift_barrel = self.enable_oculus_rift_barrel;
+                right.base().screen_offset_x = self.base.screen_offset_x;
+                right.base().field_of_view = self.base.field_of_view;
+                right.base().enable_oculus_rift_barrel = self.base.enable_oculus_rift_barrel;
 
                 right.base().update(film_width / 2, film_height, None);
                 self.right_eye = Some(Box::new(right));
@@ -172,9 +175,9 @@ impl Camera for StereoCamera {
             StereoCameraType::StereoEnvironment180 => {
                 // Create left eye camera
                 let mut left = EnvironmentCamera::new(
-                    self.orig - 0.5 * self.horiz_stereo_eyes_distance * self.x,
-                    self.target,
-                    self.up,
+                    self.base.orig - 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
+                    &self.base.target,
+                    &self.base.up,
                     None,
                 );
                 left.base().screen_offset_x = -self.horiz_stereo_lens_distance * 0.5;
@@ -184,9 +187,9 @@ impl Camera for StereoCamera {
 
                 // Create right eye camera
                 let mut right = EnvironmentCamera::new(
-                    self.orig + 0.5 * self.horiz_stereo_eyes_distance * self.x,
-                    self.target,
-                    self.up,
+                    self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
+                    self.base.target,
+                    self.base.up,
                     None,
                 );
                 right.base().screen_offset_x = self.horiz_stereo_lens_distance * 0.5;
@@ -197,9 +200,9 @@ impl Camera for StereoCamera {
             StereoCameraType::StereoEnvironment360 => {
                 // Create left eye camera
                 let mut left = EnvironmentCamera::new(
-                    self.orig - 0.5 * self.horiz_stereo_eyes_distance * self.x,
-                    self.target,
-                    self.up,
+                    self.base.orig - 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
+                    &self.base.target,
+                    &self.base.up,
                     None,
                 );
                 left.base().screen_offset_x = -self.horiz_stereo_lens_distance * 0.5;
@@ -209,9 +212,9 @@ impl Camera for StereoCamera {
 
                 // Create right eye camera
                 let mut right = EnvironmentCamera::new(
-                    self.orig + 0.5 * self.horiz_stereo_eyes_distance * self.x,
-                    self.target,
-                    self.up,
+                    self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
+                    &self.base.target,
+                    &self.base.up,
                     None,
                 );
                 right.base().screen_offset_x = self.horiz_stereo_lens_distance * 0.5;

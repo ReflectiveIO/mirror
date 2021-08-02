@@ -40,9 +40,9 @@ impl Camera for OrthographicCamera {
             fn get_dir(&self) -> &Vector;
 
             // Used for compiling camera information for OpenCL (and more)
-            fn get_raster_to_camera(&self, idx: u32) -> &Transform;
-            fn get_camera_to_world(&self, idx: u32) -> &Transform;
-            fn get_screen_to_world(&self, idx: u32) -> &Transform;
+            fn get_raster_to_camera(&self, idx: u32) -> Option<&Transform>;
+            fn get_camera_to_world(&self, idx: u32) -> Option<&Transform>;
+            fn get_screen_to_world(&self, idx: u32) -> Option<&Transform>;
 
             // Translate
             fn translate(&mut self, t: &Vector);
