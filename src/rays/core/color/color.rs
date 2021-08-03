@@ -67,6 +67,7 @@ impl From<f32> for Color {
     fn from(f: f32) -> Self { Self { 0: f, 1: f, 2: f } }
 }
 
+#[derive(Clone)]
 pub struct RGBColor {
     color: Color,
 }
