@@ -2,7 +2,7 @@ use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::image_map::{ChannelSelectionType, WrapType};
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct ImageMap {
     name: String,
 }

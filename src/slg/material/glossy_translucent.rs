@@ -10,81 +10,78 @@ use crate::slg::material::{Material, MaterialType};
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
-#[derive(Default)]
 pub struct GlossyTranslucentMaterial {
-    kd: Texture,
-    kt: Texture,
-    ks: Texture,
-    ks_bf: Texture,
-    nu: Texture,
-    nu_bf: Texture,
-    nv: Texture,
-    nv_bf: Texture,
-    ka: Texture,
-    ka_bf: Texture,
-    depth: Texture,
-    depth_bf: Texture,
-    index: Texture,
-    index_bf: Texture,
+    kd: Box<dyn Texture>,
+    kt: Box<dyn Texture>,
+    ks: Box<dyn Texture>,
+    ks_bf: Box<dyn Texture>,
+    nu: Box<dyn Texture>,
+    nu_bf: Box<dyn Texture>,
+    nv: Box<dyn Texture>,
+    nv_bf: Box<dyn Texture>,
+    ka: Box<dyn Texture>,
+    ka_bf: Box<dyn Texture>,
+    depth: Box<dyn Texture>,
+    depth_bf: Box<dyn Texture>,
+    index: Box<dyn Texture>,
+    index_bf: Box<dyn Texture>,
     multi_bounce: bool,
     multi_bounce_bf: bool,
 }
 
 impl GlossyTranslucentMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        kd: &Texture,
-        kt: &Texture,
-        ks: &Texture,
-        ks2: &Texture,
-        u: &Texture,
-        u2: &Texture,
-        v: &Texture,
-        v2: &Texture,
-        ka: &Texture,
-        ka2: &Texture,
-        d: &Texture,
-        d2: &Texture,
-        i: &Texture,
-        i2: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        kd: &Box<dyn Texture>,
+        kt: &Box<dyn Texture>,
+        ks: &Box<dyn Texture>,
+        ks2: &Box<dyn Texture>,
+        u: &Box<dyn Texture>,
+        u2: &Box<dyn Texture>,
+        v: &Box<dyn Texture>,
+        v2: &Box<dyn Texture>,
+        ka: &Box<dyn Texture>,
+        ka2: &Box<dyn Texture>,
+        d: &Box<dyn Texture>,
+        d2: &Box<dyn Texture>,
+        i: &Box<dyn Texture>,
+        i2: &Box<dyn Texture>,
         multi_bounce: bool,
         multi_bounce2: bool,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
-    pub fn get_kd(&self) -> &Texture { &self.kd }
+    pub fn get_kd(&self) -> &Box<dyn Texture> { &self.kd }
 
-    pub fn get_kt(&self) -> &Texture { &self.kt }
+    pub fn get_kt(&self) -> &Box<dyn Texture> { &self.kt }
 
-    pub fn get_ks(&self) -> &Texture { &self.ks }
+    pub fn get_ks(&self) -> &Box<dyn Texture> { &self.ks }
 
-    pub fn get_ks_bf(&self) -> &Texture { &self.ks_bf }
+    pub fn get_ks_bf(&self) -> &Box<dyn Texture> { &self.ks_bf }
 
-    pub fn get_nu(&self) -> &Texture { &self.nu }
+    pub fn get_nu(&self) -> &Box<dyn Texture> { &self.nu }
 
-    pub fn get_nu_bf(&self) -> &Texture { &self.nu_bf }
+    pub fn get_nu_bf(&self) -> &Box<dyn Texture> { &self.nu_bf }
 
-    pub fn get_nv(&self) -> &Texture { &self.nv }
+    pub fn get_nv(&self) -> &Box<dyn Texture> { &self.nv }
 
-    pub fn get_nv_bf(&self) -> &Texture { &self.nv_bf }
+    pub fn get_nv_bf(&self) -> &Box<dyn Texture> { &self.nv_bf }
 
-    pub fn get_ka(&self) -> &Texture { &self.ka }
+    pub fn get_ka(&self) -> &Box<dyn Texture> { &self.ka }
 
-    pub fn get_ka_bf(&self) -> &Texture { &self.ka_bf }
+    pub fn get_ka_bf(&self) -> &Box<dyn Texture> { &self.ka_bf }
 
-    pub fn get_depth(&self) -> &Texture { &self.depth }
+    pub fn get_depth(&self) -> &Box<dyn Texture> { &self.depth }
 
-    pub fn get_depth_bf(&self) -> &Texture { &self.depth_bf }
+    pub fn get_depth_bf(&self) -> &Box<dyn Texture> { &self.depth_bf }
 
-    pub fn get_index(&self) -> &Texture { &self.index }
+    pub fn get_index(&self) -> &Box<dyn Texture> { &self.index }
 
-    pub fn get_index_bf(&self) -> &Texture { &self.index_bf }
+    pub fn get_index_bf(&self) -> &Box<dyn Texture> { &self.index_bf }
 
     pub fn is_multi_bounce(&self) -> bool { self.multi_bounce }
 
@@ -137,9 +134,15 @@ impl MaterialTrait for GlossyTranslucentMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

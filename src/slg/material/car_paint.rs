@@ -9,58 +9,44 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct CarPaintMaterial {
-    pub kd: Texture,
+    pub kd: Box<dyn Texture>,
 
-    pub ks1: Texture,
-    pub ks2: Texture,
-    pub ks3: Texture,
+    pub ks1: Box<dyn Texture>,
+    pub ks2: Box<dyn Texture>,
+    pub ks3: Box<dyn Texture>,
 
-    pub m1: Texture,
-    pub m2: Texture,
-    pub m3: Texture,
+    pub m1: Box<dyn Texture>,
+    pub m2: Box<dyn Texture>,
+    pub m3: Box<dyn Texture>,
 
-    pub r1: Texture,
-    pub r2: Texture,
-    pub r3: Texture,
-    pub ka: Texture,
-    pub depth: Texture,
+    pub r1: Box<dyn Texture>,
+    pub r2: Box<dyn Texture>,
+    pub r3: Box<dyn Texture>,
+    pub ka: Box<dyn Texture>,
+    pub depth: Box<dyn Texture>,
 }
 
 impl CarPaintMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        kd: &Texture,
-        ks1: &Texture,
-        ks2: &Texture,
-        ks3: &Texture,
-        m1: &Texture,
-        m2: &Texture,
-        m3: &Texture,
-        r1: &Texture,
-        r2: &Texture,
-        r3: &Texture,
-        ka: &Texture,
-        depth: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        kd: &Box<dyn Texture>,
+        ks1: &Box<dyn Texture>,
+        ks2: &Box<dyn Texture>,
+        ks3: &Box<dyn Texture>,
+        m1: &Box<dyn Texture>,
+        m2: &Box<dyn Texture>,
+        m3: &Box<dyn Texture>,
+        r1: &Box<dyn Texture>,
+        r2: &Box<dyn Texture>,
+        r3: &Box<dyn Texture>,
+        ka: &Box<dyn Texture>,
+        depth: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            kd: Texture::default(),
-            ks1: Default::default(),
-            ks2: Default::default(),
-            ks3: Default::default(),
-            m1: Default::default(),
-            m2: Default::default(),
-            m3: Default::default(),
-            r1: Default::default(),
-            r2: Default::default(),
-            r3: Default::default(),
-            ka: Default::default(),
-            depth: Default::default(),
-        }
+        todo!()
     }
 
     pub fn nb_presets() -> i8 { 8 }
@@ -110,9 +96,15 @@ impl MaterialTrait for CarPaintMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

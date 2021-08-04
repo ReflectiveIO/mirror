@@ -10,19 +10,19 @@ use crate::slg::textures::Texture;
 use crate::slg::volume::SchlickScatter;
 
 pub struct HomogeneousVolume {
-    sigma_a: Texture,
-    sigma_s: Texture,
+    sigma_a: Box<dyn Texture>,
+    sigma_s: Box<dyn Texture>,
     schlick_scatter: SchlickScatter,
     multi_scattering: bool,
 }
 
 impl HomogeneousVolume {
     pub fn new(
-        ior_tex: &Texture,
-        emi_tex: &Texture,
-        a: &Texture,
-        s: &Texture,
-        g: &Texture,
+        ior_tex: &Box<dyn Texture>,
+        emi_tex: &Box<dyn Texture>,
+        a: &Box<dyn Texture>,
+        s: &Box<dyn Texture>,
+        g: &Box<dyn Texture>,
         multi_scattering: bool,
     ) -> Self {
         todo!()
@@ -39,11 +39,11 @@ impl HomogeneousVolume {
         todo!()
     }
 
-    pub fn get_sigma_a(&self) -> &Texture { &self.sigma_a }
+    pub fn get_sigma_a(&self) -> &Box<dyn Texture> { &self.sigma_a }
 
-    pub fn get_sigma_s(&self) -> &Texture { &self.sigma_s }
+    pub fn get_sigma_s(&self) -> &Box<dyn Texture> { &self.sigma_s }
 
-    pub fn get_g(&self) -> &Texture { &self.schlick_scatter.g }
+    pub fn get_g(&self) -> &Box<dyn Texture> { &self.schlick_scatter.g }
 
     pub fn is_multi_scattering(&self) -> bool { self.multi_scattering }
 }
@@ -98,9 +98,15 @@ impl MaterialTrait for HomogeneousVolume {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

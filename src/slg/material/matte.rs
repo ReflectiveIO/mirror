@@ -9,25 +9,22 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct MatteMaterial {
-    kd: Texture,
+    kd: Box<dyn Texture>,
 }
 
 impl MatteMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        col: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        col: &Box<dyn Texture>,
     ) -> Self {
-        MatteMaterial {
-            kd: Texture::default(),
-        }
+        todo!()
     }
 
-    pub fn get_kd(&self) -> &Texture { &self.kd }
+    pub fn get_kd(&self) -> &Box<dyn Texture> { &self.kd }
 }
 
 impl MaterialTrait for MatteMaterial {
@@ -76,9 +73,15 @@ impl MaterialTrait for MatteMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

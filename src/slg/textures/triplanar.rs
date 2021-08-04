@@ -62,23 +62,27 @@ impl Texture for TriplanarTexture {
         self.text_z.add_referenced_textures(v);
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.text_x.add_referenced_image_maps(v);
         self.text_y.add_referenced_image_maps(v);
         self.text_z.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.text_x.as_ref() == old_tex {
-            self.text_x = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.text_x == old_tex {
+            self.text_x = new_tex.clone();
         }
 
-        if self.text_y.as_ref() == old_tex {
-            self.text_y = Box::new(new_tex);
+        if self.text_y == old_tex {
+            self.text_y = new_tex.clone();
         }
 
-        if self.text_z.as_ref() == old_tex {
-            self.text_z = Box::new(new_tex)
+        if self.text_z == old_tex {
+            self.text_z = new_tex.clone()
         }
     }
 

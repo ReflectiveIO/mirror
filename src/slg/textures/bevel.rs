@@ -37,15 +37,19 @@ impl Texture for BevelTexture {
         }
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         if let Some(mut tex) = &self.texture {
             tex.add_referenced_image_maps(v);
         }
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.texture.is_some() && self.texture.unwrap().as_ref() == old_tex {
-            self.texture = Some(Box::new(new_tex))
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.texture.is_some() && self.texture.unwrap() == old_tex {
+            self.texture = Some(new_tex.clone())
         }
     }
 

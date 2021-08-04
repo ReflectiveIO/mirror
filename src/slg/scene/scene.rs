@@ -515,7 +515,7 @@ impl Scene {
 
     fn parse_lights(&self, props: &Properties) {}
 
-    fn get_texture(&self, name: &str) -> Texture { Texture::default() }
+    fn get_texture(&self, name: &str) -> Box<dyn Texture> { todo!() }
 
     fn create_camera(&self, props: &Properties) -> BaseCamera {
         BaseCamera::new(CameraType::Environment)
@@ -529,13 +529,11 @@ impl Scene {
         TextureMapping3D::default()
     }
 
-    fn create_texture(&self, name: &str, props: &Properties) -> Texture { Texture::default() }
+    fn create_texture(&self, name: &str, props: &Properties) -> Box<dyn Texture> { todo!() }
 
-    fn create_volume(&self, id: u32, name: &str, props: &Properties) -> Volume { Volume::default() }
+    fn create_volume(&self, id: u32, name: &str, props: &Properties) -> Volume { todo!() }
 
-    fn create_material(&self, id: u32, name: &str, props: &Properties) -> Material {
-        Material::default()
-    }
+    fn create_material(&self, id: u32, name: &str, props: &Properties) -> Material { todo!() }
 
     fn create_shape(&self, name: &str, props: &Properties) -> ExtTriangleMesh {
         ExtTriangleMesh::default()

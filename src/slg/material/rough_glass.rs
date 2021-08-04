@@ -9,53 +9,50 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct RoughGlassMaterial {
-    kr: Texture,
-    kt: Texture,
-    exterior_ior: Texture,
-    interior_ior: Texture,
-    nu: Texture,
-    nv: Texture,
-    film_thickness: Texture,
-    film_ior: Texture,
+    kr: Box<dyn Texture>,
+    kt: Box<dyn Texture>,
+    exterior_ior: Box<dyn Texture>,
+    interior_ior: Box<dyn Texture>,
+    nu: Box<dyn Texture>,
+    nv: Box<dyn Texture>,
+    film_thickness: Box<dyn Texture>,
+    film_ior: Box<dyn Texture>,
 }
 
 impl RoughGlassMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        refl: &Texture,
-        trans: &Texture,
-        exterior_ior_fact: &Texture,
-        interior_ior_fact: &Texture,
-        u: &Texture,
-        v: &Texture,
-        film_thickness: &Texture,
-        film_ior: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        refl: &Box<dyn Texture>,
+        trans: &Box<dyn Texture>,
+        exterior_ior_fact: &Box<dyn Texture>,
+        interior_ior_fact: &Box<dyn Texture>,
+        u: &Box<dyn Texture>,
+        v: &Box<dyn Texture>,
+        film_thickness: &Box<dyn Texture>,
+        film_ior: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
-    pub fn get_kr(&self) -> &Texture { &self.kr }
+    pub fn get_kr(&self) -> &Box<dyn Texture> { &self.kr }
 
-    pub fn get_kt(&self) -> &Texture { &self.kt }
+    pub fn get_kt(&self) -> &Box<dyn Texture> { &self.kt }
 
-    pub fn get_exterior_ior(&self) -> &Texture { &self.exterior_ior }
+    pub fn get_exterior_ior(&self) -> &Box<dyn Texture> { &self.exterior_ior }
 
-    pub fn get_interior_ior(&self) -> &Texture { &self.interior_ior }
+    pub fn get_interior_ior(&self) -> &Box<dyn Texture> { &self.interior_ior }
 
-    pub fn get_nu(&self) -> &Texture { &self.nu }
+    pub fn get_nu(&self) -> &Box<dyn Texture> { &self.nu }
 
-    pub fn get_nv(&self) -> &Texture { &self.nv }
+    pub fn get_nv(&self) -> &Box<dyn Texture> { &self.nv }
 
-    pub fn get_film_thickness(&self) -> &Texture { &self.film_thickness }
+    pub fn get_film_thickness(&self) -> &Box<dyn Texture> { &self.film_thickness }
 
-    pub fn get_film_ior(&self) -> &Texture { &self.film_ior }
+    pub fn get_film_ior(&self) -> &Box<dyn Texture> { &self.film_ior }
 }
 
 impl MaterialTrait for RoughGlassMaterial {
@@ -106,9 +103,15 @@ impl MaterialTrait for RoughGlassMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

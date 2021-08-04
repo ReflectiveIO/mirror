@@ -8,16 +8,16 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::{MaterialTrait, MaterialType};
 use crate::slg::textures::Texture;
 
-#[derive(Default, Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct Volume {
-    ior_texture: Texture,
-    volume_emission_texture: Texture,
+    ior_texture: Box<dyn Texture>,
+    volume_emission_texture: Box<dyn Texture>,
     volume_light_id: usize,
     priority: i8,
 }
 
 impl Volume {
-    pub fn new(ior: &Texture, emission: &Texture) -> Self { todo!() }
+    pub fn new(ior: &Box<dyn Texture>, emission: &Box<dyn Texture>) -> Self { todo!() }
 
     pub fn set_volume_light_id(&mut self, id: usize) { self.volume_light_id = id }
 
@@ -27,9 +27,11 @@ impl Volume {
 
     pub const fn get_priority(&self) -> i8 { self.priority }
 
-    pub const fn get_ior_texture(&self) -> &Texture { &self.ior_texture }
+    pub const fn get_ior_texture(&self) -> &Box<dyn Texture> { &self.ior_texture }
 
-    pub const fn get_volume_emission_texture(&self) -> &Texture { &self.volume_emission_texture }
+    pub const fn get_volume_emission_texture(&self) -> &Box<dyn Texture> {
+        &self.volume_emission_texture
+    }
 
     pub fn get_ior(&self, hp: &HitPoint) -> f32 { self.ior_texture.get_float_value(hp) }
 
@@ -93,9 +95,15 @@ impl MaterialTrait for Volume {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }
@@ -103,11 +111,11 @@ impl MaterialTrait for Volume {
 /// An utility class
 pub struct SchlickScatter {
     pub volume: Volume,
-    pub g: Texture,
+    pub g: Box<dyn Texture>,
 }
 
 impl SchlickScatter {
-    pub fn new(volume: &Volume, g: &Texture) -> Self { todo!() }
+    pub fn new(volume: &Volume, g: &Box<dyn Texture>) -> Self { todo!() }
 
     fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
 

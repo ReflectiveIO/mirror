@@ -42,18 +42,22 @@ impl Texture for DistortTexture {
         self.offset.add_referenced_textures(v);
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.texture.add_referenced_image_maps(v);
         self.offset.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.texture.as_ref() == old_tex {
-            self.texture = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.texture == old_tex {
+            self.texture = new_tex.clone();
         }
 
-        if self.offset.as_ref() == old_tex {
-            self.offset = Box::new(new_tex);
+        if self.offset == old_tex {
+            self.offset = new_tex.clone();
         }
     }
 

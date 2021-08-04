@@ -7,49 +7,46 @@ use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct ArchGlassMaterial {
-    kr: Texture,
-    kt: Texture,
-    exterior_ior: Texture,
-    interior_ior: Texture,
-    cauchy_b: Texture,
-    film_thickness: Texture,
-    film_ior: Texture,
+    kr: Box<dyn Texture>,
+    kt: Box<dyn Texture>,
+    exterior_ior: Box<dyn Texture>,
+    interior_ior: Box<dyn Texture>,
+    cauchy_b: Box<dyn Texture>,
+    film_thickness: Box<dyn Texture>,
+    film_ior: Box<dyn Texture>,
 }
 
 impl ArchGlassMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        refl: &Texture,
-        trans: &Texture,
-        exterior_fact: &Texture,
-        interior_fact: &Texture,
-        b: &Texture,
-        film_thickness: &Texture,
-        film_ior: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        refl: &Box<dyn Texture>,
+        trans: &Box<dyn Texture>,
+        exterior_fact: &Box<dyn Texture>,
+        interior_fact: &Box<dyn Texture>,
+        b: &Box<dyn Texture>,
+        film_thickness: &Box<dyn Texture>,
+        film_ior: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
-    pub fn get_kr(&self) -> &Texture { &self.kr }
+    pub fn get_kr(&self) -> &Box<dyn Texture> { &self.kr }
 
-    pub fn get_kt(&self) -> &Texture { &self.kt }
+    pub fn get_kt(&self) -> &Box<dyn Texture> { &self.kt }
 
-    pub fn get_exterior_ior(&self) -> &Texture { &self.exterior_ior }
+    pub fn get_exterior_ior(&self) -> &Box<dyn Texture> { &self.exterior_ior }
 
-    pub fn get_interior_ior(&self) -> &Texture { &self.interior_ior }
+    pub fn get_interior_ior(&self) -> &Box<dyn Texture> { &self.interior_ior }
 
-    pub fn get_cauchy_b(&self) -> &Texture { &self.cauchy_b }
+    pub fn get_cauchy_b(&self) -> &Box<dyn Texture> { &self.cauchy_b }
 
-    pub fn get_film_thickness(&self) -> &Texture { &self.film_thickness }
+    pub fn get_film_thickness(&self) -> &Box<dyn Texture> { &self.film_thickness }
 
-    pub fn get_film_ior(&self) -> &Texture { &self.film_ior }
+    pub fn get_film_ior(&self) -> &Box<dyn Texture> { &self.film_ior }
 
     pub fn eval_specular_reflection(
         hp: &HitPoint,

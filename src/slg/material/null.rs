@@ -9,15 +9,10 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct NullMaterial;
 
 impl NullMaterial {
-    pub fn new(front_transp: &Texture, back_transp: &Texture) -> Self {
-        Self {
-            ..Default::default()
-        }
-    }
+    pub fn new(front_transp: &Box<dyn Texture>, back_transp: &Box<dyn Texture>) -> Self { Self }
 }
 
 impl MaterialTrait for NullMaterial {

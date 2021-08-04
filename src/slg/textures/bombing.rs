@@ -64,9 +64,13 @@ impl Texture for BombingTexture {
 
     fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) { todo!() }
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
         todo!()
     }
 

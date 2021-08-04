@@ -49,25 +49,29 @@ impl Texture for HsvTexture {
         self.val.add_referenced_textures(v);
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.tex.add_referenced_image_maps(v);
         self.hue.add_referenced_image_maps(v);
         self.sat.add_referenced_image_maps(v);
         self.val.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.tex.as_ref() == old_tex {
-            self.tex = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.tex == old_tex {
+            self.tex = new_tex.clone();
         }
-        if self.hue.as_ref() == old_tex {
-            self.hue = Box::new(new_tex);
+        if self.hue == old_tex {
+            self.hue = new_tex.clone();
         }
-        if self.sat.as_ref() == old_tex {
-            self.sat = Box::new(new_tex);
+        if self.sat == old_tex {
+            self.sat = new_tex.clone();
         }
-        if self.val.as_ref() == old_tex {
-            self.val = Box::new(new_tex);
+        if self.val == old_tex {
+            self.val = new_tex.clone();
         }
     }
 

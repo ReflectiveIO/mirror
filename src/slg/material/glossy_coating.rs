@@ -12,28 +12,28 @@ use crate::slg::volume::Volume;
 
 pub struct GlossyCoatingMaterial {
     mat_base: Box<dyn MaterialTrait>,
-    ks: Texture,
-    nu: Texture,
-    nv: Texture,
-    ka: Texture,
-    depth: Texture,
-    index: Texture,
+    ks: Box<dyn Texture>,
+    nu: Box<dyn Texture>,
+    nv: Box<dyn Texture>,
+    ka: Box<dyn Texture>,
+    depth: Box<dyn Texture>,
+    index: Box<dyn Texture>,
     multi_bounce: bool,
 }
 
 impl GlossyCoatingMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
         mb: Box<dyn MaterialTrait>,
-        ks: Texture,
-        u: Texture,
-        v: Texture,
-        ka: Texture,
-        d: Texture,
-        i: Texture,
+        ks: Box<dyn Texture>,
+        u: Box<dyn Texture>,
+        v: Box<dyn Texture>,
+        ka: Box<dyn Texture>,
+        d: Box<dyn Texture>,
+        i: Box<dyn Texture>,
         multi_bounce: bool,
     ) -> Self {
         Self {
@@ -50,17 +50,17 @@ impl GlossyCoatingMaterial {
 
     pub fn get_material_base(&self) -> &Box<dyn MaterialTrait> { &self.mat_base }
 
-    pub fn get_ks(&self) -> &Texture { &self.ks }
+    pub fn get_ks(&self) -> &Box<dyn Texture> { &self.ks }
 
-    pub fn get_nu(&self) -> &Texture { &self.nu }
+    pub fn get_nu(&self) -> &Box<dyn Texture> { &self.nu }
 
-    pub fn get_nv(&self) -> &Texture { &self.nv }
+    pub fn get_nv(&self) -> &Box<dyn Texture> { &self.nv }
 
-    pub fn get_ka(&self) -> &Texture { &self.ka }
+    pub fn get_ka(&self) -> &Box<dyn Texture> { &self.ka }
 
-    pub fn get_depth(&self) -> &Texture { &self.depth }
+    pub fn get_depth(&self) -> &Box<dyn Texture> { &self.depth }
 
-    pub fn get_index(&self) -> &Texture { &self.index }
+    pub fn get_index(&self) -> &Box<dyn Texture> { &self.index }
 
     pub fn is_multi_bounce(&self) -> bool { self.multi_bounce }
 }
@@ -151,9 +151,15 @@ impl MaterialTrait for GlossyCoatingMaterial {
 
     fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) { todo!() }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 

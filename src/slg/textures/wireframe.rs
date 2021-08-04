@@ -39,27 +39,29 @@ impl Texture for WireFrameTexture {
 
     fn y(&self) -> f32 { (self.border_texture.y() + self.inside_texture.y()) * 0.5 }
 
-    fn filter(&self) -> f32 {
-        self(self.border_texture.filter() + self.inside_texture.filter()) * 0.5
-    }
+    fn filter(&self) -> f32 { (self.border_texture.filter() + self.inside_texture.filter()) * 0.5 }
 
     fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) {
         self.border_texture.add_referenced_textures(v);
         self.inside_texture.add_referenced_textures(v)
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.border_texture.add_referenced_image_maps(v);
         self.inside_texture.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.border_texture.as_ref() == old_tex {
-            self.border_texture = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.border_texture == old_tex {
+            self.border_texture = new_tex.clone();
         }
 
-        if self.inside_texture.as_ref() == old_tex {
-            self.inside_texture = Box::new(new_tex)
+        if self.inside_texture == old_tex {
+            self.inside_texture = new_tex.clone()
         }
     }
 

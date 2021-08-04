@@ -7,25 +7,22 @@ use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct MirrorMaterial {
-    kr: Texture,
+    kr: Box<dyn Texture>,
 }
 
 impl MirrorMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        refl: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        refl: &Box<dyn Texture>,
     ) -> Self {
-        MirrorMaterial {
-            kr: Texture::default(),
-        }
+        todo!()
     }
 
-    pub fn get_kr(&self) -> &Texture { &self.kr }
+    pub fn get_kr(&self) -> &Box<dyn Texture> { &self.kr }
 }
 
 impl MaterialTrait for MirrorMaterial {
@@ -70,9 +67,15 @@ impl MaterialTrait for MirrorMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 }
 
 impl NamedObject for MirrorMaterial {

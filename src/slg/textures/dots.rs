@@ -46,18 +46,22 @@ impl Texture for DotsTexture {
         self.outside_texture.add_referenced_textures(v);
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.inside_texture.add_referenced_image_maps(v);
         self.outside_texture.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.inside_texture.as_ref() == old_tex {
-            self.inside_texture = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.inside_texture == old_tex {
+            self.inside_texture = new_tex.clone();
         }
 
-        if self.outside_texture.as_ref() == old_tex {
-            self.outside_texture = Box::new(new_tex);
+        if self.outside_texture == old_tex {
+            self.outside_texture = new_tex.clone();
         }
     }
 

@@ -11,90 +11,74 @@ use crate::slg::textures::Texture;
 
 /// Disney BRDF
 /// Based on "Physically Based Shading at Disney" presentet SIGGRAPH 2012
-#[derive(Default)]
 pub struct DisneyMaterial {
-    base_color: Texture,
-    sub_surface: Texture,
-    roughness: Texture,
-    metallic: Texture,
-    specular: Texture,
-    specular_tint: Texture,
-    clear_coat: Texture,
-    clear_coat_gloss: Texture,
-    anisotropic: Texture,
-    sheen: Texture,
-    sheen_tint: Texture,
-    film_amount: Texture,
-    film_thickness: Texture,
-    film_ior: Texture,
+    base_color: Box<dyn Texture>,
+    sub_surface: Box<dyn Texture>,
+    roughness: Box<dyn Texture>,
+    metallic: Box<dyn Texture>,
+    specular: Box<dyn Texture>,
+    specular_tint: Box<dyn Texture>,
+    clear_coat: Box<dyn Texture>,
+    clear_coat_gloss: Box<dyn Texture>,
+    anisotropic: Box<dyn Texture>,
+    sheen: Box<dyn Texture>,
+    sheen_tint: Box<dyn Texture>,
+    film_amount: Box<dyn Texture>,
+    film_thickness: Box<dyn Texture>,
+    film_ior: Box<dyn Texture>,
 }
 
 impl DisneyMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        base_color: &Texture,
-        sub_surface: &Texture,
-        roughness: &Texture,
-        metallic: &Texture,
-        specular: &Texture,
-        specular_tint: &Texture,
-        clear_coat: &Texture,
-        clear_coat_gloss: &Texture,
-        anisotropic: &Texture,
-        sheen: &Texture,
-        sheen_tint: &Texture,
-        film_amount: &Texture,
-        film_thickness: &Texture,
-        film_ior: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        base_color: &Box<dyn Texture>,
+        sub_surface: &Box<dyn Texture>,
+        roughness: &Box<dyn Texture>,
+        metallic: &Box<dyn Texture>,
+        specular: &Box<dyn Texture>,
+        specular_tint: &Box<dyn Texture>,
+        clear_coat: &Box<dyn Texture>,
+        clear_coat_gloss: &Box<dyn Texture>,
+        anisotropic: &Box<dyn Texture>,
+        sheen: &Box<dyn Texture>,
+        sheen_tint: &Box<dyn Texture>,
+        film_amount: &Box<dyn Texture>,
+        film_thickness: &Box<dyn Texture>,
+        film_ior: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            base_color: Default::default(),
-            sub_surface: Default::default(),
-            roughness: Default::default(),
-            metallic: Default::default(),
-            specular: Default::default(),
-            specular_tint: Default::default(),
-            clear_coat: Default::default(),
-            clear_coat_gloss: Default::default(),
-            anisotropic: Default::default(),
-            sheen: Default::default(),
-            sheen_tint: Default::default(),
-            film_amount: Default::default(),
-            film_thickness: Default::default(),
-            film_ior: Default::default(),
-        }
+        todo!()
     }
 
-    pub fn get_base_color(&self) -> &Texture { &self.base_color }
+    pub fn get_base_color(&self) -> &Box<dyn Texture> { &self.base_color }
 
-    pub fn get_sub_surface(&self) -> &Texture { &self.sub_surface }
+    pub fn get_sub_surface(&self) -> &Box<dyn Texture> { &self.sub_surface }
 
-    pub fn get_roughness(&self) -> &Texture { &self.roughness }
+    pub fn get_roughness(&self) -> &Box<dyn Texture> { &self.roughness }
 
-    pub fn get_metallic(&self) -> &Texture { &self.metallic }
+    pub fn get_metallic(&self) -> &Box<dyn Texture> { &self.metallic }
 
-    pub fn get_specular(&self) -> &Texture { &self.specular }
+    pub fn get_specular(&self) -> &Box<dyn Texture> { &self.specular }
 
-    pub fn get_specular_tint(&self) -> &Texture { &self.specular_tint }
+    pub fn get_specular_tint(&self) -> &Box<dyn Texture> { &self.specular_tint }
 
-    pub fn get_clear_coat(&self) -> &Texture { &self.clear_coat }
+    pub fn get_clear_coat(&self) -> &Box<dyn Texture> { &self.clear_coat }
 
-    pub fn get_clear_coat_gloss(&self) -> &Texture { &self.clear_coat_gloss }
+    pub fn get_clear_coat_gloss(&self) -> &Box<dyn Texture> { &self.clear_coat_gloss }
 
-    pub fn get_anisotropic(&self) -> &Texture { &self.anisotropic }
+    pub fn get_anisotropic(&self) -> &Box<dyn Texture> { &self.anisotropic }
 
-    pub fn get_sheen(&self) -> &Texture { &self.sheen }
+    pub fn get_sheen(&self) -> &Box<dyn Texture> { &self.sheen }
 
-    pub fn get_sheen_tint(&self) -> &Texture { &self.sheen_tint }
+    pub fn get_sheen_tint(&self) -> &Box<dyn Texture> { &self.sheen_tint }
 
-    pub fn get_film_amount(&self) -> &Texture { &self.film_amount }
+    pub fn get_film_amount(&self) -> &Box<dyn Texture> { &self.film_amount }
 
-    pub fn get_film_thickness(&self) -> &Texture { &self.film_thickness }
+    pub fn get_film_thickness(&self) -> &Box<dyn Texture> { &self.film_thickness }
 
-    pub fn get_film_ior(&self) -> &Texture { &self.film_ior }
+    pub fn get_film_ior(&self) -> &Box<dyn Texture> { &self.film_ior }
 }
 
 impl MaterialTrait for DisneyMaterial {
@@ -141,9 +125,15 @@ impl MaterialTrait for DisneyMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

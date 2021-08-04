@@ -42,17 +42,21 @@ impl Texture for CheckerBoard2DTexture {
         self.tex2.add_referenced_textures(v);
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.tex1.add_referenced_image_maps(v);
         self.tex2.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.tex1.as_ref() == old_tex {
-            self.tex1 = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.tex1 == old_tex {
+            self.tex1 = new_tex.clone();
         }
-        if self.tex2.as_ref() == old_tex {
-            self.tex2 = Box::new(new_tex);
+        if self.tex2 == old_tex {
+            self.tex2 = new_tex.clone();
         }
     }
 
@@ -99,17 +103,21 @@ impl Texture for CheckerBoard3DTexture {
         self.tex2.add_referenced_textures(v);
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.tex1.add_referenced_image_maps(v);
         self.tex2.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.tex1.as_ref() == old_tex {
-            self.tex1 = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.tex1 == old_tex {
+            self.tex1 = new_tex.clone();
         }
-        if self.tex2.as_ref() == old_tex {
-            self.tex2 = Box::new(new_tex);
+        if self.tex2 == old_tex {
+            self.tex2 = new_tex.clone();
         }
     }
 

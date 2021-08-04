@@ -9,54 +9,49 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct Metal2Material {
-    fresnel_tex: Texture,
-    n: Texture,
-    k: Texture,
-    nu: Texture,
-    nv: Texture,
+    fresnel_tex: Box<dyn Texture>,
+    n: Box<dyn Texture>,
+    k: Box<dyn Texture>,
+    nu: Box<dyn Texture>,
+    nv: Box<dyn Texture>,
 }
 
 impl Metal2Material {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        nn: &Texture,
-        kk: &Texture,
-        u: &Texture,
-        v: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        nn: &Box<dyn Texture>,
+        kk: &Box<dyn Texture>,
+        u: &Box<dyn Texture>,
+        v: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
     pub fn fresnel(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        fresnel_texture: &Texture,
-        u: &Texture,
-        v: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        fresnel_texture: &Box<dyn Texture>,
+        u: &Box<dyn Texture>,
+        v: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
-    pub fn get_fresnel(&self) -> &Texture { &self.fresnel_tex }
+    pub fn get_fresnel(&self) -> &Box<dyn Texture> { &self.fresnel_tex }
 
-    pub fn get_n(&self) -> &Texture { &self.n }
+    pub fn get_n(&self) -> &Box<dyn Texture> { &self.n }
 
-    pub fn get_k(&self) -> &Texture { &self.k }
+    pub fn get_k(&self) -> &Box<dyn Texture> { &self.k }
 
-    pub fn get_nu(&self) -> &Texture { &self.nu }
+    pub fn get_nu(&self) -> &Box<dyn Texture> { &self.nu }
 
-    pub fn get_nv(&self) -> &Texture { &self.nv }
+    pub fn get_nv(&self) -> &Box<dyn Texture> { &self.nv }
 }
 
 impl MaterialTrait for Metal2Material {
@@ -103,9 +98,15 @@ impl MaterialTrait for Metal2Material {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

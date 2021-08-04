@@ -2,7 +2,7 @@ use crate::rays;
 use crate::rays::utils::clamp;
 
 /// Color Declarations
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Color(f32, f32, f32);
 
 impl Color {

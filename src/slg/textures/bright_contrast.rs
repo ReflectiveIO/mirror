@@ -51,21 +51,25 @@ impl Texture for BrightContrastTexture {
         self.contrast_tex.add_referenced_textures(v);
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.tex.add_referenced_image_maps(v);
         self.brightness_tex.add_referenced_image_maps(v);
         self.contrast_tex.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.tex.as_ref() == old_tex {
-            self.tex = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.tex == old_tex {
+            self.tex = new_tex.clone();
         }
-        if self.brightness_tex.as_ref() == old_tex {
-            self.brightness_tex = Box::new(new_tex);
+        if self.brightness_tex == old_tex {
+            self.brightness_tex = new_tex.clone();
         }
-        if self.contrast_tex.as_ref() == old_tex {
-            self.contrast_tex = Box::new(new_tex);
+        if self.contrast_tex == old_tex {
+            self.contrast_tex = new_tex.clone();
         }
     }
 

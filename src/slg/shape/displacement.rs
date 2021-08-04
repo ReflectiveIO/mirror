@@ -22,7 +22,7 @@ pub struct Params {
 }
 
 impl DisplacementShape {
-    pub fn new(src: &ExtTriangleMesh, disp: &Texture, params: &Params) -> Self { todo!() }
+    pub fn new(src: &ExtTriangleMesh, disp: &Box<dyn Texture>, params: &Params) -> Self { todo!() }
 }
 
 impl Shape for DisplacementShape {

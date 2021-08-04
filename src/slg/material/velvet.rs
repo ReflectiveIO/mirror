@@ -9,41 +9,38 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct VelvetMaterial {
-    kd: Texture,
-    p1: Texture,
-    p2: Texture,
-    p3: Texture,
-    thickness: Texture,
+    kd: Box<dyn Texture>,
+    p1: Box<dyn Texture>,
+    p2: Box<dyn Texture>,
+    p3: Box<dyn Texture>,
+    thickness: Box<dyn Texture>,
 }
 
 impl VelvetMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        kd: &Texture,
-        p1: &Texture,
-        p2: &Texture,
-        p3: &Texture,
-        thickness: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        kd: &Box<dyn Texture>,
+        p1: &Box<dyn Texture>,
+        p2: &Box<dyn Texture>,
+        p3: &Box<dyn Texture>,
+        thickness: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
-    pub fn get_kd(&self) -> &Texture { &self.kd }
+    pub fn get_kd(&self) -> &Box<dyn Texture> { &self.kd }
 
-    pub fn get_p1(&self) -> &Texture { &self.p1 }
+    pub fn get_p1(&self) -> &Box<dyn Texture> { &self.p1 }
 
-    pub fn get_p2(&self) -> &Texture { &self.p2 }
+    pub fn get_p2(&self) -> &Box<dyn Texture> { &self.p2 }
 
-    pub fn get_p3(&self) -> &Texture { &self.p3 }
+    pub fn get_p3(&self) -> &Box<dyn Texture> { &self.p3 }
 
-    pub fn get_thickness(&self) -> &Texture { &self.thickness }
+    pub fn get_thickness(&self) -> &Box<dyn Texture> { &self.thickness }
 }
 
 impl MaterialTrait for VelvetMaterial {
@@ -90,9 +87,15 @@ impl MaterialTrait for VelvetMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

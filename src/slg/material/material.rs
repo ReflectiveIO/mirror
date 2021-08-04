@@ -49,7 +49,6 @@ impl Default for MaterialEmissionDLSType {
     fn default() -> Self { MaterialEmissionDLSType::Auto }
 }
 
-#[derive(Default)]
 pub struct Material {
     mat_id: u32,
     light_id: u32,
@@ -69,11 +68,11 @@ pub struct Material {
     emitted_temperature: f32,
     emitted_normalize_temperature: bool,
 
-    front_transparency_tex: Texture,
-    back_transparency_tex: Texture,
+    front_transparency_tex: Box<dyn Texture>,
+    back_transparency_tex: Box<dyn Texture>,
     pass_through_shadow_transparency: Spectrum,
-    emitted_tex: Option<Texture>,
-    bump_tax: Option<Texture>,
+    emitted_tex: Option<Box<dyn Texture>>,
+    bump_tax: Option<Box<dyn Texture>>,
     bump_sample_distance: f32,
 
     emission_map: ImageMap,
@@ -97,14 +96,12 @@ pub struct Material {
 
 impl Material {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
     pub fn set_light_id(&mut self, id: u32) { self.light_id = id }
@@ -222,13 +219,15 @@ impl Material {
 
     pub fn get_emitted_importance(&self) -> f32 { self.emitted_importance }
 
-    pub fn get_front_transparency_texture(&self) -> &Texture { &self.front_transparency_tex }
+    pub fn get_front_transparency_texture(&self) -> &Box<dyn Texture> {
+        &self.front_transparency_tex
+    }
 
-    pub fn get_back_transparency_texture(&self) -> &Texture { &self.back_transparency_tex }
+    pub fn get_back_transparency_texture(&self) -> &Box<dyn Texture> { &self.back_transparency_tex }
 
-    pub fn get_emit_texture(&self) -> &Option<Texture> { &self.emitted_tex }
+    pub fn get_emit_texture(&self) -> &Option<Box<dyn Texture>> { &self.emitted_tex }
 
-    pub fn get_bump_texture(&self) -> &Option<Texture> { &self.bump_tax }
+    pub fn get_bump_texture(&self) -> &Option<Box<dyn Texture>> { &self.bump_tax }
 
     pub fn set_emission_map(&mut self, map: ImageMap) { self.emission_map = map }
 
@@ -350,11 +349,17 @@ impl MaterialTrait for Material {
 
     fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {}
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) { todo!() }
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }
@@ -383,10 +388,10 @@ pub trait MaterialTrait: Downcast + NamedObject {
     fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 { 0.0 }
 
     fn get_interior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
-        &Volume::default()
+        todo!()
     }
     fn get_exterior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
-        &Volume::default()
+        todo!()
     }
     fn bump(&mut self, hit_point: &HitPoint) {}
 
@@ -454,10 +459,15 @@ pub trait MaterialTrait: Downcast + NamedObject {
 
     fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { false }
     fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {}
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) {}
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {}
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) {}
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {}
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) {}
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties {
         Properties::default()

@@ -9,51 +9,48 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct Glossy2Material {
-    kd: Texture,
-    ks: Texture,
-    nu: Texture,
-    nv: Texture,
-    ka: Texture,
-    depth: Texture,
-    index: Texture,
+    kd: Box<dyn Texture>,
+    ks: Box<dyn Texture>,
+    nu: Box<dyn Texture>,
+    nv: Box<dyn Texture>,
+    ka: Box<dyn Texture>,
+    depth: Box<dyn Texture>,
+    index: Box<dyn Texture>,
     multi_bounce: bool,
 }
 
 impl Glossy2Material {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        kd: &Texture,
-        ks: &Texture,
-        u: &Texture,
-        v: &Texture,
-        ka: &Texture,
-        d: &Texture,
-        i: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        kd: &Box<dyn Texture>,
+        ks: &Box<dyn Texture>,
+        u: &Box<dyn Texture>,
+        v: &Box<dyn Texture>,
+        ka: &Box<dyn Texture>,
+        d: &Box<dyn Texture>,
+        i: &Box<dyn Texture>,
         multi_bounce: bool,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
-    pub fn get_kd(&self) -> &Texture { &self.kd }
+    pub fn get_kd(&self) -> &Box<dyn Texture> { &self.kd }
 
-    pub fn get_ks(&self) -> &Texture { &self.ks }
+    pub fn get_ks(&self) -> &Box<dyn Texture> { &self.ks }
 
-    pub fn get_nu(&self) -> &Texture { &self.nu }
+    pub fn get_nu(&self) -> &Box<dyn Texture> { &self.nu }
 
-    pub fn get_nv(&self) -> &Texture { &self.nv }
+    pub fn get_nv(&self) -> &Box<dyn Texture> { &self.nv }
 
-    pub fn get_ka(&self) -> &Texture { &self.ka }
+    pub fn get_ka(&self) -> &Box<dyn Texture> { &self.ka }
 
-    pub fn get_depth(&self) -> &Texture { &self.depth }
+    pub fn get_depth(&self) -> &Box<dyn Texture> { &self.depth }
 
-    pub fn get_index(&self) -> &Texture { &self.index }
+    pub fn get_index(&self) -> &Box<dyn Texture> { &self.index }
 
     pub fn is_multi_bounce(&self) -> bool { self.multi_bounce }
 }
@@ -102,9 +99,15 @@ impl MaterialTrait for Glossy2Material {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

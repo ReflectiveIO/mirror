@@ -48,13 +48,12 @@ pub struct Yarn {
     center_v: f32,
 }
 
-#[derive(Default)]
 pub struct ClothMaterial {
     preset: ClothPreset,
-    weft_kd: Texture,
-    weft_ks: Texture,
-    warp_kd: Texture,
-    warp_ks: Texture,
+    weft_kd: Box<dyn Texture>,
+    weft_ks: Box<dyn Texture>,
+    warp_kd: Box<dyn Texture>,
+    warp_ks: Box<dyn Texture>,
     repeat_u: f32,
     repeat_v: f32,
     specular_normalization: f32,
@@ -62,39 +61,30 @@ pub struct ClothMaterial {
 
 impl ClothMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
         preset: ClothPreset,
-        weft_kd: &Texture,
-        weft_ks: &Texture,
-        warp_kd: &Texture,
-        warp_ks: &Texture,
+        weft_kd: &Box<dyn Texture>,
+        weft_ks: &Box<dyn Texture>,
+        warp_kd: &Box<dyn Texture>,
+        warp_ks: &Box<dyn Texture>,
         repeat_u: f32,
         repeat_v: f32,
     ) -> Self {
-        Self {
-            preset,
-            weft_kd: Default::default(),
-            weft_ks: Default::default(),
-            warp_kd: Default::default(),
-            warp_ks: Default::default(),
-            repeat_u,
-            repeat_v,
-            specular_normalization: 0.0,
-        }
+        todo!()
     }
 
     pub fn get_preset(&self) -> &ClothPreset { &self.preset }
 
-    pub fn get_weft_kd(&self) -> &Texture { &self.weft_kd }
+    pub fn get_weft_kd(&self) -> &Box<dyn Texture> { &self.weft_kd }
 
-    pub fn get_weft_ks(&self) -> &Texture { &self.weft_ks }
+    pub fn get_weft_ks(&self) -> &Box<dyn Texture> { &self.weft_ks }
 
-    pub fn get_warp_kd(&self) -> &Texture { &self.warp_kd }
+    pub fn get_warp_kd(&self) -> &Box<dyn Texture> { &self.warp_kd }
 
-    pub fn get_warp_ks(&self) -> &Texture { &self.warp_ks }
+    pub fn get_warp_ks(&self) -> &Box<dyn Texture> { &self.warp_ks }
 
     pub fn get_repeat_u(&self) -> f32 { self.repeat_u }
 
@@ -196,9 +186,15 @@ impl MaterialTrait for ClothMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

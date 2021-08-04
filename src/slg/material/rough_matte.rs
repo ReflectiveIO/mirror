@@ -9,29 +9,26 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-#[derive(Default)]
 pub struct RoughMatteMaterial {
-    kd: Texture,
-    sigma: Texture,
+    kd: Box<dyn Texture>,
+    sigma: Box<dyn Texture>,
 }
 
 impl RoughMatteMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
-        col: &Texture,
-        s: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
+        col: &Box<dyn Texture>,
+        s: &Box<dyn Texture>,
     ) -> Self {
-        Self {
-            ..Default::default()
-        }
+        todo!()
     }
 
-    pub fn get_kd(&self) -> &Texture { &self.kd }
+    pub fn get_kd(&self) -> &Box<dyn Texture> { &self.kd }
 
-    pub fn get_sigma(&self) -> &Texture { &self.sigma }
+    pub fn get_sigma(&self) -> &Box<dyn Texture> { &self.sigma }
 }
 
 impl MaterialTrait for RoughMatteMaterial {
@@ -78,9 +75,15 @@ impl MaterialTrait for RoughMatteMaterial {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }

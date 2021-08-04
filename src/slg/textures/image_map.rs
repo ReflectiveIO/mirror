@@ -47,7 +47,7 @@ impl Texture for ImageMapTexture {
 
     fn bump(&self, hp: &HitPoint, sample_distance: f32) -> Normal { todo!() }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) { todo!() }
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) { todo!() }
 
     fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties {
         todo!()

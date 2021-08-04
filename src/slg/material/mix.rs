@@ -13,7 +13,7 @@ use crate::slg::volume::Volume;
 pub struct MixMaterial {
     a: Box<dyn MaterialTrait>,
     b: Box<dyn MaterialTrait>,
-    mix_factor: Texture,
+    mix_factor: Box<dyn Texture>,
     event_types: BSDFEvent,
     is_light_source: bool,
     is_delta: bool,
@@ -21,13 +21,13 @@ pub struct MixMaterial {
 
 impl MixMaterial {
     pub fn new(
-        front_transp: &Texture,
-        back_transp: &Texture,
-        emitted: &Texture,
-        bump: &Texture,
+        front_transp: &Box<dyn Texture>,
+        back_transp: &Box<dyn Texture>,
+        emitted: &Box<dyn Texture>,
+        bump: &Box<dyn Texture>,
         a: Box<dyn MaterialTrait>,
         b: Box<dyn MaterialTrait>,
-        mix: Texture,
+        mix: Box<dyn Texture>,
     ) -> Self {
         Self {
             a,
@@ -44,7 +44,7 @@ impl MixMaterial {
 
     pub fn get_b(&self) -> &Box<dyn MaterialTrait> { &self.b }
 
-    pub fn get_mix_factor(&self) -> &Texture { &self.mix_factor }
+    pub fn get_mix_factor(&self) -> &Box<dyn Texture> { &self.mix_factor }
 }
 
 impl MaterialTrait for MixMaterial {
@@ -131,9 +131,15 @@ impl MaterialTrait for MixMaterial {
 
     fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) { todo!() }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 

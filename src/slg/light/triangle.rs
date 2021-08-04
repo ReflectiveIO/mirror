@@ -13,7 +13,6 @@ use crate::slg::material::{Material, MaterialEmissionDLSType, MaterialTrait};
 use crate::slg::scene::SceneObject;
 use crate::slg::Scene;
 
-#[derive(Default)]
 pub struct TriangleLight {
     pub light_material: Material,
     pub scene_object: SceneObject,
@@ -30,11 +29,7 @@ pub struct TriangleLight {
 }
 
 impl TriangleLight {
-    pub fn new() -> Self {
-        Self {
-            ..Default::default()
-        }
-    }
+    pub fn new() -> Self { todo!() }
 
     pub fn get_triangle_area(&self) -> f32 { self.triangle_area }
 

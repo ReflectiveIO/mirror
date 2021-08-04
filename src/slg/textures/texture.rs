@@ -87,8 +87,13 @@ pub trait Texture: NamedObject {
     fn bump(&self, hp: &HitPoint, sample_distance: f32) -> Normal { todo!() }
 
     fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {}
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {}
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {}
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+    }
     fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties;
 }
 
@@ -96,4 +101,22 @@ impl<T: Texture> NamedObject for T {
     fn get_name(&self) -> &String { &String::from("texture") }
 
     fn set_name(&mut self, name: &str) { todo!() }
+}
+
+impl NamedObject for Box<dyn Texture> {
+    fn get_name(&self) -> &String { self.get_name() }
+
+    fn set_name(&mut self, name: &str) { self.set_name(name) }
+}
+
+impl PartialEq<&Box<dyn Texture>> for Box<dyn Texture> {
+    fn eq(&self, other: &&Box<dyn Texture>) -> bool { todo!() }
+}
+
+impl PartialEq for Box<dyn Texture> {
+    fn eq(&self, other: &Self) -> bool { todo!() }
+}
+
+impl Clone for Box<dyn Texture> {
+    fn clone(&self) -> Self { self.clone() }
 }

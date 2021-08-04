@@ -70,13 +70,17 @@ impl Texture for BandTexture {
         self.amount.add_referenced_textures(v)
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.amount.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.amount.as_ref() == old_tex {
-            self.amount = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.amount == old_tex {
+            self.amount = new_tex.clone();
         }
     }
 

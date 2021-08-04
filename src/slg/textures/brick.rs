@@ -5,6 +5,7 @@ use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
 
+#[derive(PartialEq)]
 pub enum MasonryBond {
     Flemish,
     Running,
@@ -186,21 +187,25 @@ impl Texture for BrickTexture {
         self.tex3.add_referenced_textures(v);
     }
 
-    fn add_referenced_image_maps(&mut self, v: &Vec<ImageMap>) {
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
         self.tex1.add_referenced_image_maps(v);
         self.tex2.add_referenced_image_maps(v);
         self.tex3.add_referenced_image_maps(v);
     }
 
-    fn update_texture_references(&mut self, old_tex: &dyn Texture, new_tex: &dyn Texture) {
-        if self.tex1.as_ref() == old_tex {
-            self.tex1 = Box::new(new_tex);
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        if self.tex1 == old_tex {
+            self.tex1 = new_tex.clone();
         }
-        if self.tex2.as_ref() == old_tex {
-            self.tex2 = Box::new(new_tex);
+        if self.tex2 == old_tex {
+            self.tex2 = new_tex.clone();
         }
-        if self.tex3.as_ref() == old_tex {
-            self.tex3 = Box::new(new_tex);
+        if self.tex3 == old_tex {
+            self.tex3 = new_tex.clone();
         }
     }
 

@@ -9,11 +9,17 @@ use crate::slg::material::{MaterialTrait, MaterialType};
 use crate::slg::textures::Texture;
 
 pub struct ClearVolume {
-    sigma_a: Texture,
+    sigma_a: Box<dyn Texture>,
 }
 
 impl ClearVolume {
-    pub fn new(ior_tex: &Texture, emi_tex: &Texture, a: &Texture) -> Self { todo!() }
+    pub fn new(
+        ior_tex: &Box<dyn Texture>,
+        emi_tex: &Box<dyn Texture>,
+        a: &Box<dyn Texture>,
+    ) -> Self {
+        todo!()
+    }
 
     pub fn scatter(
         &self,
@@ -26,7 +32,7 @@ impl ClearVolume {
         todo!()
     }
 
-    pub fn get_sigma_a(&self) -> &Texture { &self.sigma_a }
+    pub fn get_sigma_a(&self) -> &Box<dyn Texture> { &self.sigma_a }
 }
 
 impl NamedObject for ClearVolume {
@@ -79,9 +85,15 @@ impl MaterialTrait for ClearVolume {
         todo!()
     }
 
-    fn add_referenced_textures(&mut self, v: &Vec<Texture>) { todo!() }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
-    fn update_texture_references(&mut self, old_tex: &Texture, new_tex: &Texture) { todo!() }
+    fn update_texture_references(
+        &mut self,
+        old_tex: &Box<dyn Texture>,
+        new_tex: &Box<dyn Texture>,
+    ) {
+        todo!()
+    }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 }
