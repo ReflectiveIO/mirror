@@ -521,12 +521,20 @@ impl Scene {
         BaseCamera::new(CameraType::Environment)
     }
 
-    fn create_texture_mapping_2d(&self, prefix: &str, props: &Properties) -> TextureMapping2D {
-        TextureMapping2D::default()
+    fn create_texture_mapping_2d(
+        &self,
+        prefix: &str,
+        props: &Properties,
+    ) -> Box<dyn TextureMapping2D> {
+        todo!()
     }
 
-    fn create_texture_mapping_3d(&self, prefix: &str, props: &Properties) -> TextureMapping3D {
-        TextureMapping3D::default()
+    fn create_texture_mapping_3d(
+        &self,
+        prefix: &str,
+        props: &Properties,
+    ) -> Box<dyn TextureMapping3D> {
+        todo!()
     }
 
     fn create_texture(&self, name: &str, props: &Properties) -> Box<dyn Texture> { todo!() }

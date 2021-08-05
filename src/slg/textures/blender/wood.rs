@@ -2,10 +2,13 @@ use crate::rays::color::Spectrum;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
+use crate::slg::textures::{
+    BlenderMarbleType, BlenderNoiseBase, BlenderNoiseBasis, BlenderWoodType, Texture,
+    TextureMapping3D, TextureType,
+};
 
 pub struct BlenderWoodTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     wood_type: BlenderWoodType,
     noise_basis: BlenderNoiseBasis,
     noise_basis2: BlenderNoiseBase,
@@ -18,7 +21,7 @@ pub struct BlenderWoodTexture {
 
 impl BlenderWoodTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         wood_type: BlenderWoodType,
         noise_basis: BlenderNoiseBasis,
         noise_basis2: BlenderNoiseBase,
@@ -41,9 +44,9 @@ impl BlenderWoodTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
-    pub fn get_wood_type(&self) -> &BlenderMarbleType { &self.wood_type }
+    pub fn get_wood_type(&self) -> &BlenderWoodType { &self.wood_type }
 
     pub fn get_noise_basis(&self) -> &BlenderNoiseBasis { &self.noise_basis }
 

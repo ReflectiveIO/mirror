@@ -30,12 +30,12 @@ pub struct CloudTexture {
     noise_offset: f32,
     turbulence_amount: f32,
     num_octaves: u32,
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
 }
 
 impl CloudTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         radius: f32,
         first_noise_scale: f32,
         turbulence_amount: f32,
@@ -51,7 +51,7 @@ impl CloudTexture {
         todo!()
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_radius(&self) -> f32 { self.radius }
 

@@ -5,13 +5,13 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
 
 pub struct WindyTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
 }
 
 impl WindyTexture {
-    pub fn new(mapping: TextureMapping3D) -> Self { Self { mapping } }
+    pub fn new(mapping: Box<dyn TextureMapping3D>) -> Self { Self { mapping } }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 }
 
 impl Texture for WindyTexture {

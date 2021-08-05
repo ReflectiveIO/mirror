@@ -1,5 +1,23 @@
-#[derive(Default)]
-pub struct TextureMapping2D;
+use std::str::FromStr;
 
-#[derive(Default)]
-pub struct TextureMapping3D;
+pub use self::mapping_2d::*;
+pub use self::mapping_3d::*;
+
+mod mapping_2d;
+mod mapping_3d;
+
+pub enum RandomMappingSeedType {
+    ObjectId,
+    TriangleAov,
+    ObjectIdOffset,
+}
+
+impl FromStr for RandomMappingSeedType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> { todo!() }
+}
+
+impl ToString for RandomMappingSeedType {
+    fn to_string(&self) -> String { todo!() }
+}

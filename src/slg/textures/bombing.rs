@@ -5,7 +5,7 @@ use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::{Texture, TextureMapping2D, TextureType};
 
 pub struct BombingTexture {
-    mapping: TextureMapping2D,
+    mapping: Box<dyn TextureMapping2D>,
     background_texture: Box<dyn Texture>,
     bullet_texture: Box<dyn Texture>,
     bullet_mask_texture: Box<dyn Texture>,
@@ -17,7 +17,7 @@ pub struct BombingTexture {
 
 impl BombingTexture {
     pub fn new(
-        mapping: TextureMapping2D,
+        mapping: Box<dyn TextureMapping2D>,
         background_texture: Box<dyn Texture>,
         bullet_texture: Box<dyn Texture>,
         bullet_mask_texture: Box<dyn Texture>,
@@ -36,7 +36,7 @@ impl BombingTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping2D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping2D> { &self.mapping }
 
     pub fn get_background_texture(&self) -> &Box<dyn Texture> { &self.background_texture }
 

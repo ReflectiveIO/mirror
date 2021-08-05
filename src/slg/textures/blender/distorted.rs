@@ -2,10 +2,10 @@ use crate::rays::color::Spectrum;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
+use crate::slg::textures::{BlenderNoiseBasis, Texture, TextureMapping3D, TextureType};
 
 pub struct BlenderDistortedNoiseTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     noise_distortion: BlenderNoiseBasis,
     noise_basis: BlenderNoiseBasis,
     distortion: i32,
@@ -16,7 +16,7 @@ pub struct BlenderDistortedNoiseTexture {
 
 impl BlenderDistortedNoiseTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         noise_distortion: BlenderNoiseBasis,
         noise_basis: BlenderNoiseBasis,
         distortion: i32,
@@ -35,7 +35,7 @@ impl BlenderDistortedNoiseTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_noise_distortion(&self) -> &BlenderNoiseBasis { &self.noise_distortion }
 

@@ -5,13 +5,17 @@ use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::{Texture, TextureMapping2D, TextureMapping3D, TextureType};
 
 pub struct CheckerBoard2DTexture {
-    mapping: TextureMapping2D,
+    mapping: Box<dyn TextureMapping2D>,
     tex1: Box<dyn Texture>,
     tex2: Box<dyn Texture>,
 }
 
 impl CheckerBoard2DTexture {
-    pub fn new(mapping: TextureMapping2D, tex1: Box<dyn Texture>, tex2: Box<dyn Texture>) -> Self {
+    pub fn new(
+        mapping: Box<dyn TextureMapping2D>,
+        tex1: Box<dyn Texture>,
+        tex2: Box<dyn Texture>,
+    ) -> Self {
         Self {
             mapping,
             tex1,
@@ -19,7 +23,7 @@ impl CheckerBoard2DTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping2D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping2D> { &self.mapping }
 
     pub fn get_texture1(&self) -> &Box<dyn Texture> { &self.tex1 }
 
@@ -66,13 +70,17 @@ impl Texture for CheckerBoard2DTexture {
 }
 
 pub struct CheckerBoard3DTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     tex1: Box<dyn Texture>,
     tex2: Box<dyn Texture>,
 }
 
 impl CheckerBoard3DTexture {
-    pub fn new(mapping: TextureMapping3D, tex1: Box<dyn Texture>, tex2: Box<dyn Texture>) -> Self {
+    pub fn new(
+        mapping: Box<dyn TextureMapping3D>,
+        tex1: Box<dyn Texture>,
+        tex2: Box<dyn Texture>,
+    ) -> Self {
         Self {
             mapping,
             tex1,
@@ -80,7 +88,7 @@ impl CheckerBoard3DTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_texture1(&self) -> &Box<dyn Texture> { &self.tex1 }
 

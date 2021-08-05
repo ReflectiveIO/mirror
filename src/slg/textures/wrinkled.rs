@@ -5,13 +5,13 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
 
 pub struct WrinkledTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     octaves: i32,
     omega: f32,
 }
 
 impl WrinkledTexture {
-    pub fn new(mapping: TextureMapping3D, octaves: i32, omega: f32) -> Self {
+    pub fn new(mapping: Box<dyn TextureMapping3D>, octaves: i32, omega: f32) -> Self {
         Self {
             mapping,
             octaves,
@@ -19,7 +19,7 @@ impl WrinkledTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_octaves(&self) -> i32 { self.octaves }
 

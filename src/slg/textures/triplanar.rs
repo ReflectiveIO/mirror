@@ -6,7 +6,7 @@ use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
 
 pub struct TriplanarTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     text_x: Box<dyn Texture>,
     text_y: Box<dyn Texture>,
     text_z: Box<dyn Texture>,
@@ -15,7 +15,7 @@ pub struct TriplanarTexture {
 
 impl TriplanarTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         text_x: Box<dyn Texture>,
         text_y: Box<dyn Texture>,
         text_z: Box<dyn Texture>,
@@ -30,7 +30,7 @@ impl TriplanarTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_texture1(&self) -> &Box<dyn Texture> { &self.text_x }
 

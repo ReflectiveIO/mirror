@@ -5,13 +5,13 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::{Texture, TextureMapping2D, TextureType};
 
 pub struct UVTexture {
-    mapping: TextureMapping2D,
+    mapping: Box<dyn TextureMapping2D>,
 }
 
 impl UVTexture {
-    pub fn new(mapping: TextureMapping2D) -> Self { Self { mapping } }
+    pub fn new(mapping: Box<dyn TextureMapping2D>) -> Self { Self { mapping } }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping2D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping2D> { &self.mapping }
 }
 
 impl Texture for UVTexture {

@@ -2,10 +2,10 @@ use crate::rays::color::Spectrum;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
+use crate::slg::textures::{ProgressionType, Texture, TextureMapping3D, TextureType};
 
 pub struct BlenderBlendTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     progression_type: ProgressionType,
     direction: bool,
     bright: f32,
@@ -14,7 +14,7 @@ pub struct BlenderBlendTexture {
 
 impl BlenderBlendTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         progression_type: ProgressionType,
         direction: bool,
         bright: f32,
@@ -29,7 +29,7 @@ impl BlenderBlendTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_progression_type(&self) -> &ProgressionType { &self.progression_type }
 

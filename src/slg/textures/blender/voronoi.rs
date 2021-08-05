@@ -2,10 +2,10 @@ use crate::rays::color::Spectrum;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
+use crate::slg::textures::{DistanceMetric, Texture, TextureMapping3D, TextureType};
 
 pub struct BlenderVoronoiTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     intensity: i32,
     feature_weight1: f32,
     feature_weight2: f32,
@@ -20,7 +20,7 @@ pub struct BlenderVoronoiTexture {
 
 impl BlenderVoronoiTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         intensity: i32,
         feature_weight1: f32,
         feature_weight2: f32,
@@ -47,7 +47,7 @@ impl BlenderVoronoiTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_intensity(&self) -> i32 { self.intensity }
 
@@ -59,7 +59,7 @@ impl BlenderVoronoiTexture {
 
     pub fn get_feature_weight4(&self) -> f32 { self.feature_weight4 }
 
-    pub fn get_distance_metric(&self) -> &DistanceMetric { self.distance_metric }
+    pub fn get_distance_metric(&self) -> &DistanceMetric { &self.distance_metric }
 
     pub fn get_exponent(&self) -> f32 { self.exponent }
 

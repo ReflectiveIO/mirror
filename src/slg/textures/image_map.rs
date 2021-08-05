@@ -7,7 +7,7 @@ use crate::slg::textures::{Texture, TextureMapping2D, TextureType};
 
 pub struct ImageMapTexture {
     image_map: ImageMap,
-    mapping: TextureMapping2D,
+    mapping: Box<dyn TextureMapping2D>,
     gain: f32,
 
     // used for randomized tiling
@@ -17,13 +17,19 @@ pub struct ImageMapTexture {
 }
 
 impl ImageMapTexture {
-    fn new(tex_name: &String, img: &ImageMap, mp: &TextureMapping2D, g: f32, rt: bool) -> Self {
+    fn new(
+        tex_name: &String,
+        img: &ImageMap,
+        mp: &Box<dyn TextureMapping2D>,
+        g: f32,
+        rt: bool,
+    ) -> Self {
         todo!()
     }
 
     pub fn get_image_map(&self) -> &ImageMap { &self.image_map }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping2D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping2D> { &self.mapping }
 
     pub fn get_gain(&self) -> f32 { self.gain }
 

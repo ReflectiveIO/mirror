@@ -2,10 +2,12 @@ use crate::rays::color::Spectrum;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
+use crate::slg::textures::{
+    BlenderNoiseBasis, BlenderStucciType, Texture, TextureMapping3D, TextureType,
+};
 
 pub struct BlenderStucciTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     stucci_type: BlenderStucciType,
     noise_basis: BlenderNoiseBasis,
     noise_size: f32,
@@ -17,7 +19,7 @@ pub struct BlenderStucciTexture {
 
 impl BlenderStucciTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         stucci_type: BlenderStucciType,
         noise_basis: BlenderNoiseBasis,
         noise_size: f32,
@@ -38,7 +40,7 @@ impl BlenderStucciTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_stucci_type(&self) -> &BlenderStucciType { &self.stucci_type }
 

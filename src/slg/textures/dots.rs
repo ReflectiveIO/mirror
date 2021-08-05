@@ -5,14 +5,14 @@ use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::{Texture, TextureMapping2D, TextureType};
 
 pub struct DotsTexture {
-    mapping: TextureMapping2D,
+    mapping: Box<dyn TextureMapping2D>,
     inside_texture: Box<dyn Texture>,
     outside_texture: Box<dyn Texture>,
 }
 
 impl DotsTexture {
     pub fn new(
-        mapping: TextureMapping2D,
+        mapping: Box<dyn TextureMapping2D>,
         inside_texture: Box<dyn Texture>,
         outside_texture: Box<dyn Texture>,
     ) -> Self {
@@ -23,7 +23,7 @@ impl DotsTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping2D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping2D> { &self.mapping }
 
     pub fn get_inside_texture(&self) -> &Box<dyn Texture> { &self.inside_texture }
 

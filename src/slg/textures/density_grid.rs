@@ -5,7 +5,7 @@ use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
 
 pub struct DensityGridTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     nx: i32,
     ny: i32,
     nz: i32,
@@ -13,7 +13,13 @@ pub struct DensityGridTexture {
 }
 
 impl DensityGridTexture {
-    pub fn new(mapping: TextureMapping3D, nx: i32, ny: i32, nz: i32, image_map: ImageMap) -> Self {
+    pub fn new(
+        mapping: Box<dyn TextureMapping3D>,
+        nx: i32,
+        ny: i32,
+        nz: i32,
+        image_map: ImageMap,
+    ) -> Self {
         Self {
             mapping,
             nx,
@@ -31,7 +37,7 @@ impl DensityGridTexture {
 
     pub fn get_image_map(&self) -> &ImageMap { &self.image_map }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 }
 
 impl Texture for DensityGridTexture {

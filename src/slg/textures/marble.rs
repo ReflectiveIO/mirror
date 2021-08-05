@@ -5,7 +5,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
 
 pub struct MarbleTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     octaves: i32,
     omega: f32,
     scale: f32,
@@ -14,7 +14,7 @@ pub struct MarbleTexture {
 
 impl MarbleTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         octaves: i32,
         omega: f32,
         scale: f32,
@@ -29,7 +29,7 @@ impl MarbleTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_octaves(&self) -> i32 { self.octaves }
 

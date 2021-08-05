@@ -5,7 +5,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
 
 pub struct BlenderMagicTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     noise_depth: i32,
     turbulence: f32,
     bright: f32,
@@ -14,7 +14,7 @@ pub struct BlenderMagicTexture {
 
 impl BlenderMagicTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         noise_depth: i32,
         turbulence: f32,
         bright: f32,
@@ -29,7 +29,7 @@ impl BlenderMagicTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_noise_depth(&self) -> i32 { self.noise_depth }
 

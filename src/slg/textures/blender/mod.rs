@@ -19,3 +19,69 @@ mod noise;
 mod stucci;
 mod voronoi;
 mod wood;
+
+pub enum BlenderNoiseBase {
+    Sin,
+    Saw,
+    Tri,
+}
+
+pub enum BlenderMarbleType {
+    Soft,
+    Sharp,
+    Sharper,
+}
+
+pub enum BlenderMusgraveType {
+    MultiFractal,
+    RidgedMultiFractal,
+    HybridMultiFractal,
+    Fbm,
+    HeteroTerrain,
+}
+
+pub enum BlenderStucciType {
+    Plastic,
+    WallIn,
+    WallOut,
+}
+
+pub enum BlenderWoodType {
+    Bands,
+    Rings,
+    BandNoise,
+    RingNoise,
+}
+
+pub enum ProgressionType {
+    Lin,
+    Quad,
+    Ease,
+    Diag,
+    Sphere,
+    Halo,
+    Rad,
+}
+
+pub enum DistanceMetric {
+    ActualDistance,
+    DistanceSquared,
+    MANHATTAN,
+    CheByChev,
+    MinkowskiHalf,
+    MinkowskiFour,
+    Minkowski,
+}
+
+pub enum BlenderNoiseBasis {
+    BlenderOriginal,
+    OriginalPerlin,
+    ImprovedPerlin,
+    VoronoiF1,
+    VoronoiF2,
+    VoronoiF3,
+    VoronoiF4,
+    VoronoiF2F1,
+    VoronoiCrackle,
+    CellNoise,
+}

@@ -2,10 +2,12 @@ use crate::rays::color::Spectrum;
 use crate::rays::Properties;
 use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
+use crate::slg::textures::{
+    BlenderMusgraveType, BlenderNoiseBasis, Texture, TextureMapping3D, TextureType,
+};
 
 pub struct BlenderMusgraveTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
     musgrave_type: BlenderMusgraveType,
     noise_basis: BlenderNoiseBasis,
     dimension: f32,
@@ -21,7 +23,7 @@ pub struct BlenderMusgraveTexture {
 
 impl BlenderMusgraveTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
         musgrave_type: BlenderMusgraveType,
         noise_basis: BlenderNoiseBasis,
         dimension: f32,
@@ -50,7 +52,7 @@ impl BlenderMusgraveTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_musgrave_type(&self) -> &BlenderMusgraveType { &self.musgrave_type }
 

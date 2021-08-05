@@ -16,7 +16,7 @@ pub enum MasonryBond {
 }
 
 pub struct BrickTexture {
-    mapping: TextureMapping3D,
+    mapping: Box<dyn TextureMapping3D>,
 
     tex1: Box<dyn Texture>,
     tex2: Box<dyn Texture>,
@@ -47,7 +47,7 @@ pub struct BrickTexture {
 
 impl BrickTexture {
     pub fn new(
-        mapping: TextureMapping3D,
+        mapping: Box<dyn TextureMapping3D>,
 
         tex1: Box<dyn Texture>,
         tex2: Box<dyn Texture>,
@@ -129,7 +129,7 @@ impl BrickTexture {
         }
     }
 
-    pub fn get_texture_mapping(&self) -> &TextureMapping3D { &self.mapping }
+    pub fn get_texture_mapping(&self) -> &Box<dyn TextureMapping3D> { &self.mapping }
 
     pub fn get_texture1(&self) -> &Box<dyn Texture> { &self.tex1 }
 
