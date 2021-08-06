@@ -23,7 +23,7 @@ pub use self::image_map::ImageMapTexture;
 pub use self::irregular::IrregularDataTexture;
 pub use self::mapping::*;
 pub use self::marble::MarbleTexture;
-//pub use self::math::*;
+pub use self::math::*;
 pub use self::normal_map::NormalMapTexture;
 pub use self::object_id::*;
 pub use self::texture::*;
@@ -70,4 +70,4 @@ mod wireframe;
 mod wrinkled;
 
 mod hitpoint;
-//mod math;
+mod math;
