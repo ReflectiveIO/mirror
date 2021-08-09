@@ -1,13 +1,15 @@
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-use super::material::MaterialTrait;
-
 pub struct MirrorMaterial {
+    base: BaseMaterial,
+
     kr: Box<dyn Texture>,
 }
 
@@ -25,7 +27,9 @@ impl MirrorMaterial {
     pub fn get_kr(&self) -> &Box<dyn Texture> { &self.kr }
 }
 
-impl MaterialTrait for MirrorMaterial {
+impl Material for MirrorMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::Mirror }
 
     fn get_event_types(&self) -> BSDFEvent { BSDFEventType::SPECULAR | BSDFEventType::REFLECT }
@@ -76,10 +80,4 @@ impl MaterialTrait for MirrorMaterial {
     ) {
         todo!()
     }
-}
-
-impl NamedObject for MirrorMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

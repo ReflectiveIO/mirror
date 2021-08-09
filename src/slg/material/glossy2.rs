@@ -1,14 +1,17 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
 pub struct Glossy2Material {
+    base: BaseMaterial,
+
     kd: Box<dyn Texture>,
     ks: Box<dyn Texture>,
     nu: Box<dyn Texture>,
@@ -54,7 +57,9 @@ impl Glossy2Material {
     pub fn is_multi_bounce(&self) -> bool { self.multi_bounce }
 }
 
-impl MaterialTrait for Glossy2Material {
+impl Material for Glossy2Material {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::Glossy2 }
 
     fn get_event_types(&self) -> BSDFEvent { BSDFEventType::GLOSSY | BSDFEventType::REFLECT }
@@ -109,10 +114,4 @@ impl MaterialTrait for Glossy2Material {
     }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
-}
-
-impl NamedObject for Glossy2Material {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

@@ -1,17 +1,19 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
-use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
 pub struct TwoSidedMaterial {
-    front_mat: Box<dyn MaterialTrait>,
-    back_mat: Box<dyn MaterialTrait>,
+    base: BaseMaterial,
+
+    front_mat: Box<dyn Material>,
+    back_mat: Box<dyn Material>,
     event_types: BSDFEvent,
     is_light_source: bool,
     is_delta: bool,
@@ -23,10 +25,11 @@ impl TwoSidedMaterial {
         back_transp: &Box<dyn Texture>,
         emitted: &Box<dyn Texture>,
         bump: &Box<dyn Texture>,
-        front_mat: Box<dyn MaterialTrait>,
-        back_mat: Box<dyn MaterialTrait>,
+        front_mat: Box<dyn Material>,
+        back_mat: Box<dyn Material>,
     ) -> Self {
         Self {
+            base: BaseMaterial::new(front_transp, back_transp, emitted, back_transp),
             front_mat,
             back_mat,
             event_types: Default::default(),
@@ -35,12 +38,14 @@ impl TwoSidedMaterial {
         }
     }
 
-    pub fn get_front_material(&self) -> &Box<dyn MaterialTrait> { &self.front_mat }
+    pub fn get_front_material(&self) -> &Box<dyn Material> { &self.front_mat }
 
-    pub fn get_back_material(&self) -> &Box<dyn MaterialTrait> { &self.back_mat }
+    pub fn get_back_material(&self) -> &Box<dyn Material> { &self.back_mat }
 }
 
-impl MaterialTrait for TwoSidedMaterial {
+impl Material for TwoSidedMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::TwoSided }
 
     fn get_event_types(&self) -> BSDFEvent { self.event_types }
@@ -116,15 +121,15 @@ impl MaterialTrait for TwoSidedMaterial {
 
     fn update_material_references(
         &mut self,
-        old_mat: &Box<dyn MaterialTrait>,
-        new_mat: &Box<dyn MaterialTrait>,
+        old_mat: &Box<dyn Material>,
+        new_mat: &Box<dyn Material>,
     ) {
         todo!()
     }
 
-    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { todo!() }
+    fn is_referencing(&self, mat: &Box<dyn Material>) -> bool { todo!() }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) { todo!() }
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn Material>>) { todo!() }
 
     fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
@@ -139,10 +144,4 @@ impl MaterialTrait for TwoSidedMaterial {
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
     fn update_avg_pass_through_transparency(&mut self) { todo!() }
-}
-
-impl NamedObject for TwoSidedMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

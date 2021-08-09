@@ -76,7 +76,7 @@ pub enum TextureType {
     FresnelConstTex,
 }
 
-pub trait Texture: NamedObject {
+pub trait Texture {
     fn get_type(&self) -> TextureType;
     fn get_float_value(&self, hp: &HitPoint) -> f32;
     fn get_spectrum_value(&self, hp: &HitPoint) -> Spectrum;
@@ -97,16 +97,10 @@ pub trait Texture: NamedObject {
     fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties;
 }
 
-impl<T: Texture> NamedObject for T {
+impl NamedObject for Box<dyn Texture> {
     fn get_name(&self) -> &String { &String::from("texture") }
 
     fn set_name(&mut self, name: &str) { todo!() }
-}
-
-impl NamedObject for Box<dyn Texture> {
-    fn get_name(&self) -> &String { self.get_name() }
-
-    fn set_name(&mut self, name: &str) { self.set_name(name) }
 }
 
 impl PartialEq<&Box<dyn Texture>> for Box<dyn Texture> {

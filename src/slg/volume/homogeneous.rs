@@ -1,14 +1,15 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Ray, Vector};
-use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::material::{MaterialTrait, MaterialType};
+use crate::slg::material::{BaseMaterial, Material, MaterialType};
 use crate::slg::textures::Texture;
 use crate::slg::volume::SchlickScatter;
 
 pub struct HomogeneousVolume {
+    base: BaseMaterial,
+
     sigma_a: Box<dyn Texture>,
     sigma_s: Box<dyn Texture>,
     schlick_scatter: SchlickScatter,
@@ -47,13 +48,9 @@ impl HomogeneousVolume {
     pub fn is_multi_scattering(&self) -> bool { self.multi_scattering }
 }
 
-impl NamedObject for HomogeneousVolume {
-    fn get_name(&self) -> &String { todo!() }
+impl Material for HomogeneousVolume {
+    fn base(&self) -> &BaseMaterial { &self.base }
 
-    fn set_name(&mut self, name: &str) { todo!() }
-}
-
-impl MaterialTrait for HomogeneousVolume {
     fn get_type(&self) -> MaterialType { todo!() }
 
     fn get_event_types(&self) -> BSDFEvent { todo!() }

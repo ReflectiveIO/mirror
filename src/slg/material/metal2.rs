@@ -1,14 +1,16 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
-use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
 pub struct Metal2Material {
+    base: BaseMaterial,
+
     fresnel_tex: Box<dyn Texture>,
     n: Box<dyn Texture>,
     k: Box<dyn Texture>,
@@ -53,7 +55,9 @@ impl Metal2Material {
     pub fn get_nv(&self) -> &Box<dyn Texture> { &self.nv }
 }
 
-impl MaterialTrait for Metal2Material {
+impl Material for Metal2Material {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::Metal2 }
 
     fn get_event_types(&self) -> BSDFEvent { BSDFEventType::GLOSSY | BSDFEventType::REFLECT }
@@ -108,10 +112,4 @@ impl MaterialTrait for Metal2Material {
     }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
-}
-
-impl NamedObject for Metal2Material {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

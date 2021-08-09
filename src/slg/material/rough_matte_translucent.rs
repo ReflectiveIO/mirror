@@ -1,14 +1,16 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
-use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
 pub struct RoughMatteTranslucentMaterial {
+    base: BaseMaterial,
+
     kr: Box<dyn Texture>,
     kt: Box<dyn Texture>,
     sigma: Box<dyn Texture>,
@@ -34,7 +36,9 @@ impl RoughMatteTranslucentMaterial {
     pub fn get_sigma(&self) -> &Box<dyn Texture> { &self.sigma }
 }
 
-impl MaterialTrait for RoughMatteTranslucentMaterial {
+impl Material for RoughMatteTranslucentMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::RoughMatteTranslucent }
 
     fn get_event_types(&self) -> BSDFEvent {
@@ -91,10 +95,4 @@ impl MaterialTrait for RoughMatteTranslucentMaterial {
     }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
-}
-
-impl NamedObject for RoughMatteTranslucentMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

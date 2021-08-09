@@ -1,16 +1,17 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
-use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
 pub struct GlossyCoatingMaterial {
-    mat_base: Box<dyn MaterialTrait>,
+    base: BaseMaterial,
+
     ks: Box<dyn Texture>,
     nu: Box<dyn Texture>,
     nv: Box<dyn Texture>,
@@ -26,7 +27,7 @@ impl GlossyCoatingMaterial {
         back_transp: &Box<dyn Texture>,
         emitted: &Box<dyn Texture>,
         bump: &Box<dyn Texture>,
-        mb: Box<dyn MaterialTrait>,
+        mb: Box<dyn Material>,
         ks: Box<dyn Texture>,
         u: Box<dyn Texture>,
         v: Box<dyn Texture>,
@@ -36,7 +37,7 @@ impl GlossyCoatingMaterial {
         multi_bounce: bool,
     ) -> Self {
         Self {
-            mat_base: mb,
+            base: BaseMaterial::new(front_transp, back_transp, emitted, bump),
             ks,
             nu: u,
             nv: v,
@@ -46,8 +47,6 @@ impl GlossyCoatingMaterial {
             multi_bounce,
         }
     }
-
-    pub fn get_material_base(&self) -> &Box<dyn MaterialTrait> { &self.mat_base }
 
     pub fn get_ks(&self) -> &Box<dyn Texture> { &self.ks }
 
@@ -64,11 +63,13 @@ impl GlossyCoatingMaterial {
     pub fn is_multi_bounce(&self) -> bool { self.multi_bounce }
 }
 
-impl MaterialTrait for GlossyCoatingMaterial {
+impl Material for GlossyCoatingMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::GlossyCoating }
 
     fn get_event_types(&self) -> BSDFEvent {
-        BSDFEventType::GLOSSY | BSDFEventType::REFLECT | self.mat_base.get_event_types()
+        BSDFEventType::GLOSSY | BSDFEventType::REFLECT | self.base.get_event_types()
     }
 
     fn is_light_source(&self) -> bool { todo!() }
@@ -140,15 +141,15 @@ impl MaterialTrait for GlossyCoatingMaterial {
 
     fn update_material_references(
         &mut self,
-        old_mat: &Box<dyn MaterialTrait>,
-        new_mat: &Box<dyn MaterialTrait>,
+        old_mat: &Box<dyn Material>,
+        new_mat: &Box<dyn Material>,
     ) {
         todo!()
     }
 
-    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { todo!() }
+    fn is_referencing(&self, mat: &Box<dyn Material>) -> bool { todo!() }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) { todo!() }
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn Material>>) { todo!() }
 
     fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
@@ -163,10 +164,4 @@ impl MaterialTrait for GlossyCoatingMaterial {
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
     fn update_avg_pass_through_transparency(&mut self) { todo!() }
-}
-
-impl NamedObject for GlossyCoatingMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

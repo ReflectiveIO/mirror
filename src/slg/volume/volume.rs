@@ -1,14 +1,15 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Ray, Vector};
-use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::material::{MaterialTrait, MaterialType};
+use crate::slg::material::{BaseMaterial, Material, MaterialType};
 use crate::slg::textures::Texture;
 
 #[derive(Clone, PartialEq)]
 pub struct Volume {
+    base: BaseMaterial,
+
     ior_texture: Box<dyn Texture>,
     volume_emission_texture: Box<dyn Texture>,
     volume_light_id: usize,
@@ -46,13 +47,9 @@ impl Volume {
     }
 }
 
-impl NamedObject for Volume {
-    fn get_name(&self) -> &String { todo!() }
+impl Material for Volume {
+    fn base(&self) -> &BaseMaterial { &self.base }
 
-    fn set_name(&mut self, name: &str) { todo!() }
-}
-
-impl MaterialTrait for Volume {
     fn get_type(&self) -> MaterialType { todo!() }
 
     fn get_event_types(&self) -> BSDFEvent { todo!() }

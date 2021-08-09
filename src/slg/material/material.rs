@@ -7,6 +7,7 @@ use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::core::SampleableSphericalFunction;
 use crate::slg::image_map::{ImageMap, ImageMapCache};
+use crate::slg::material::BaseMaterial;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
@@ -38,6 +39,7 @@ pub enum MaterialType {
 }
 
 /// Material emission direct light sampling type
+#[derive(Clone, PartialEq)]
 pub enum MaterialEmissionDLSType {
     Enabled,
     Disabled,
@@ -48,359 +50,151 @@ impl Default for MaterialEmissionDLSType {
     fn default() -> Self { MaterialEmissionDLSType::Auto }
 }
 
-pub struct Material {
-    mat_id: u32,
-    light_id: u32,
+pub trait Material: Downcast {
+    fn base(&self) -> &BaseMaterial;
 
-    direct_light_sampling_type: MaterialEmissionDLSType,
+    fn set_light_id(&mut self, id: u32) { self.base().set_light_id(id) }
+    fn get_light_id(&self) -> u32 { self.base().get_light_id() }
+    fn set_id(&mut self, id: u32) { self.base().set_id(id) }
+    fn get_id(&self) -> u32 { self.base().get_id() }
+    fn set_emitted_gain(&mut self, v: Spectrum) { self.base().set_emitted_gain(v) }
+    fn get_emitted_gain(&self) -> &Spectrum { self.base().get_emitted_gain() }
+    fn set_emitted_power(&mut self, v: f32) { self.base().set_emitted_power(v) }
+    fn get_emitted_power(&self) -> f32 { self.base().get_emitted_power() }
+    fn set_emitted_power_normalize(&mut self, v: bool) {
+        self.base().set_emitted_power_normalize(v)
+    }
+    fn is_emitted_power_normalize(&self) -> bool { self.base().is_emitted_power_normalize() }
+    fn set_emitted_gain_normalize(&mut self, v: bool) { self.base().set_emitted_gain_normalize(v) }
+    fn is_emitted_gain_normalize(&self) -> bool { self.base().is_emitted_gain_normalize() }
+    fn set_emitted_efficiency(&mut self, v: f32) { self.base().set_emitted_efficiency(v) }
+    fn get_emitted_efficiency(&self) -> f32 { self.base().get_emitted_efficiency() }
+    fn get_emitted_factor(&self) -> &Spectrum { self.base().get_emitted_factor() }
+    fn set_emitted_theta(&mut self, theta: f32) { self.base().set_emitted_theta(theta) }
+    fn get_emitted_theta(&self) -> f32 { self.base().get_emitted_theta() }
+    fn get_emitted_cos_theta_max(&self) -> f32 { self.base().get_emitted_cos_theta_max() }
+    fn set_emitted_temperature(&mut self, v: f32) { self.base().set_emitted_temperature(v) }
+    fn set_emitted_temperature_normalize(&mut self, v: bool) {
+        self.base().set_emitted_temperature_normalize(v)
+    }
+    fn is_using_primitive_area(&self) -> bool { self.base().is_using_primitive_area() }
 
-    emitted_importance: f32,
-    emitted_gain: Spectrum,
-    emitted_factor: Spectrum,
-    emitted_power: f32,
-    emitted_efficiency: f32,
-    emitted_theta: f32,
-    emitted_cos_theta_max: f32,
+    fn get_type(&self) -> MaterialType;
+    fn get_event_types(&self) -> BSDFEvent;
 
-    emitted_power_normalize: bool,
-    emitted_gain_normalize: bool,
-    emitted_temperature: f32,
-    emitted_normalize_temperature: bool,
+    fn is_light_source(&self) -> bool { self.base().is_light_source() }
+    fn set_photon_gi_enabled(&mut self, v: bool) { self.base().set_photon_gi_enabled(v) }
+    fn is_photon_gi_enabled(&self) -> bool { self.base().is_photon_gi_enabled() }
+    fn get_glossiness(&self) -> f32 { self.base().get_glossiness() }
 
-    front_transparency_tex: Box<dyn Texture>,
-    back_transparency_tex: Box<dyn Texture>,
-    pass_through_shadow_transparency: Spectrum,
-    emitted_tex: Option<Box<dyn Texture>>,
-    bump_tax: Option<Box<dyn Texture>>,
-    bump_sample_distance: f32,
+    fn set_direct_light_sampling_type(&mut self, t: MaterialEmissionDLSType) {
+        self.base().set_direct_light_sampling_type(t)
+    }
+    fn get_direct_light_sampling_type(&self) -> &MaterialEmissionDLSType {
+        self.base().get_direct_light_sampling_type()
+    }
+    fn set_indirect_diffuse_visibility(&mut self, visible: bool) {
+        self.base().set_indirect_diffuse_visibility(visible)
+    }
+    fn is_visible_indirect_diffuse(&self) -> bool { self.base().is_visible_indirect_diffuse() }
+    fn set_indirect_glossy_visibility(&mut self, visible: bool) {
+        self.base().set_indirect_glossy_visibility(visible)
+    }
+    fn is_visible_indirect_glossy(&self) -> bool { self.base().is_visible_indirect_glossy() }
+    fn set_indirect_specular_visibility(&mut self, visible: bool) {
+        self.base().set_indirect_specular_visibility(visible)
+    }
+    fn is_visible_indirect_specular(&self) -> bool { self.base().is_visible_indirect_specular() }
 
-    emission_map: ImageMap,
-    emission_func: SampleableSphericalFunction,
-    interior_volume: Volume,
-    exterior_volume: Volume,
-
-    glossiness: f32,
-    avg_pass_through_transparency: f32,
-
-    is_visible_indirect_diffuse: bool,
-    is_visible_indirect_glossy: bool,
-    is_visible_indirect_specular: bool,
-
-    use_primitive_area: bool,
-    is_shadow_catcher: bool,
-    is_shadow_cater_only_infinite_lights: bool,
-    is_photon_gi_enabled: bool,
-    is_holdout: bool,
-}
-
-impl Material {
-    pub fn new(
-        front_transp: &Box<dyn Texture>,
-        back_transp: &Box<dyn Texture>,
-        emitted: &Box<dyn Texture>,
-        bump: &Box<dyn Texture>,
-    ) -> Self {
-        todo!()
+    fn set_shadow_catcher(&mut self, enabled: bool) { self.base().set_shadow_catcher(enabled) }
+    fn is_shadow_catcher(&self) -> bool { self.base().is_shadow_catcher() }
+    fn set_shadow_catcher_only_infinite_lights(&mut self, enabled: bool) {
+        self.base().set_shadow_catcher_only_infinite_lights(enabled)
+    }
+    fn is_shadow_catcher_only_infinite_lights(&self) -> bool {
+        self.base().is_shadow_catcher_only_infinite_lights()
     }
 
-    pub fn set_light_id(&mut self, id: u32) { self.light_id = id }
+    fn set_holdout(&mut self, enabled: bool) { self.base().set_holdout(enabled) }
+    fn is_holdout(&self) -> bool { self.base().is_holdout() }
 
-    pub fn get_light_id(&self) -> u32 { self.light_id }
+    fn set_bump_sample_distance(&mut self, dist: f32) { self.base().set_bump_sample_distance(dist) }
+    fn get_bump_sample_distance(&self) -> f32 { self.base().get_bump_sample_distance() }
 
-    pub fn set_id(&mut self, id: u32) { self.mat_id = id }
-
-    pub fn get_id(&self) -> u32 { self.mat_id }
-
-    pub fn set_emitted_gain(&mut self, v: Spectrum) {
-        self.emitted_gain = v;
-        self.update_emitted_factor();
+    fn is_delta(&self) -> bool { self.base().is_delta() }
+    fn get_avg_pass_through_transparency(&self) -> f32 {
+        self.base().get_avg_pass_through_transparency()
+    }
+    fn get_pass_through_transparency(
+        &self,
+        hit_point: &HitPoint,
+        local_fixed_dir: Vector,
+        pass_through_event: f32,
+        back_tracing: bool,
+    ) -> Spectrum {
+        self.base().get_pass_through_transparency(
+            hit_point,
+            local_fixed_dir,
+            pass_through_event,
+            back_tracing,
+        )
     }
 
-    pub fn get_emitted_gain(&self) -> &Spectrum { &self.emitted_gain }
-
-    pub fn set_emitted_power(&mut self, v: f32) {
-        self.emitted_power = v;
-        self.update_emitted_factor();
+    fn set_pass_through_shadow_transparency(&mut self, t: Spectrum) {
+        self.base().set_pass_through_shadow_transparency(t)
+    }
+    fn get_pass_through_shadow_transparency(&self) -> &Spectrum {
+        self.base().get_pass_through_shadow_transparency()
     }
 
-    pub fn get_emitted_power(&self) -> f32 { self.emitted_power }
-
-    pub fn set_emitted_power_normalize(&mut self, v: bool) { self.emitted_power_normalize = v }
-
-    pub fn is_emitted_power_normalize(&self) -> bool { self.emitted_power_normalize }
-
-    pub fn set_emitted_gain_normalize(&mut self, v: bool) { self.emitted_gain_normalize = v }
-
-    pub fn is_emitted_gain_normalize(&self) -> bool { self.emitted_gain_normalize }
-
-    pub fn set_emitted_efficiency(&mut self, v: f32) {
-        self.emitted_efficiency = v;
-        self.update_emitted_factor();
+    fn get_emitted_radiance(&self, hit_point: &HitPoint, one_over_primitive_area: f32) -> Spectrum {
+        self.base()
+            .get_emitted_radiance(hit_point, one_over_primitive_area)
+    }
+    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 {
+        self.get_emitted_radiance_y(one_over_primitive_area)
     }
 
-    pub fn get_emitted_efficiency(&self) -> f32 { self.emitted_efficiency }
-
-    pub fn get_emiited_factor(&self) -> &Spectrum { &self.emitted_factor }
-
-    pub fn set_emitted_theta(&mut self, theta: f32) { self.emitted_theta = theta }
-
-    pub fn get_emitted_theta(&self) -> f32 { self.emitted_theta }
-
-    pub fn get_emitted_cos_theta_max(&self) -> f32 { self.emitted_cos_theta_max }
-
-    pub fn set_emitted_temperature(&mut self, v: f32) {
-        self.emitted_temperature = v;
-        self.update_emitted_factor();
+    fn set_emitted_importance(&mut self, imp: f32) { self.base().set_emitted_importance(imp) }
+    fn get_emitted_importance(&self) -> f32 { self.base().get_emitted_importance() }
+    fn get_front_transparency_texture(&self) -> &Box<dyn Texture> {
+        self.base().get_front_transparency_texture()
     }
-
-    pub fn set_emitted_temperature_normalize(&mut self, v: bool) {
-        self.emitted_normalize_temperature = v;
-        self.update_emitted_factor();
+    fn get_back_transparency_texture(&self) -> &Box<dyn Texture> {
+        self.base().get_back_transparency_texture()
     }
+    fn get_emit_texture(&self) -> &Option<Box<dyn Texture>> { self.base().get_emit_texture() }
+    fn get_bump_texture(&self) -> &Option<Box<dyn Texture>> { self.base().get_bump_texture() }
 
-    pub fn is_using_primitive_area(&self) -> bool { self.use_primitive_area }
-
-    pub fn set_direct_light_sampling_type(&mut self, t: MaterialEmissionDLSType) {
-        self.direct_light_sampling_type = t;
-    }
-
-    pub fn get_direct_light_sampling_type(&self) -> &MaterialEmissionDLSType {
-        &self.direct_light_sampling_type
-    }
-
-    pub fn set_indirect_diffuse_visibility(&mut self, visible: bool) {
-        self.is_visible_indirect_diffuse = visible
-    }
-
-    pub fn is_visible_indirect_diffuse(&self) -> bool { self.is_visible_indirect_diffuse }
-
-    pub fn set_indirect_glossy_visibility(&mut self, visible: bool) {
-        self.is_visible_indirect_glossy = visible
-    }
-
-    pub fn is_visible_indirect_glossy(&self) -> bool { self.is_visible_indirect_glossy }
-
-    pub fn set_indirect_specular_visibility(&mut self, visible: bool) {
-        self.is_visible_indirect_specular = visible
-    }
-
-    pub fn is_visible_indirect_specular(&self) -> bool { self.is_visible_indirect_specular }
-
-    pub fn set_shadow_catcher(&mut self, enabled: bool) { self.is_shadow_catcher = enabled }
-
-    pub fn is_shadow_catcher(&self) -> bool { self.is_shadow_catcher }
-
-    pub fn set_shadow_catcher_only_infinite_lights(&mut self, enabled: bool) {
-        self.is_shadow_cater_only_infinite_lights = enabled
-    }
-
-    pub fn is_shadow_catcher_only_infinite_lights(&self) -> bool {
-        self.is_shadow_cater_only_infinite_lights
-    }
-
-    pub fn set_holdout(&mut self, enabled: bool) { self.is_holdout = enabled }
-
-    pub fn is_holdout(&self) -> bool { self.is_holdout }
-
-    pub fn set_bump_sample_distance(&mut self, dist: f32) { self.bump_sample_distance = dist }
-
-    pub fn get_bump_sample_distance(&self) -> f32 { self.bump_sample_distance }
-
-    pub fn set_pass_through_shadow_transparency(&mut self, t: Spectrum) {
-        self.pass_through_shadow_transparency = t
-    }
-
-    pub fn get_pass_through_shadow_transparency(&self) -> &Spectrum {
-        &self.pass_through_shadow_transparency
-    }
-
-    pub fn set_emitted_importance(&mut self, imp: f32) { self.emitted_importance = imp; }
-
-    pub fn get_emitted_importance(&self) -> f32 { self.emitted_importance }
-
-    pub fn get_front_transparency_texture(&self) -> &Box<dyn Texture> {
-        &self.front_transparency_tex
-    }
-
-    pub fn get_back_transparency_texture(&self) -> &Box<dyn Texture> { &self.back_transparency_tex }
-
-    pub fn get_emit_texture(&self) -> &Option<Box<dyn Texture>> { &self.emitted_tex }
-
-    pub fn get_bump_texture(&self) -> &Option<Box<dyn Texture>> { &self.bump_tax }
-
-    pub fn set_emission_map(&mut self, map: ImageMap) { self.emission_map = map }
-
-    pub fn get_emission_map(&self) -> &ImageMap { &self.emission_map }
-
-    pub fn get_emission_func(&self) -> &SampleableSphericalFunction { &self.emission_func }
+    fn set_emission_map(&mut self, map: ImageMap) { self.base().set_emission_map(map) }
+    fn get_emission_map(&self) -> &ImageMap { self.base().get_emission_map() }
+    fn get_emission_func(&self) -> &SampleableSphericalFunction { self.base().get_emission_func() }
 
     // MixMaterial can have multiple volumes assigned and needs
     // the pass_through_event information to be able to return the
     // correct volume.
-    pub fn set_interior_volume(&mut self, vol: Volume) { self.interior_volume = vol }
-
-    pub fn get_interior_volume(&self) -> &Volume { &self.interior_volume }
-
-    pub fn set_exterior_volume(&mut self, vol: Volume) { self.exterior_volume = vol }
-
-    pub fn get_exterior_volume(&self) -> &Volume { &self.exterior_volume }
-
-    fn update_emitted_factor(&mut self) {}
-}
-
-impl NamedObject for Material {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
-}
-
-impl MaterialTrait for Material {
-    fn get_type(&self) -> MaterialType { todo!() }
-
-    fn get_event_types(&self) -> BSDFEvent { todo!() }
-
-    fn is_light_source(&self) -> bool { self.emitted_tex.is_some() }
-
-    fn set_photon_gi_enabled(&mut self, v: bool) { self.is_photon_gi_enabled = v; }
-
-    fn is_photon_gi_enabled(&self) -> bool { self.is_photon_gi_enabled }
-
-    fn get_glossiness(&self) -> f32 { self.glossiness }
-
-    fn get_avg_pass_through_transparency(&self) -> f32 { self.avg_pass_through_transparency }
-
-    fn get_pass_through_transparency(
-        &self,
-        hit_point: &HitPoint,
-        local_fixed_dir: Vector,
-        pass_through_event: f32,
-        back_tracing: bool,
-    ) -> Spectrum {
-        todo!()
-    }
-
-    fn get_emitted_radiance(&self, hit_point: &HitPoint, one_over_primitive_area: f32) -> Spectrum {
-        todo!()
-    }
-
-    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 { todo!() }
-
+    fn set_interior_volume(&mut self, vol: Volume) { self.base().set_interior_volume(vol) }
     fn get_interior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
-        &self.interior_volume
+        self.base()
+            .get_interior_volume(hit_point, pass_through_event)
     }
-
+    fn set_exterior_volume(&mut self, vol: Volume) { self.base().set_exterior_volume(vol) }
     fn get_exterior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
-        &self.exterior_volume
+        self.base()
+            .get_exterior_volume(hit_point, pass_through_event)
     }
 
-    fn bump(&mut self, hit_point: &HitPoint) { todo!() }
-
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
-
-    fn evaluate_total(&self, hit_point: &HitPoint) -> Spectrum { todo!() }
-
-    fn evaluate(
-        &self,
-        hp: &HitPoint,
-        local_light_dir: &Vector,
-        local_eye_dir: &Vector,
-        event: &BSDFEvent,
-        direct_pd_fw: Option<f32>,
-        reverse_pd_fw: Option<f32>,
-    ) -> Spectrum {
-        todo!()
-    }
-
-    fn sample(
-        &self,
-        hp: &HitPoint,
-        local_fixed_dir: &Vector,
-        local_sample_dir: &Vector,
-        u0: f32,
-        u1: f32,
-        pass_through_event: f32,
-        pdfw: f32,
-        event: &BSDFEvent,
-    ) -> Spectrum {
-        todo!()
-    }
-
-    fn pdf(
-        &self,
-        hp: &HitPoint,
-        local_light_dir: &Vector,
-        local_eye_dir: &Vector,
-        direct_pd_fw: f32,
-        reverse_pd_fw: f32,
-    ) {
-        todo!()
-    }
-
-    fn update_material_references(
-        &mut self,
-        old_mat: &Box<dyn MaterialTrait>,
-        new_mat: &Box<dyn MaterialTrait>,
-    ) {
-        todo!()
-    }
-
-    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { todo!() }
-
-    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {}
-
-    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
-
-    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) { todo!() }
-
-    fn update_texture_references(
-        &mut self,
-        old_tex: &Box<dyn Texture>,
-        new_tex: &Box<dyn Texture>,
-    ) {
-        todo!()
-    }
-
-    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
-}
-
-pub trait MaterialTrait: Downcast + NamedObject {
-    fn get_type(&self) -> MaterialType;
-    fn get_event_types(&self) -> BSDFEvent;
-    fn is_light_source(&self) -> bool { false }
-    fn set_photon_gi_enabled(&mut self, v: bool) {}
-    fn is_photon_gi_enabled(&self) -> bool { false }
-    fn get_glossiness(&self) -> f32 { 0.0 }
-    fn is_delta(&self) -> bool { false }
-    fn get_avg_pass_through_transparency(&self) -> f32 { 0.0 }
-    fn get_pass_through_transparency(
-        &self,
-        hit_point: &HitPoint,
-        local_fixed_dir: Vector,
-        pass_through_event: f32,
-        back_tracing: bool,
-    ) -> Spectrum {
-        Spectrum::new()
-    }
-    fn get_emitted_radiance(&self, hit_point: &HitPoint, one_over_primitive_area: f32) -> Spectrum {
-        Spectrum::new()
-    }
-    fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 { 0.0 }
-
-    fn get_interior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
-        todo!()
-    }
-    fn get_exterior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
-        todo!()
-    }
-    fn bump(&mut self, hit_point: &HitPoint) {}
+    fn bump(&mut self, hit_point: &HitPoint) { self.base().bump(hit_point) }
 
     /// albedo() returns the material albedo. It is used for Albedo AOV
-    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { Spectrum::new() }
+    fn albedo(&self, hit_point: &HitPoint) -> Spectrum { self.base().albedo(hit_point) }
 
     /// Returns the total reflection given an constant illumination
     /// over the hemisphere. It is currently used only by PhotonGICache
     /// and BakeCPU render engine.
-    fn evaluate_total(&self, hit_point: &HitPoint) -> Spectrum { Spectrum::new() }
+    fn evaluate_total(&self, hit_point: &HitPoint) -> Spectrum {
+        self.base().evaluate_total(hit_point)
+    }
 
     /// Used to evaluate the material (i.e. get a color plus some
     /// related data) knowing the eye and light vector. It used by the path
@@ -451,33 +245,44 @@ pub trait MaterialTrait: Downcast + NamedObject {
     /// (because volumes are just a special kind of materials)
     fn update_material_references(
         &mut self,
-        old_mat: &Box<dyn MaterialTrait>,
-        new_mat: &Box<dyn MaterialTrait>,
+        old_mat: &Box<dyn Material>,
+        new_mat: &Box<dyn Material>,
     ) {
+        self.base().update_material_references(old_mat, new_mat)
     }
 
-    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { false }
-    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) {}
-    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) {}
-    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {}
-
+    /// Return true if the material is referencing the specified material
+    fn is_referencing(&self, mat: &Box<dyn Material>) -> bool { self.base().is_referencing(mat) }
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn Material>>) {
+        self.base().add_referenced_materials(v)
+    }
+    fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) {
+        self.base().add_referenced_textures(v)
+    }
+    fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
+        self.base().add_referenced_image_maps(v)
+    }
+    /// Update any reference to oldTex with newTex
     fn update_texture_references(
         &mut self,
         old_tex: &Box<dyn Texture>,
         new_tex: &Box<dyn Texture>,
     ) {
+        self.base().update_texture_references(old_tex, new_tex)
     }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties {
-        Properties::default()
+        self.base().to_properties(imc, real_filename)
     }
 
-    fn update_avg_pass_through_transparency(&mut self) {}
+    fn update_avg_pass_through_transparency(&mut self) {
+        self.base().update_avg_pass_through_transparency()
+    }
 }
-impl_downcast!(MaterialTrait);
+impl_downcast!(Material);
 
-impl NamedObject for Box<dyn MaterialTrait> {
-    fn get_name(&self) -> &String { self.get_name() }
+impl NamedObject for Box<dyn Material> {
+    fn get_name(&self) -> &String { &String::from("material") }
 
-    fn set_name(&mut self, name: &str) { self.set_name(name) }
+    fn set_name(&mut self, name: &str) { todo!() }
 }

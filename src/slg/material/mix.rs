@@ -1,17 +1,20 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
 pub struct MixMaterial {
-    a: Box<dyn MaterialTrait>,
-    b: Box<dyn MaterialTrait>,
+    base: BaseMaterial,
+
+    a: Box<dyn Material>,
+    b: Box<dyn Material>,
     mix_factor: Box<dyn Texture>,
     event_types: BSDFEvent,
     is_light_source: bool,
@@ -24,11 +27,12 @@ impl MixMaterial {
         back_transp: &Box<dyn Texture>,
         emitted: &Box<dyn Texture>,
         bump: &Box<dyn Texture>,
-        a: Box<dyn MaterialTrait>,
-        b: Box<dyn MaterialTrait>,
+        a: Box<dyn Material>,
+        b: Box<dyn Material>,
         mix: Box<dyn Texture>,
     ) -> Self {
         Self {
+            base: BaseMaterial::new(front_transp, back_transp, emitted, bump),
             a,
             b,
             mix_factor: mix,
@@ -39,14 +43,16 @@ impl MixMaterial {
         }
     }
 
-    pub fn get_a(&self) -> &Box<dyn MaterialTrait> { &self.a }
+    pub fn get_a(&self) -> &Box<dyn Material> { &self.a }
 
-    pub fn get_b(&self) -> &Box<dyn MaterialTrait> { &self.b }
+    pub fn get_b(&self) -> &Box<dyn Material> { &self.b }
 
     pub fn get_mix_factor(&self) -> &Box<dyn Texture> { &self.mix_factor }
 }
 
-impl MaterialTrait for MixMaterial {
+impl Material for MixMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::Mix }
 
     fn get_event_types(&self) -> BSDFEvent { self.event_types }
@@ -120,15 +126,15 @@ impl MaterialTrait for MixMaterial {
 
     fn update_material_references(
         &mut self,
-        old_mat: &Box<dyn MaterialTrait>,
-        new_mat: &Box<dyn MaterialTrait>,
+        old_mat: &Box<dyn Material>,
+        new_mat: &Box<dyn Material>,
     ) {
         todo!()
     }
 
-    fn is_referencing(&self, mat: &Box<dyn MaterialTrait>) -> bool { todo!() }
+    fn is_referencing(&self, mat: &Box<dyn Material>) -> bool { todo!() }
 
-    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn MaterialTrait>>) { todo!() }
+    fn add_referenced_materials(&mut self, v: &Vec<Box<dyn Material>>) { todo!() }
 
     fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) { todo!() }
 
@@ -143,10 +149,4 @@ impl MaterialTrait for MixMaterial {
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
     fn update_avg_pass_through_transparency(&mut self) { todo!() }
-}
-
-impl NamedObject for MixMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

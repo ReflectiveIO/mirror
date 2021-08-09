@@ -74,7 +74,7 @@ impl LightSourceDefinitions {
 
     pub fn delete_light_source_start_with(&mut self, prefix: &str) {}
 
-    pub fn delete_light_source_by_material(&mut self, mat: &Material) {}
+    pub fn delete_light_source_by_material(&mut self, mat: &Box<dyn Material>) {}
 
     /* Following methods require preprocess() */
 

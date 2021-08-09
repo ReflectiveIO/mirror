@@ -4,7 +4,7 @@ use crate::rays::mesh::{ExtMesh, ExtTriangleMesh};
 use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::light::traits::LightSource;
 use crate::slg::light::TriangleLight;
-use crate::slg::material::{MaterialTrait, MaterialType};
+use crate::slg::material::{Material, MaterialType};
 use crate::slg::scene::{BakeMapType, SceneObject};
 use crate::slg::utils::PathVolumeInfo;
 use crate::slg::volume::Volume;
@@ -12,7 +12,7 @@ use crate::slg::Scene;
 
 pub struct BSDF {
     pub hit_point: HitPoint,
-    material: Option<Box<dyn MaterialTrait>>,
+    material: Option<Box<dyn Material>>,
     scene_object: SceneObject,
     mesh: Box<dyn ExtMesh>,
     triangle_light_source: TriangleLight,

@@ -2,7 +2,7 @@ use crate::rays::mesh::ExtMesh;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::image_map::ImageMap;
-use crate::slg::material::MaterialTrait;
+use crate::slg::material::Material;
 use crate::slg::scene::ExtMeshCache;
 
 pub enum BakeMapType {
@@ -12,7 +12,7 @@ pub enum BakeMapType {
 
 pub struct SceneObject {
     mesh: Box<dyn ExtMesh>,
-    material: Box<dyn MaterialTrait>,
+    material: Box<dyn Material>,
     object_id: u32,
     bake_map: ImageMap,
     bake_map_uv_index: u32,
@@ -20,7 +20,7 @@ pub struct SceneObject {
 }
 
 impl SceneObject {
-    pub fn new(m: Box<dyn ExtMesh>, mt: Box<dyn MaterialTrait>, id: u32, visible: bool) -> Self {
+    pub fn new(m: Box<dyn ExtMesh>, mt: Box<dyn Material>, id: u32, visible: bool) -> Self {
         Self {
             mesh: m,
             material: mt,
@@ -33,7 +33,7 @@ impl SceneObject {
 
     pub fn get_ext_mesh(&self) -> &Box<dyn ExtMesh> { &self.mesh }
 
-    pub fn get_material(&self) -> &Box<dyn MaterialTrait> { &self.material }
+    pub fn get_material(&self) -> &Box<dyn Material> { &self.material }
 
     pub fn get_id(&self) -> u32 { self.object_id }
 

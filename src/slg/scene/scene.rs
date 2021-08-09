@@ -12,7 +12,7 @@ use crate::slg::film::SampleResult;
 use crate::slg::image_map::{ChannelSelectionType, ImageMap, ImageMapCache, WrapType};
 use crate::slg::light::traits::{LightSource, NotIntersectableLightSource};
 use crate::slg::light::{LightSourceDefinitions, Spotlight};
-use crate::slg::material::{Material, MaterialDefinitions, MaterialTrait};
+use crate::slg::material::{Material, MaterialDefinitions};
 use crate::slg::scene::{ExtMeshCache, SceneObject, SceneObjectDefinitions};
 use crate::slg::shape::TessellationType;
 use crate::slg::textures::{Texture, TextureDefinitions, TextureMapping2D, TextureMapping3D};
@@ -158,7 +158,7 @@ impl Scene {
 
         // Set the default world interior/exterior volume if required
         if self.default_world_volume.is_some() {
-            let vol: Box<dyn MaterialTrait> = Box::new(self.default_world_volume.unwrap());
+            let vol: Box<dyn Material> = Box::new(self.default_world_volume.unwrap());
             let index = self.mat_defs.index(&vol);
             props.set(
                 "scene.world.volume.default",
@@ -535,7 +535,9 @@ impl Scene {
 
     fn create_volume(&self, id: u32, name: &str, props: &Properties) -> Volume { todo!() }
 
-    fn create_material(&self, id: u32, name: &str, props: &Properties) -> Material { todo!() }
+    fn create_material(&self, id: u32, name: &str, props: &Properties) -> Box<dyn Material> {
+        todo!()
+    }
 
     fn create_shape(&self, name: &str, props: &Properties) -> ExtTriangleMesh {
         ExtTriangleMesh::default()

@@ -1,14 +1,17 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
 pub struct VelvetMaterial {
+    base: BaseMaterial,
+
     kd: Box<dyn Texture>,
     p1: Box<dyn Texture>,
     p2: Box<dyn Texture>,
@@ -42,7 +45,9 @@ impl VelvetMaterial {
     pub fn get_thickness(&self) -> &Box<dyn Texture> { &self.thickness }
 }
 
-impl MaterialTrait for VelvetMaterial {
+impl Material for VelvetMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::Velvet }
 
     fn get_event_types(&self) -> BSDFEvent { BSDFEventType::DIFFUSE | BSDFEventType::REFLECT }
@@ -97,10 +102,4 @@ impl MaterialTrait for VelvetMaterial {
     }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
-}
-
-impl NamedObject for VelvetMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

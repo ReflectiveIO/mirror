@@ -1,14 +1,17 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
 pub struct GlossyTranslucentMaterial {
+    base: BaseMaterial,
+
     kd: Box<dyn Texture>,
     kt: Box<dyn Texture>,
     ks: Box<dyn Texture>,
@@ -86,7 +89,9 @@ impl GlossyTranslucentMaterial {
     pub fn is_multi_bounce_bf(&self) -> bool { self.multi_bounce_bf }
 }
 
-impl MaterialTrait for GlossyTranslucentMaterial {
+impl Material for GlossyTranslucentMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::GlossyTranslucent }
 
     fn get_event_types(&self) -> BSDFEvent {
@@ -143,10 +148,4 @@ impl MaterialTrait for GlossyTranslucentMaterial {
     }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
-}
-
-impl NamedObject for GlossyTranslucentMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

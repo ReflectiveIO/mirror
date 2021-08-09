@@ -1,12 +1,15 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
 pub struct ArchGlassMaterial {
+    base: BaseMaterial,
+
     kr: Box<dyn Texture>,
     kt: Box<dyn Texture>,
     exterior_ior: Box<dyn Texture>,
@@ -74,7 +77,9 @@ impl ArchGlassMaterial {
     }
 }
 
-impl MaterialTrait for ArchGlassMaterial {
+impl Material for ArchGlassMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::ArchGlass }
 
     fn get_event_types(&self) -> BSDFEvent {
@@ -117,10 +122,4 @@ impl MaterialTrait for ArchGlassMaterial {
     ) {
         todo!()
     }
-}
-
-impl NamedObject for ArchGlassMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

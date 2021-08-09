@@ -1,7 +1,7 @@
 use crate::rays::object::NamedObject;
 use crate::slg::image_map::{ChannelSelectionType, WrapType};
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, PartialEq)]
 pub struct ImageMap {
     name: String,
 }

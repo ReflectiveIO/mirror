@@ -1,20 +1,29 @@
-use super::material::MaterialTrait;
+use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
+use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 
-pub struct NullMaterial;
-
-impl NullMaterial {
-    pub fn new(front_transp: &Box<dyn Texture>, back_transp: &Box<dyn Texture>) -> Self { Self }
+pub struct NullMaterial {
+    base: BaseMaterial,
 }
 
-impl MaterialTrait for NullMaterial {
+impl NullMaterial {
+    pub fn new(front_transp: &Box<dyn Texture>, back_transp: &Box<dyn Texture>) -> Self {
+        Self {
+            base: BaseMaterial::default(),
+        }
+    }
+}
+
+impl Material for NullMaterial {
+    fn base(&self) -> &BaseMaterial { &self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::NullMat }
 
     fn get_event_types(&self) -> BSDFEvent { BSDFEventType::SPECULAR | BSDFEventType::TRANSMIT }
@@ -73,10 +82,4 @@ impl MaterialTrait for NullMaterial {
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties { todo!() }
 
     fn update_avg_pass_through_transparency(&mut self) { todo!() }
-}
-
-impl NamedObject for NullMaterial {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }

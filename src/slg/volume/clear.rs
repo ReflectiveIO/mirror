@@ -4,10 +4,11 @@ use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::material::{MaterialTrait, MaterialType};
+use crate::slg::material::{BaseMaterial, Material, MaterialType};
 use crate::slg::textures::Texture;
 
 pub struct ClearVolume {
+    base: BaseMaterial,
     sigma_a: Box<dyn Texture>,
 }
 
@@ -34,13 +35,9 @@ impl ClearVolume {
     pub fn get_sigma_a(&self) -> &Box<dyn Texture> { &self.sigma_a }
 }
 
-impl NamedObject for ClearVolume {
-    fn get_name(&self) -> &String { todo!() }
+impl Material for ClearVolume {
+    fn base(&self) -> &BaseMaterial { &self.base }
 
-    fn set_name(&mut self, name: &str) { todo!() }
-}
-
-impl MaterialTrait for ClearVolume {
     fn get_type(&self) -> MaterialType { todo!() }
 
     fn get_event_types(&self) -> BSDFEvent { todo!() }

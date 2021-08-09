@@ -6,12 +6,12 @@ use crate::rays::mesh::Mesh;
 use crate::slg::bsdf::{HitPoint, BSDF};
 use crate::slg::light::traits::{IntersectableLightSource, LightSource};
 use crate::slg::light::LightSourceType;
-use crate::slg::material::{Material, MaterialEmissionDLSType, MaterialTrait};
+use crate::slg::material::{Material, MaterialEmissionDLSType};
 use crate::slg::scene::SceneObject;
 use crate::slg::Scene;
 
 pub struct TriangleLight {
-    pub light_material: Material,
+    pub light_material: Box<dyn Material>,
     pub scene_object: SceneObject,
 
     // Note: mesh_index is initialized in
@@ -115,5 +115,5 @@ impl IntersectableLightSource for TriangleLight {
         todo!()
     }
 
-    fn light_material(&self) -> &Material { &self.light_material }
+    fn light_material(&self) -> &Box<dyn Material> { &self.light_material }
 }

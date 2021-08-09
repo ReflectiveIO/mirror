@@ -2,7 +2,7 @@ use downcast_rs::Downcast;
 
 use crate::slg::bsdf::HitPoint;
 use crate::slg::light::traits::LightSource;
-use crate::slg::material::{Material, MaterialTrait};
+use crate::slg::material::Material;
 use crate::slg::Scene;
 
 /// Intersectable LightSource interface
@@ -36,6 +36,6 @@ pub trait IntersectableLightSource: LightSource + Downcast {
         emission_pd_fw: Option<Vec<f32>>,
     );
 
-    fn light_material(&self) -> &Material;
+    fn light_material(&self) -> &Box<dyn Material>;
 }
 impl_downcast!(IntersectableLightSource);
