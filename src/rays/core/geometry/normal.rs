@@ -1,5 +1,7 @@
 use std::ops::*;
 
+use config::Value;
+
 use super::{Cross, Dot, Vector};
 use crate::rays::geometry::Matrix4x4;
 
@@ -194,4 +196,8 @@ impl MulAssign<&Matrix4x4> for Normal {
         self.y = rhs.m[1][0] * x + rhs.m[1][1] * y + rhs.m[1][2] * z;
         self.z = rhs.m[2][0] * x + rhs.m[2][1] * y + rhs.m[2][2] * z;
     }
+}
+
+impl Into<Value> for Normal {
+    fn into(self) -> Value { todo!() }
 }

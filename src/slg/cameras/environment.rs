@@ -17,9 +17,9 @@ pub struct EnvironmentCamera {
 }
 
 impl EnvironmentCamera {
-    pub fn new(orig: &Point, target: &Point, up: &Vector, sw: Option<[f32; 4]>) -> Self {
+    pub fn new(orig: &Point, target: &Point, up: &Vector, sw: Option<[f64; 4]>) -> Self {
         let mut auto_update_screen_window: bool;
-        let mut screen_window: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
+        let mut screen_window: [f64; 4] = [0.0, 0.0, 0.0, 0.0];
         if let Some(w) = sw {
             auto_update_screen_window = false;
             screen_window = w;
@@ -80,7 +80,7 @@ impl EnvironmentCamera {
         let x_pixel_width = (self.base.screen_window[1] - self.base.screen_window[0]) * 0.5;
         let y_pixel_height = (self.base.screen_window[3] - self.base.screen_window[2]) * 0.5;
 
-        self.base.pixel_area = x_pixel_width * y_pixel_height;
+        self.base.pixel_area = (x_pixel_width * y_pixel_height) as f32;
     }
 
     fn init_ray(&self, ray: &mut Ray, film_x: f32, film_y: f32) {
@@ -169,7 +169,7 @@ impl Camera for EnvironmentCamera {
         self.base.y = self.base.x.cross(&self.base.dir).normalize();
 
         // Initialize screen information
-        let frame: f32 = film_width as f32 / film_height as f32;
+        let frame: f64 = film_width as f64 / film_height as f64;
 
         // Check if i have to update screen_window
         if self.base.auto_update_screen_window {
@@ -284,12 +284,15 @@ impl Camera for EnvironmentCamera {
         let mut props = self.base.to_properties();
 
         props.set("scene.camera.type", "environment");
-        props.set("scene.camera.lookat.orig", &self.base.orig);
-        props.set("scene.camera.lookat.target", &self.base.target);
+        props.set("scene.camera.lookat.orig", self.base.orig);
+        props.set("scene.camera.lookat.target", self.base.target);
         props.set("scene.camera.up", self.base.up);
 
         if !self.base.auto_update_screen_window {
-            props.set("scene.camera.screen-window", &self.base.screen_window);
+            props.set(
+                "scene.camera.screen-window",
+                self.base.screen_window.to_vec(),
+            );
         }
 
         props.set("scene.camera.environment.degrees", self.base.degrees as f64);

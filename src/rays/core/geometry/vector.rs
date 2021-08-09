@@ -1,5 +1,7 @@
 use std::ops::*;
 
+use config::Value;
+
 use super::{Cross, Dot, Normal, Point};
 use crate::rays::geometry::Matrix4x4;
 
@@ -220,4 +222,8 @@ pub fn coordinate_system(v1: &Vector, v2: &mut Vector, v3: &mut Vector) {
     }
 
     *v3 = v1.cross(v2);
+}
+
+impl Into<Value> for Vector {
+    fn into(self) -> Value { todo!() }
 }

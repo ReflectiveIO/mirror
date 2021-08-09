@@ -21,7 +21,7 @@ impl PerspectiveCamera {
         orig: &Point,
         target: &Point,
         up: &Vector,
-        sw: Option<[f32; 4]>,
+        sw: Option<[f64; 4]>,
     ) -> Self {
         let mut inner = ProjectiveCamera::new(t, sw, orig, target, up);
 
@@ -98,7 +98,7 @@ impl Camera for PerspectiveCamera {
         p0 *= self.base.trans.raster_to_world.inverse();
 
         *x = p0.x;
-        *y = self.base.film_height - 1 - p0.y;
+        *y = self.base.film_height as f32 - 1.0 - p0.y;
 
         // Check if we are inside the image plane
         if (x < self.base.film_sub_region[0])

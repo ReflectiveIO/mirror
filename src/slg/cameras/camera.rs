@@ -148,7 +148,7 @@ pub struct BaseCamera {
     pub focal_distance: f32,
     pub auto_focus: bool,
 
-    pub screen_window: [f32; 4],
+    pub screen_window: [f64; 4],
     pub auto_update_screen_window: bool,
 
     // Calculated values

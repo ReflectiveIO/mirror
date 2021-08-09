@@ -1,5 +1,7 @@
 use std::ops::*;
 
+use config::Value;
+
 use crate::rays::geometry::{Matrix4x4, Vector};
 
 #[derive(Debug, Copy, Clone, PartialEq, Default)]
@@ -220,4 +222,8 @@ impl MulAssign<&Matrix4x4> for Point {
             *self /= w;
         }
     }
+}
+
+impl Into<Value> for Point {
+    fn into(self) -> Value { todo!() }
 }

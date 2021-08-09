@@ -15,13 +15,13 @@ pub struct ProjectiveCamera {
 impl ProjectiveCamera {
     pub fn new(
         t: CameraType,
-        sw: Option<[f32; 4]>,
+        sw: Option<[f64; 4]>,
         orig: &Point,
         target: &Point,
         up: &Vector,
     ) -> Self {
         let mut auto_update_screen_window: bool;
-        let mut screen_window: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
+        let mut screen_window: [f64; 4] = [0.0, 0.0, 0.0, 0.0];
 
         if let Some(w) = sw {
             auto_update_screen_window = false;
@@ -134,12 +134,15 @@ impl Camera for ProjectiveCamera {
     fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties {
         let mut props = self.base.to_properties();
 
-        props.set("scene.camera.lookat.orig", &self.base.orig);
-        props.set("scene.camera.lookat.target", &self.base.target);
+        props.set("scene.camera.lookat.orig", self.base.orig);
+        props.set("scene.camera.lookat.target", self.base.target);
         props.set("scene.camera.up", self.base.up);
 
         if !self.base.auto_update_screen_window {
-            props.set("scene.camera.screen-window", self.base.screen_window);
+            props.set(
+                "scene.camera.screen-window",
+                self.base.screen_window.to_vec(),
+            );
         }
 
         if self.base.enable_clipping_plane {
@@ -149,11 +152,11 @@ impl Camera for ProjectiveCamera {
             );
             props.set(
                 "scene.camera.clipping-plane.center",
-                &self.base.clipping_plane_center,
+                self.base.clipping_plane_center,
             );
             props.set(
                 "scene.camera.clipping-plane.normal",
-                &self.base.clipping_plane_normal,
+                self.base.clipping_plane_normal,
             );
         }
 

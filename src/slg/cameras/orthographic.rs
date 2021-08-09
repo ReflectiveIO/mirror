@@ -17,7 +17,7 @@ pub struct OrthographicCamera {
 }
 
 impl OrthographicCamera {
-    pub fn new(orig: &Point, target: &Point, up: &Vector, sw: Option<[f32; 4]>) -> Self {
+    pub fn new(orig: &Point, target: &Point, up: &Vector, sw: Option<[f64; 4]>) -> Self {
         let mut inner = ProjectiveCamera::new(CameraType::Orthographic, sw, orig, target, up);
         let base = inner.base().clone();
         Self {

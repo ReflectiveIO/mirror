@@ -144,7 +144,7 @@ impl Camera for StereoCamera {
                 // Create right eye camera
                 let mut right = PerspectiveCamera::new(
                     CameraType::Stereo,
-                    self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
+                    &(self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x),
                     &self.base.target,
                     &self.base.up,
                     None,
@@ -187,9 +187,9 @@ impl Camera for StereoCamera {
 
                 // Create right eye camera
                 let mut right = EnvironmentCamera::new(
-                    self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
-                    self.base.target,
-                    self.base.up,
+                    &(self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x),
+                    &self.base.target,
+                    &self.base.up,
                     None,
                 );
                 right.base().screen_offset_x = self.horiz_stereo_lens_distance * 0.5;
@@ -212,7 +212,7 @@ impl Camera for StereoCamera {
 
                 // Create right eye camera
                 let mut right = EnvironmentCamera::new(
-                    self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x,
+                    &(self.base.orig + 0.5 * self.horiz_stereo_eyes_distance * self.base.x),
                     &self.base.target,
                     &self.base.up,
                     None,
