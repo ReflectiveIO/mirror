@@ -1,9 +1,5 @@
-use crate::rays::color::{RGBColor, Spectrum};
-use crate::rays::geometry::{Ray, Transform, Vector};
-use crate::rays::Properties;
-use crate::slg::bsdf::BSDF;
-use crate::slg::image_map::ImageMapCache;
-use crate::slg::Scene;
+use crate::rays::color::Spectrum;
+use crate::rays::geometry::Vector;
 
 pub struct DistantLight {
     pub color: Spectrum,

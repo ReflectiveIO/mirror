@@ -130,10 +130,10 @@ pub trait SceneTrait {
     /// from the strands/hairs definition included in stands file.
     fn define_stands(
         &self,
-        shape_name: &str,                     // the name of the defined shape
-        strands_file: HairFile,               // includes all information about the strands.
+        shape_name: &str,       // the name of the defined shape
+        strands_file: HairFile, // includes all information about the strands.
         tessel_type: StrandsTessellationType, /* the tessellation used to transform the strands
-                                               * in a triangle mesh */
+                                 * in a triangle mesh */
 
         adaptive_max_depth: u32, // maximum number of subdivisions for adaptive tessellation.
         adaptive_error: f32,     // the error threshold for adaptive tessellation

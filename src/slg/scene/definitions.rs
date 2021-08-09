@@ -1,5 +1,5 @@
 use crate::rays::mesh::ExtMesh;
-use crate::rays::object::{GetIndex, GetObject, NamedObject, NamedObjectVector};
+use crate::rays::object::{GetIndex, GetObject, NamedObjectVector};
 use crate::slg::light::LightSourceDefinitions;
 use crate::slg::scene::SceneObject;
 

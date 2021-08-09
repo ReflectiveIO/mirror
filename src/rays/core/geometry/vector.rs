@@ -1,4 +1,3 @@
-use std::f32::consts::PI;
 use std::ops::*;
 
 use super::{Cross, Dot, Normal, Point};
@@ -208,4 +207,17 @@ impl MulAssign<&Matrix4x4> for Vector {
         self.y = rhs.m[1][0] * x + rhs.m[1][1] * y + rhs.m[1][2] * z;
         self.z = rhs.m[2][0] * x + rhs.m[2][1] * y + rhs.m[2][2] * z;
     }
+}
+
+#[inline]
+pub fn coordinate_system(v1: &Vector, v2: &mut Vector, v3: &mut Vector) {
+    if v1.x.abs() > v1.y.abs() {
+        let inv_len = 1.0 / (v1.x * v1.x + v1.z * v1.z).sqrt();
+        *v2 = Vector::new(-v1.z * inv_len, 0.0, v1.x * inv_len);
+    } else {
+        let inv_len = 1.0 / (v1.y * v1.y + v1.z * v1.z).sqrt();
+        *v2 = Vector::new(0.0, v1.z * inv_len, -v1.y * inv_len);
+    }
+
+    *v3 = v1.cross(v2);
 }

@@ -1,4 +1,3 @@
-use std::borrow::BorrowMut;
 use std::sync::Arc;
 
 use delegate::delegate;

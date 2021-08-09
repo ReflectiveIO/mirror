@@ -1,4 +1,3 @@
-use crate::rays;
 use crate::rays::utils::clamp;
 
 /// Color Declarations

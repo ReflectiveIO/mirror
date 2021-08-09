@@ -1,14 +1,7 @@
-use std::collections::HashSet;
-
 use downcast_rs::Downcast;
 
-use crate::rays::color::Spectrum;
-use crate::rays::geometry::{Normal, Point, Ray};
-use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::bsdf::BSDF;
-use crate::slg::image_map::ImageMap;
+use crate::slg::bsdf::HitPoint;
 use crate::slg::light::traits::LightSource;
-use crate::slg::light::LightSourceType;
 use crate::slg::material::{Material, MaterialTrait};
 use crate::slg::Scene;
 

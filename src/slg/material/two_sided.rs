@@ -1,10 +1,9 @@
-use super::material::{Material, MaterialTrait};
+use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
-use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::bsdf::BSDFEvent;
+use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;

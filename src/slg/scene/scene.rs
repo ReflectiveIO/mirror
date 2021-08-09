@@ -1,7 +1,3 @@
-use std::any::Any;
-
-use downcast_rs::Downcast;
-
 use crate::core::SceneTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::device::IntersectionDevice;
@@ -11,13 +7,11 @@ use crate::rays::object::{GetIndex, GetObject, NamedObject};
 use crate::rays::utils::HairFile;
 use crate::rays::{Context, Dataset, Properties};
 use crate::slg::bsdf::BSDF;
-use crate::slg::cameras::{BaseCamera, Camera, CameraType, EnvironmentCamera};
+use crate::slg::cameras::{BaseCamera, Camera, CameraType};
 use crate::slg::film::SampleResult;
 use crate::slg::image_map::{ChannelSelectionType, ImageMap, ImageMapCache, WrapType};
-use crate::slg::light::traits::{
-    IntersectableLightSource, LightSource, NotIntersectableLightSource,
-};
-use crate::slg::light::{LightSourceDefinitions, Spotlight, TriangleLight};
+use crate::slg::light::traits::{LightSource, NotIntersectableLightSource};
+use crate::slg::light::{LightSourceDefinitions, Spotlight};
 use crate::slg::material::{Material, MaterialDefinitions, MaterialTrait};
 use crate::slg::scene::{ExtMeshCache, SceneObject, SceneObjectDefinitions};
 use crate::slg::shape::TessellationType;

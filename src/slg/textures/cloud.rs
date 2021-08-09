@@ -1,7 +1,7 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Point, Vector};
 use crate::rays::Properties;
-use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::HitPoint;
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::textures::{Texture, TextureMapping3D, TextureType};
 

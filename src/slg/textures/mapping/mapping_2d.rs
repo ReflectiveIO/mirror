@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use crate::rays::geometry::UV;
 use crate::rays::Properties;
-use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::HitPoint;
 use crate::slg::textures::RandomMappingSeedType;
 
 /// TextureMapping2DType

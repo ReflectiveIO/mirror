@@ -1,5 +1,4 @@
 use std::ops::{Div, Mul};
-use std::sync::Arc;
 
 use crate::rays::geometry::{Cross, Matrix4x4, Point, Vector};
 

@@ -4,11 +4,10 @@ use delegate::delegate;
 
 use crate::rays::geometry::{Dot, Point, Ray, Transform, Vector};
 use crate::rays::object::NamedObject;
-use crate::rays::utils::Distribution2D;
 use crate::rays::Properties;
 use crate::slg::cameras::camera::{BokehDistributionType, Camera};
 use crate::slg::cameras::{BaseCamera, CameraType, ProjectiveCamera};
-use crate::slg::image_map::{ImageMap, ImageMapCache};
+use crate::slg::image_map::ImageMapCache;
 use crate::slg::utils::PathVolumeInfo;
 
 pub struct PerspectiveCamera {

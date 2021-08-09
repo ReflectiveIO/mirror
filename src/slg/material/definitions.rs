@@ -1,5 +1,5 @@
-use super::material::{Material, MaterialTrait};
-use crate::rays::object::{GetIndex, GetObject, NamedObject, NamedObjectVector};
+use super::material::MaterialTrait;
+use crate::rays::object::{GetIndex, GetObject, NamedObjectVector};
 
 #[derive(Default)]
 pub struct MaterialDefinitions {

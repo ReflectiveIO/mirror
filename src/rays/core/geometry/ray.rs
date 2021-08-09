@@ -1,4 +1,4 @@
-use std::ops::{Mul, MulAssign};
+use std::ops::MulAssign;
 
 use typed_builder::TypedBuilder;
 

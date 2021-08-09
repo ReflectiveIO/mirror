@@ -1,6 +1,3 @@
-use std::collections::HashMap;
-use std::str::FromStr;
-
 use crate::rays::object::{GetObject, NamedObjectVector};
 use crate::rays::Properties;
 use crate::slg::light::strategy::*;

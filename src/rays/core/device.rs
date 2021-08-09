@@ -24,7 +24,6 @@ use std::convert::TryFrom;
 
 use config::Value;
 use downcast_rs::Downcast;
-use serde::{Deserialize, Serialize};
 
 use super::context::Context;
 

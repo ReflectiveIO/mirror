@@ -1,8 +1,6 @@
 use std::borrow::BorrowMut;
 use std::sync::Arc;
 
-use delegate::delegate;
-
 use crate::rays::geometry::{rotate, Dot, Normal, Point, Ray, Transform, Vector};
 use crate::rays::Properties;
 use crate::slg::cameras::camera::Camera;

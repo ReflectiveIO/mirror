@@ -3,12 +3,10 @@ use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
-use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
-use crate::slg::material::{Material, MaterialType};
+use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
-use crate::slg::volume::Volume;
 
 pub struct GlossyTranslucentMaterial {
     kd: Box<dyn Texture>,

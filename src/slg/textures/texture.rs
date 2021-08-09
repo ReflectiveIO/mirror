@@ -2,7 +2,7 @@ use crate::rays::color::Spectrum;
 use crate::rays::geometry::Normal;
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
-use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::HitPoint;
 use crate::slg::image_map::{ImageMap, ImageMapCache};
 
 pub enum TextureType {

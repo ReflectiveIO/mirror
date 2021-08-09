@@ -1,13 +1,10 @@
 use std::collections::HashMap;
 use std::convert::TryInto;
-use std::error::Error;
-
-use log::info;
 
 use super::config::Config;
 use super::film::Film;
 use super::state::State;
-use crate::rays::device::{HardwareDevice, IntersectionDevice};
+use crate::rays::device::IntersectionDevice;
 use crate::rays::Properties;
 use crate::slg::engine::tile::Tile;
 use crate::slg::engine::{CPUTileRenderEngine, EngineType, TilePathCPURenderEngine};

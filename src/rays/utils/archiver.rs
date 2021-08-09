@@ -1,11 +1,8 @@
+use std::env;
 use std::fs::{File, OpenOptions};
-use std::io::{self, Read, Write};
-use std::{env, fs};
+use std::io::{Read, Write};
 
-use bincode::ErrorKind;
 use serde::{Deserialize, Serialize};
-
-use crate::rays::utils::path_relative_from;
 
 #[derive(Default)]
 pub struct Stats {

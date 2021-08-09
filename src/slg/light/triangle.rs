@@ -1,12 +1,9 @@
-use std::collections::HashSet;
 use std::f32::consts::PI;
 
 use crate::rays::color::Spectrum;
-use crate::rays::geometry::{Normal, Point, Ray};
+use crate::rays::geometry::Ray;
 use crate::rays::mesh::Mesh;
-use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::bsdf::BSDF;
-use crate::slg::image_map::ImageMap;
+use crate::slg::bsdf::{HitPoint, BSDF};
 use crate::slg::light::traits::{IntersectableLightSource, LightSource};
 use crate::slg::light::LightSourceType;
 use crate::slg::material::{Material, MaterialEmissionDLSType, MaterialTrait};

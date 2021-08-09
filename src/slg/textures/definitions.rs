@@ -1,4 +1,4 @@
-use crate::rays::object::{GetIndex, GetObject, NamedObject, NamedObjectVector};
+use crate::rays::object::{GetIndex, GetObject, NamedObjectVector};
 use crate::slg::textures::Texture;
 
 #[derive(Default)]

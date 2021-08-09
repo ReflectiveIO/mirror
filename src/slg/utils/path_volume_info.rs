@@ -1,5 +1,4 @@
-use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::bsdf::{BSDFEvent, BSDF};
+use crate::slg::bsdf::{BSDFEvent, HitPoint, BSDF};
 use crate::slg::volume::Volume;
 
 const PATH_VOLUME_INFO_SIZE: usize = 8;

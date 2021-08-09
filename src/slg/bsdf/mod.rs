@@ -1,8 +1,7 @@
 pub use self::bsdf::BSDF;
-pub use self::event::BSDFEvent;
-pub use self::event::BSDFEventType;
+pub use self::event::{BSDFEvent, BSDFEventType};
+pub use self::hitpoint::HitPoint;
 
 mod bsdf;
-pub mod hitpoint;
-
 mod event;
+mod hitpoint;

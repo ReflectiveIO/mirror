@@ -1,16 +1,10 @@
 use std::borrow::BorrowMut;
-use std::cmp::{max, min};
 use std::f32::consts::PI;
 use std::sync::Arc;
 
-use config::Value;
-
 use super::camera::Camera;
-use crate::rays;
 use crate::rays::epsilon::{Epsilon, MachineEpsilon, DEFAULT_EPSILON_STATIC};
-use crate::rays::geometry::{
-    look_at, rotate, scale, translate, Cross, Dot, Matrix4x4, Point, Ray, Transform, Vector,
-};
+use crate::rays::geometry::{rotate, Cross, Dot, Point, Ray, Transform, Vector};
 use crate::rays::utils::{clamp, radians};
 use crate::rays::Properties;
 use crate::slg::cameras::camera::CameraTransforms;

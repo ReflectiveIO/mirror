@@ -2,8 +2,7 @@ use super::material::MaterialTrait;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
 use crate::rays::object::NamedObject;
-use crate::slg::bsdf::hitpoint::HitPoint;
-use crate::slg::bsdf::{BSDFEvent, BSDFEventType};
+use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::material::MaterialType;
 use crate::slg::textures::Texture;
 

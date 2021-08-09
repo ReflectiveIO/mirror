@@ -1,12 +1,9 @@
 use config::Value;
-use serde::{Deserialize, Serialize};
 
 pub struct Tile;
 
 impl From<Tile> for Value {
-    fn from(v: Tile) -> Self {
-        todo!()
-    }
+    fn from(v: Tile) -> Self { todo!() }
 }
 
 #[derive(Default, Deserialize, Serialize)]

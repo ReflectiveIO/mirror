@@ -3,12 +3,10 @@ use std::collections::HashSet;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Normal, Point, Ray, Transform};
 use crate::rays::Properties;
-use crate::slg::bsdf::hitpoint::HitPoint;
 use crate::slg::bsdf::BSDF;
 use crate::slg::image_map::{ImageMap, ImageMapCache};
 use crate::slg::light::traits::LightSource;
 use crate::slg::light::LightSourceType;
-use crate::slg::material::{Material, MaterialTrait};
 use crate::slg::Scene;
 
 pub trait InfiniteLightSource: LightSource {

@@ -5,6 +5,11 @@ use crate::slg::image_map::ImageMap;
 use crate::slg::material::MaterialTrait;
 use crate::slg::scene::ExtMeshCache;
 
+pub enum BakeMapType {
+    Combined,
+    LightMap,
+}
+
 pub struct SceneObject {
     mesh: Box<dyn ExtMesh>,
     material: Box<dyn MaterialTrait>,

@@ -1,4 +1,4 @@
-use crate::rays::geometry::{Normal, Point, Vector};
+use crate::rays::geometry::Point;
 use crate::rays::utils::clamp;
 
 pub const DEFAULT_EPSILON_MIN: f32 = 1e-5f32;

@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use crate::rays::geometry::{Point, Transform};
 use crate::rays::Properties;
-use crate::slg::bsdf::hitpoint::HitPoint;
+use crate::slg::bsdf::HitPoint;
 use crate::slg::textures::{NormalMapTexture, RandomMappingSeedType};
 
 /// TextureMapping3DType
