@@ -1,4 +1,4 @@
 pub struct Distribution1D;
 
-#[derive(Default)]
+#[derive(Default, PartialEq, Clone)]
 pub struct Distribution2D;

@@ -25,7 +25,37 @@ impl Mesh for ExtTriangleMesh {
     fn get_total_triangle_count(&self) -> u32 { todo!() }
 }
 
-impl ExtMesh for ExtTriangleMesh {}
+impl ExtMesh for ExtTriangleMesh {
+    fn get_tri_aov(&self, triangle_index: u32, data_index: u32) -> f32 { todo!() }
+
+    fn interpolate_tri_uv(&self, triangle_index: u32, b1: f32, b2: f32, data_index: u32) -> UV {
+        todo!()
+    }
+
+    fn interpolate_tri_color(
+        &self,
+        triangle_index: u32,
+        b1: f32,
+        b2: f32,
+        data_index: u32,
+    ) -> Spectrum {
+        todo!()
+    }
+
+    fn interpolate_tri_alpha(&self, triangle_index: u32, b1: f32, b2: f32, data_index: u32) -> f32 {
+        todo!()
+    }
+
+    fn interpolate_tri_vertex_aov(
+        &self,
+        triangle_index: u32,
+        b1: f32,
+        b2: f32,
+        data_index: u32,
+    ) -> f32 {
+        todo!()
+    }
+}
 
 impl NamedObject for ExtTriangleMesh {
     fn get_name(&self) -> &String { todo!() }
