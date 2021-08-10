@@ -2,6 +2,7 @@ use std::ops::*;
 
 use config::Value;
 
+use crate::rays::core::geometry::Transform;
 use crate::rays::geometry::{Matrix4x4, Vector};
 
 #[derive(Debug, Copy, Clone, PartialEq, Default)]
@@ -54,6 +55,7 @@ impl From<[f32; 3]> for Point {
 }
 
 /// The addition operator +.
+/// Point + Point = Point
 impl Add for Point {
     type Output = Self;
 
@@ -67,6 +69,7 @@ impl Add for Point {
 }
 
 /// The addition assignment operator +=.
+/// Point += Point
 impl AddAssign for Point {
     fn add_assign(&mut self, rhs: Self) {
         *self = Self {
@@ -78,6 +81,7 @@ impl AddAssign for Point {
 }
 
 /// The addition operator +.
+/// Point + Vector = Point
 impl Add<Vector> for Point {
     type Output = Self;
 
@@ -91,6 +95,7 @@ impl Add<Vector> for Point {
 }
 
 /// The addition assignment operator +=.
+/// Point += &Vector
 impl AddAssign<&Vector> for Point {
     fn add_assign(&mut self, rhs: &Vector) {
         *self = Self {
@@ -102,6 +107,7 @@ impl AddAssign<&Vector> for Point {
 }
 
 /// The subtraction operator -.
+/// Point - Point = Point
 impl Sub for Point {
     type Output = Self;
 
@@ -114,7 +120,17 @@ impl Sub for Point {
     }
 }
 
+/// &Point - &Point = Vector
+impl Sub<&Point> for &Point {
+    type Output = Vector;
+
+    fn sub(self, rhs: &Point) -> Self::Output {
+        Vector::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+    }
+}
+
 /// The subtraction assignment operator -=.
+/// Point -= Point
 impl SubAssign for Point {
     fn sub_assign(&mut self, rhs: Self) {
         *self = Self {
@@ -126,6 +142,7 @@ impl SubAssign for Point {
 }
 
 /// The subtraction operator -.
+/// Point - &Vector = Point
 impl Sub<&Vector> for Point {
     type Output = Self;
 
@@ -139,6 +156,7 @@ impl Sub<&Vector> for Point {
 }
 
 /// The subtraction assignment operator -=.
+/// Point -= &Vector
 impl SubAssign<&Vector> for Point {
     fn sub_assign(&mut self, rhs: &Vector) {
         *self = Self {
@@ -208,7 +226,29 @@ impl Mul<Point> for f32 {
     fn mul(self, rhs: Point) -> Self::Output { rhs * self }
 }
 
-/// Point *= Matrix4x4
+/// Point * &Matrix4x4 = Point
+impl Mul<Matrix4x4> for Point {
+    type Output = Point;
+
+    fn mul(self, rhs: Matrix4x4) -> Self::Output {
+        let (x, y, z) = (self.x, self.y, self.z);
+
+        let mut point = Self {
+            x: rhs.m[0][0] * x + rhs.m[0][1] * y + rhs.m[0][2] * z + rhs.m[0][3],
+            y: rhs.m[1][0] * x + rhs.m[1][1] * y + rhs.m[1][2] * z + rhs.m[1][3],
+            z: rhs.m[2][0] * x + rhs.m[2][1] * y + rhs.m[2][2] * z + rhs.m[2][3],
+        };
+
+        let w = rhs.m[3][0] * x + rhs.m[3][1] * y + rhs.m[3][2] * z + rhs.m[3][3];
+        if w != 1.0 {
+            point /= w;
+        }
+
+        return point;
+    }
+}
+
+/// Point *= &Matrix4x4
 impl MulAssign<&Matrix4x4> for Point {
     fn mul_assign(&mut self, rhs: &Matrix4x4) {
         let (x, y, z) = (self.x, self.y, self.z);
@@ -222,6 +262,11 @@ impl MulAssign<&Matrix4x4> for Point {
             *self /= w;
         }
     }
+}
+
+/// Point *= &Transform
+impl MulAssign<&Transform> for Point {
+    fn mul_assign(&mut self, rhs: &Transform) { todo!() }
 }
 
 impl Into<Value> for Point {

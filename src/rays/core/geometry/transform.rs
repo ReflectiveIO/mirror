@@ -102,12 +102,25 @@ impl Mul<Vector> for Transform {
     fn mul(self, rhs: Vector) -> Self::Output { todo!() }
 }
 
+impl Mul<Point> for &Transform {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Self::Output { todo!() }
+}
+
 impl Div for Transform {
     type Output = Transform;
 
     fn div(self, rhs: Self) -> Self::Output {
         Transform::from((self.m * &rhs.m_inv, rhs.m * &self.m_inv))
     }
+}
+
+/// &Transform * &Transform = Transform
+impl Mul<&Transform> for &Transform {
+    type Output = Transform;
+
+    fn mul(self, rhs: &Transform) -> Self::Output { todo!() }
 }
 
 #[inline]

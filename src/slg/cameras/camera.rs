@@ -257,12 +257,12 @@ impl BaseCamera {
         props.set("scene.camera.shutter-close", self.shutter_close as f64);
         props.set("scene.camera.auto-volume.enable", self.auto_volume);
 
-        if self.volume.is_some() {
-            props.set(
-                "scene.camera.volume",
-                self.volume.unwrap().get_name().to_string(),
-            )
-        }
+        // if self.volume.is_some() {
+        //     props.set(
+        //         "scene.camera.volume",
+        //         self.volume.unwrap().get_name().to_string(),
+        //     )
+        // }
 
         if self.motion_system.is_some() {
             props.merge(

@@ -250,9 +250,9 @@ impl Camera for EnvironmentCamera {
         let lens_point: Point = Point::default();
 
         if let Some(motion_system) = &self.base.motion_system {
-            *p = lens_point * &self.base.trans.camera_to_world * motion_system.sample(time);
+            *p = &self.base.trans.camera_to_world * lens_point * motion_system.sample(time);
         } else {
-            *p = lens_point * &self.base.trans.camera_to_world;
+            *p = &self.base.trans.camera_to_world * lens_point;
         }
 
         return true;

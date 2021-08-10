@@ -24,6 +24,8 @@ impl MotionSystem {
 
     pub fn sample(&self, time: f32) -> Matrix4x4 { todo!() }
 
+    pub fn sample_inverse(&self, time: f32) -> Matrix4x4 { todo!() }
+
     pub fn to_properties(&self, prefix: &str, storing_global2local: bool) -> Properties {
         todo!()
         // let mut props = Properties::new();
