@@ -1,5 +1,9 @@
-pub use self::ext_mesh::ExtMesh;
-pub use self::ext_triangle_mesh::ExtTriangleMesh;
+pub use self::ext::ExtMesh;
+pub use self::instance::ExtInstanceTriangleMesh;
+pub use self::motion::ExtMotionTriangleMesh;
+pub use self::triangle::ExtTriangleMesh;
 
-mod ext_mesh;
-mod ext_triangle_mesh;
+mod ext;
+mod instance;
+mod motion;
+mod triangle;

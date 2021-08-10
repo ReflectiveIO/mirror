@@ -1,30 +1,13 @@
 use crate::rays::color::Spectrum;
-use crate::rays::core::geometry::{Bounds, Transform, Vector};
-use crate::rays::core::mesh::MeshType;
-use crate::rays::geometry::{Normal, Point, Triangle, UV};
-use crate::rays::mesh::{ExtMesh, Mesh};
-use crate::rays::object::NamedObject;
+use crate::rays::core::geometry::{Bounds, Normal, Point, Transform, Triangle, Vector, UV};
+use crate::rays::core::mesh::{Mesh, MeshType};
+use crate::rays::core::named_object::NamedObject;
+use crate::rays::mesh::ExtMesh;
 
-#[derive(Default)]
-pub struct ExtTriangleMesh;
+pub struct ExtInstanceTriangleMesh;
 
-impl ExtTriangleMesh {
-    pub fn new(
-        ply_nb_verts: i64,
-        ply_nb_tris: i64,
-        p: Point,
-        vi: Triangle,
-        n: Normal,
-        uvs: Vec<UV>,
-        cols: Vec<Box<Spectrum>>,
-        alphas: Vec<Vec<f32>>,
-    ) -> Self {
-        todo!()
-    }
-}
-
-impl Mesh for ExtTriangleMesh {
-    fn get_type(&self) -> MeshType { todo!() }
+impl Mesh for ExtInstanceTriangleMesh {
+    fn get_type(&self) -> MeshType { MeshType::ExtTriangleInstance }
 
     fn get_bounds(&self) -> Bounds { todo!() }
 
@@ -61,7 +44,13 @@ impl Mesh for ExtTriangleMesh {
     fn apply_transform(&mut self, trans: &Transform) { todo!() }
 }
 
-impl ExtMesh for ExtTriangleMesh {
+impl NamedObject for ExtInstanceTriangleMesh {
+    fn get_name(&self) -> &String { todo!() }
+
+    fn set_name(&mut self, name: &str) { todo!() }
+}
+
+impl ExtMesh for ExtInstanceTriangleMesh {
     fn has_normals(&self) -> bool { todo!() }
 
     fn has_uvs(&self, data_index: u32) -> bool { todo!() }
@@ -90,7 +79,7 @@ impl ExtMesh for ExtTriangleMesh {
 
     fn get_vertex_aov(&self, vert_index: u32, data_index: u32) -> UV { todo!() }
 
-    fn get_tri_aov(&self, triangle_index: u32, data_index: u32) -> f32 { todo!() }
+    fn get_tri_aov(&self, tri_index: u32, data_index: u32) -> f32 { todo!() }
 
     fn get_tri_bary_coords(
         &self,
@@ -127,7 +116,7 @@ impl ExtMesh for ExtTriangleMesh {
         todo!()
     }
 
-    fn interpolate_tri_uv(&self, triangle_index: u32, b1: f32, b2: f32, data_index: u32) -> UV {
+    fn interpolate_tri_uv(&self, tri_index: u32, b1: f32, b2: f32, data_index: u32) -> UV {
         todo!()
     }
 
@@ -158,10 +147,4 @@ impl ExtMesh for ExtTriangleMesh {
     fn delete(&mut self) { todo!() }
 
     fn save(&self, filename: &str) { todo!() }
-}
-
-impl NamedObject for ExtTriangleMesh {
-    fn get_name(&self) -> &String { todo!() }
-
-    fn set_name(&mut self, name: &str) { todo!() }
 }
