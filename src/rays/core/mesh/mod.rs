@@ -4,18 +4,18 @@ use crate::rays::object::NamedObject;
 
 ///
 /// * The inheritance scheme used here:
-/// *
-/// * | =>    TriangleMesh      => |
-/// * Mesh => |                            | => ExtTriangleMesh
-/// * | =>       ExtMesh        => |
-/// *
-/// * | => InstanceTriangleMesh => |
-/// * Mesh => |                            | => ExtInstanceTriangleMesh
-/// * | =>       ExtMesh        => |
-/// *
-/// * | => MotionTriangleMesh   => |
-/// * Mesh => |                            | => ExtMotionTriangleMesh
-/// * | =>       ExtMesh        => |
+///
+///          | =>    TriangleMesh      => |
+///  Mesh => |                            | => ExtTriangleMesh
+///          | =>       ExtMesh        => |
+///
+///          | => InstanceTriangleMesh => |
+///  Mesh => |                            | => ExtInstanceTriangleMesh
+///          | =>       ExtMesh        => |
+///
+///          | => MotionTriangleMesh   => |
+///  Mesh => |                            | => ExtMotionTriangleMesh
+///          | =>       ExtMesh        => |
 pub mod ext;
 pub mod triangle;
 
