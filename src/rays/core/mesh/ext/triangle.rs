@@ -161,7 +161,7 @@ impl ExtMesh for ExtTriangleMesh {
 }
 
 impl NamedObject for ExtTriangleMesh {
-    fn get_name(&self) -> &String { todo!() }
+    fn get_name(&self) -> String { todo!() }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }

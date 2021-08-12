@@ -74,10 +74,11 @@ impl Config {
             &mut film_full_height,
             &mut film_sub_region,
         );
-        self.scene
-            .camera
-            .unwrap()
-            .update(film_full_width, film_full_height, Some(film_sub_region));
+        self.scene.camera.as_mut().unwrap().update(
+            film_full_width,
+            film_full_height,
+            Some(film_sub_region),
+        );
     }
 
     pub fn delete_all_film_image_pipelines_properties(&self) {}

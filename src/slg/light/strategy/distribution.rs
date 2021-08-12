@@ -24,7 +24,7 @@ impl DistributionLightStrategy {
 impl LightStrategy for DistributionLightStrategy {
     fn get_type(&self) -> &LightStrategyType { &self.light_strategy_type }
 
-    fn get_tag(&self) -> &String { todo!() }
+    fn get_tag(&self) -> String { todo!() }
 
     fn preprocess(&mut self, scene: Scene, task_type: LightStrategyTask, real_time: bool) {
         self.scene = Some(scene)

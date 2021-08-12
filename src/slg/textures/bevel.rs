@@ -32,13 +32,13 @@ impl Texture for BevelTexture {
     fn bump(&self, hp: &HitPoint, sample_distance: f32) -> Normal { todo!() }
 
     fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) {
-        if let Some(mut tex) = &self.texture {
+        if let Some(tex) = self.texture.as_mut() {
             tex.add_referenced_textures(v)
         }
     }
 
     fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
-        if let Some(mut tex) = &self.texture {
+        if let Some(tex) = self.texture.as_mut() {
             tex.add_referenced_image_maps(v);
         }
     }
@@ -48,7 +48,7 @@ impl Texture for BevelTexture {
         old_tex: &Box<dyn Texture>,
         new_tex: &Box<dyn Texture>,
     ) {
-        if self.texture.is_some() && self.texture.unwrap() == old_tex {
+        if self.texture.is_some() && self.texture.as_ref().unwrap() == old_tex {
             self.texture = Some(new_tex.clone())
         }
     }

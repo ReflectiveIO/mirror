@@ -51,6 +51,8 @@ impl HomogeneousVolume {
 impl Material for HomogeneousVolume {
     fn base(&self) -> &BaseMaterial { &self.base }
 
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
+
     fn get_type(&self) -> MaterialType { todo!() }
 
     fn get_event_types(&self) -> BSDFEvent { todo!() }

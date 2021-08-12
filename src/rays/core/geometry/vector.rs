@@ -5,7 +5,7 @@ use config::Value;
 use super::{Cross, Dot, Normal, Point};
 use crate::rays::geometry::Matrix4x4;
 
-#[derive(Debug, Copy, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Vector {
     pub x: f32,
     pub y: f32,
@@ -97,12 +97,14 @@ impl SubAssign for Vector {
     }
 }
 
-impl Mul<f32> for Vector {
+/// Vector * f32 = Vector
+impl Mul<f32> for &Vector {
     type Output = Vector;
 
-    fn mul(self, rhs: f32) -> Self::Output { Self::new(self.x * rhs, self.y * rhs, self.z * rhs) }
+    fn mul(self, rhs: f32) -> Self::Output { Vector::new(self.x * rhs, self.y * rhs, self.z * rhs) }
 }
 
+/// Vector *= f32
 impl MulAssign<f32> for Vector {
     fn mul_assign(&mut self, rhs: f32) {
         *self = Self {
@@ -111,6 +113,22 @@ impl MulAssign<f32> for Vector {
             z: self.z * rhs,
         }
     }
+}
+
+/// Vector *= &Matrix4x4
+impl MulAssign<&Matrix4x4> for Vector {
+    fn mul_assign(&mut self, rhs: &Matrix4x4) {
+        let (x, y, z) = (self.x, self.y, self.z);
+
+        self.x = rhs.m[0][0] * x + rhs.m[0][1] * y + rhs.m[0][2] * z;
+        self.y = rhs.m[1][0] * x + rhs.m[1][1] * y + rhs.m[1][2] * z;
+        self.z = rhs.m[2][0] * x + rhs.m[2][1] * y + rhs.m[2][2] * z;
+    }
+}
+
+/// Vector *= Matrix4x4
+impl MulAssign<Matrix4x4> for Vector {
+    fn mul_assign(&mut self, rhs: Matrix4x4) { *self *= &rhs }
 }
 
 /// The division operator /.
@@ -158,7 +176,13 @@ impl Index<usize> for Vector {
 impl Mul<Vector> for f32 {
     type Output = Vector;
 
-    fn mul(self, rhs: Vector) -> Self::Output { rhs * self }
+    fn mul(self, rhs: Vector) -> Self::Output { &rhs * self }
+}
+
+impl Mul<&Vector> for f32 {
+    type Output = Vector;
+
+    fn mul(self, rhs: &Vector) -> Self::Output { rhs * self }
 }
 
 /// Dot(Vector, Vector)
@@ -200,17 +224,6 @@ impl Cross<Normal> for Vector {
     }
 }
 
-/// Vector *= &Matrix4x4
-impl MulAssign<&Matrix4x4> for Vector {
-    fn mul_assign(&mut self, rhs: &Matrix4x4) {
-        let (x, y, z) = (self.x, self.y, self.z);
-
-        self.x = rhs.m[0][0] * x + rhs.m[0][1] * y + rhs.m[0][2] * z;
-        self.y = rhs.m[1][0] * x + rhs.m[1][1] * y + rhs.m[1][2] * z;
-        self.z = rhs.m[2][0] * x + rhs.m[2][1] * y + rhs.m[2][2] * z;
-    }
-}
-
 #[inline]
 pub fn coordinate_system(v1: &Vector, v2: &mut Vector, v3: &mut Vector) {
     if v1.x.abs() > v1.y.abs() {
@@ -224,6 +237,6 @@ pub fn coordinate_system(v1: &Vector, v2: &mut Vector, v3: &mut Vector) {
     *v3 = v1.cross(v2);
 }
 
-impl Into<Value> for Vector {
+impl Into<Value> for &Vector {
     fn into(self) -> Value { todo!() }
 }

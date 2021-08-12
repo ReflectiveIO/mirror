@@ -1,24 +1,22 @@
-use std::borrow::BorrowMut;
+use std::borrow::Borrow;
 use std::f32::consts::PI;
-use std::sync::Arc;
 
 use super::camera::Camera;
 use crate::rays::epsilon::{Epsilon, MachineEpsilon, DEFAULT_EPSILON_STATIC};
 use crate::rays::geometry::{rotate, Cross, Dot, Point, Ray, Transform, Vector};
 use crate::rays::utils::{clamp, radians};
 use crate::rays::Properties;
-use crate::slg::cameras::camera::CameraTransforms;
 use crate::slg::cameras::{BaseCamera, CameraType};
 use crate::slg::image_map::ImageMapCache;
 use crate::slg::utils::PathVolumeInfo;
 
 pub struct EnvironmentCamera {
-    base: Arc<BaseCamera>,
+    base: BaseCamera,
 }
 
 impl EnvironmentCamera {
     pub fn new(orig: &Point, target: &Point, up: &Vector, sw: Option<[f64; 4]>) -> Self {
-        let mut auto_update_screen_window: bool;
+        let auto_update_screen_window: bool;
         let mut screen_window: [f64; 4] = [0.0, 0.0, 0.0, 0.0];
         if let Some(w) = sw {
             auto_update_screen_window = false;
@@ -27,7 +25,7 @@ impl EnvironmentCamera {
             auto_update_screen_window = true;
         }
 
-        let mut base = Arc::new(BaseCamera::new(CameraType::Environment));
+        let mut base = BaseCamera::new(CameraType::Environment);
         base.degrees = 360.0;
         base.screen_window = screen_window;
         base.auto_update_screen_window = auto_update_screen_window;
@@ -38,8 +36,9 @@ impl EnvironmentCamera {
 
     pub fn get_pixel_area(&self) -> f32 { self.base.pixel_area }
 
-    fn init_camera_transforms(&mut self, trans: &mut CameraTransforms) {
+    fn init_camera_transforms(&mut self) {
         todo!()
+        // this.base.trans
         // // This is a trick i use from LuxCoreRender to set camera_to_world to
         // identity // matrix.
         // if self.orig == self.target {
@@ -103,7 +102,9 @@ impl EnvironmentCamera {
 }
 
 impl Camera for EnvironmentCamera {
-    fn base(&mut self) -> &mut Arc<BaseCamera> { self.base.borrow_mut() }
+    fn base(&self) -> &BaseCamera { &self.base }
+
+    fn base_mut(&mut self) -> &mut BaseCamera { &mut self.base }
 
     fn get_type(&self) -> &CameraType { self.base.get_type() }
 
@@ -128,43 +129,39 @@ impl Camera for EnvironmentCamera {
         self.base.target += t;
     }
 
-    fn translate_left(&mut self, k: f32) {
-        self.translate(&(Vector::from(self.base.x).normalize() * -k));
-    }
+    fn translate_left(&mut self, k: f32) { self.translate(&(&self.base.x.normalize() * -k)); }
 
-    fn translate_right(&mut self, k: f32) {
-        self.translate(&(Vector::from(self.base.x).normalize() * k))
-    }
+    fn translate_right(&mut self, k: f32) { self.translate(&(&self.base.x.normalize() * k)); }
 
-    fn translate_forward(&mut self, k: f32) { self.translate(&(self.base.dir * k)) }
+    fn translate_forward(&mut self, k: f32) { self.translate(&(&self.base.dir * k)) }
 
-    fn translate_backward(&mut self, k: f32) { self.translate(&(self.base.dir * -k)) }
+    fn translate_backward(&mut self, k: f32) { self.translate(&(&self.base.dir * -k)) }
 
     fn rotate(&mut self, angle: f32, axis: &Vector) {
-        let dir: Vector = Vector::from(self.base.target - self.base.orig);
+        let dir: Vector = &self.base.target - &self.base.orig;
         let t: Transform = rotate(angle, axis);
         let dir: Vector = t * dir;
 
         // Check if the up vector is the same of view direction. If they are, skip this
         // operation (it would trigger a Singular matrix in MatrixInvert)
         if dir.normalize().dot(&self.base.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
-            self.base.target = self.base.orig + dir;
+            self.base.target = &self.base.orig + &dir;
         }
     }
 
-    fn rotate_left(&mut self, angle: f32) { self.rotate(angle, &Vector::from(self.base.y)) }
+    fn rotate_left(&mut self, angle: f32) { self.rotate(angle, &self.base.y.to_owned()) }
 
-    fn rotate_right(&mut self, angle: f32) { self.rotate(-angle, &Vector::from(self.base.y)) }
+    fn rotate_right(&mut self, angle: f32) { self.rotate(-angle, &self.base.y.to_owned()) }
 
-    fn rotate_up(&mut self, angle: f32) { self.rotate(angle, &Vector::from(self.base.x)) }
+    fn rotate_up(&mut self, angle: f32) { self.rotate(angle, &self.base.x.to_owned()) }
 
-    fn rotate_down(&mut self, angle: f32) { self.rotate(-angle, &Vector::from(self.base.x)) }
+    fn rotate_down(&mut self, angle: f32) { self.rotate(-angle, &self.base.x.to_owned()) }
 
     fn update(&mut self, film_width: u32, film_height: u32, film_sub_region: Option<[u32; 4]>) {
         self.base.update(film_width, film_height, film_sub_region);
 
         // Used to translate the camera
-        self.base.dir = Vector::from(self.base.target - self.base.orig).normalize();
+        self.base.dir = (&self.base.target - &self.base.orig).normalize();
         self.base.x = self.base.dir.cross(&self.base.up).normalize();
         self.base.y = self.base.x.cross(&self.base.dir).normalize();
 
@@ -181,7 +178,7 @@ impl Camera for EnvironmentCamera {
         }
 
         // Initialize camera transformations
-        self.init_camera_transforms(&mut self.base.trans);
+        self.init_camera_transforms();
 
         // Initialize pixel information
         self.init_pixel_area();
@@ -207,12 +204,12 @@ impl Camera for EnvironmentCamera {
         ray.time = time;
 
         if let Some(motion_system) = &self.base.motion_system {
-            *ray = ray * motion_system.sample(ray.time) * &self.base.trans.camera_to_world;
+            *ray = motion_system.sample(ray.time) * (&self.base.trans.camera_to_world * &*ray);
             // I need to normalize the direction vector again because the motion system
             // could include some kind of scale
             ray.direction = ray.direction.normalize();
         } else {
-            *ray = &self.base.trans.camera_to_world * ray;
+            *ray = &self.base.trans.camera_to_world * &*ray;
         }
     }
 
@@ -228,7 +225,7 @@ impl Camera for EnvironmentCamera {
             return false;
         }
 
-        let w = Vector::from(self.base.trans.camera_to_world.inverse() * ray.direction);
+        let w: Vector = &self.base.trans.camera_to_world.inverse() * &ray.direction;
         let cos_theta = w.y;
         let theta = f32::min(1.0, cos_theta).acos();
         *y = self.base.film_height as f32 - 1.0 - (theta * self.base.film_height as f32 * PI);
@@ -264,19 +261,19 @@ impl Camera for EnvironmentCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        mut pdf_w: Option<f32>,
-        mut flux_to_radiance_factor: Option<f32>,
+        pdf_w: &mut Option<f32>,
+        flux_to_radiance_factor: &mut Option<f32>,
     ) {
         let theta: f32 =
             PI * (self.base.film_height as f32 - film_y - 1.0) / self.base.film_height as f32;
-        let mut camera_pdf_w = 1.0 / (2.0 * PI * PI * theta.sin());
+        let camera_pdf_w = 1.0 / (2.0 * PI * PI * theta.sin());
 
         if pdf_w.is_some() {
-            pdf_w = Some(camera_pdf_w);
+            *pdf_w = Some(camera_pdf_w);
         }
 
         if flux_to_radiance_factor.is_some() {
-            flux_to_radiance_factor = Some(camera_pdf_w / (eye_distance * eye_distance));
+            *flux_to_radiance_factor = Some(camera_pdf_w / (eye_distance * eye_distance));
         }
     }
 
@@ -284,9 +281,9 @@ impl Camera for EnvironmentCamera {
         let mut props = self.base.to_properties();
 
         props.set("scene.camera.type", "environment");
-        props.set("scene.camera.lookat.orig", self.base.orig);
-        props.set("scene.camera.lookat.target", self.base.target);
-        props.set("scene.camera.up", self.base.up);
+        props.set("scene.camera.lookat.orig", &self.base.orig);
+        props.set("scene.camera.lookat.target", &self.base.target);
+        props.set("scene.camera.up", &self.base.up);
 
         if !self.base.auto_update_screen_window {
             props.set(

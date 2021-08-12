@@ -1,7 +1,6 @@
 use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
-use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::image_map::ImageMapCache;
@@ -47,6 +46,8 @@ impl VelvetMaterial {
 
 impl Material for VelvetMaterial {
     fn base(&self) -> &BaseMaterial { &self.base }
+
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
 
     fn get_type(&self) -> MaterialType { MaterialType::Velvet }
 

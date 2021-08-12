@@ -40,7 +40,7 @@ impl Ray {
 
     pub fn update_range_with_epsilon(&mut self) {
         self.start += MachineEpsilon::epsilon(&self.origin);
-        self.end -= MachineEpsilon::epsilon(&(self.origin + self.direction * self.end));
+        self.end -= MachineEpsilon::epsilon(&(&self.origin + &(&self.direction * self.end)));
     }
 
     pub fn update(&mut self, origin: &Point, direction: &Vector) {
@@ -72,8 +72,8 @@ pub struct RayHit {
     pub t: f32,
     pub b1: f32,
     pub b2: f32,
-    pub mesh_index: u8,
-    pub triangle_index: u8,
+    pub mesh_index: usize,
+    pub triangle_index: usize,
 }
 
 impl RayHit {

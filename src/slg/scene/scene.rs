@@ -121,6 +121,7 @@ impl Scene {
             props.merge(
                 &self
                     .camera
+                    .as_ref()
                     .unwrap()
                     .to_properties(&self.img_map_cache, real_filename),
             );
@@ -148,8 +149,8 @@ impl Scene {
         // Get the sorted list of material names according their dependencies
         let mat_names = self.mat_defs.sorted_names();
 
-        for name in mat_names {
-            let material = self.mat_defs.get(&name);
+        for name in &mat_names {
+            let material = self.mat_defs.get(name);
             // Check if it is a volume
             if let Some(volume) = material.downcast_ref::<Volume>() {
                 props.merge(&volume.to_properties(&self.img_map_cache, real_filename));
@@ -157,18 +158,18 @@ impl Scene {
         }
 
         // Set the default world interior/exterior volume if required
-        if self.default_world_volume.is_some() {
-            let vol: Box<dyn Material> = Box::new(self.default_world_volume.unwrap());
-            let index = self.mat_defs.index(&vol);
-            props.set(
-                "scene.world.volume.default",
-                self.mat_defs.get(&index).get_name().as_str(),
-            );
-        }
+        // if self.default_world_volume.is_some() {
+        //     let vol: Box<dyn Material> =
+        // Box::new(self.default_world_volume.unwrap());     let index =
+        // self.mat_defs.index(&vol);     props.set(
+        //         "scene.world.volume.default",
+        //         self.mat_defs.get(&index).get_name().as_str(),
+        //     );
+        // }
 
         // Writes the materials information
-        for name in mat_names {
-            let material = self.mat_defs.get(&name);
+        for name in &mat_names {
+            let material = self.mat_defs.get(name);
             // Check if it is not a volume
             if !material.is::<Volume>() {
                 props.merge(&material.to_properties(&self.img_map_cache, real_filename));
@@ -221,7 +222,7 @@ impl Scene {
     // extMeshCache.DefineExtMesh()
 
     pub fn define_mesh(&mut self, mesh: &Box<dyn ExtMesh>) {
-        let shape_name: &String = mesh.get_name();
+        let shape_name = &mesh.get_name();
 
         if self.ext_mesh_cache.is_ext_mesh_defined(shape_name) {
             // A replacement for an existing mesh

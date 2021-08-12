@@ -54,21 +54,21 @@ impl HitPoint {
     pub fn get_frame(&self) -> Frame { Frame::new(&self.dpdu, &self.dpdv, &self.shade_n) }
 
     pub fn get_landing_geometry_n(&self) -> Normal {
-        (if self.into_object { 1.0 } else { -1.0 }) * self.geometry_n
+        (if self.into_object { 1.0 } else { -1.0 }) * &self.geometry_n
     }
 
     pub fn get_landing_interpolated_n(&self) -> Normal {
-        (if self.into_object { 1.0 } else { -1.0 }) * self.interpolated_n
+        (if self.into_object { 1.0 } else { -1.0 }) * &self.interpolated_n
     }
 
     pub fn get_landing_shade_n(&self) -> Normal {
-        (if self.into_object { 1.0 } else { -1.0 }) * self.shade_n
+        (if self.into_object { 1.0 } else { -1.0 }) * &self.shade_n
     }
 
     pub fn get_uv(&self, data_index: u32) -> UV {
         if let Some(mesh) = &self.mesh {
             if data_index == 0 {
-                self.default_uv
+                self.default_uv.clone()
             } else {
                 mesh.interpolate_tri_uv(
                     self.triangle_index,
@@ -82,7 +82,7 @@ impl HitPoint {
         }
     }
 
-    pub const fn get_color(&self, data_index: u32) -> Spectrum {
+    pub fn get_color(&self, data_index: u32) -> Spectrum {
         if let Some(mesh) = &self.mesh {
             mesh.interpolate_tri_color(
                 self.triangle_index,
@@ -95,7 +95,7 @@ impl HitPoint {
         }
     }
 
-    pub const fn get_alpha(&self, data_index: u32) -> f32 {
+    pub fn get_alpha(&self, data_index: u32) -> f32 {
         if let Some(mesh) = &self.mesh {
             mesh.interpolate_tri_alpha(
                 self.triangle_index,
@@ -108,7 +108,7 @@ impl HitPoint {
         }
     }
 
-    pub const fn get_vertex_aov(&self, data_index: u32) -> f32 {
+    pub fn get_vertex_aov(&self, data_index: u32) -> f32 {
         if let Some(mesh) = &self.mesh {
             mesh.interpolate_tri_vertex_aov(
                 self.triangle_index,
@@ -121,7 +121,7 @@ impl HitPoint {
         }
     }
 
-    pub const fn get_tri_aov(&self, data_index: u32) -> f32 {
+    pub fn get_tri_aov(&self, data_index: u32) -> f32 {
         if let Some(mesh) = &self.mesh {
             mesh.get_tri_aov(self.triangle_index, data_index)
         } else {

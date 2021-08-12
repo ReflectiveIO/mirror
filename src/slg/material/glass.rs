@@ -79,6 +79,8 @@ impl GlassMaterial {
 impl Material for GlassMaterial {
     fn base(&self) -> &BaseMaterial { &self.base }
 
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::Glass }
 
     fn get_event_types(&self) -> BSDFEvent {

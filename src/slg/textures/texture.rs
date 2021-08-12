@@ -98,7 +98,7 @@ pub trait Texture {
 }
 
 impl NamedObject for Box<dyn Texture> {
-    fn get_name(&self) -> &String { &String::from("texture") }
+    fn get_name(&self) -> String { String::from("texture") }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }
@@ -112,5 +112,5 @@ impl PartialEq for Box<dyn Texture> {
 }
 
 impl Clone for Box<dyn Texture> {
-    fn clone(&self) -> Self { self.clone() }
+    fn clone(&self) -> Self { todo!() }
 }

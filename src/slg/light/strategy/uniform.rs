@@ -37,7 +37,7 @@ impl Into<Properties> for LightStrategyUniform {
 impl LightStrategy for LightStrategyUniform {
     fn get_type(&self) -> &LightStrategyType { Self::get_object_type() }
 
-    fn get_tag(&self) -> &String { &Self::get_object_tag().to_string() }
+    fn get_tag(&self) -> String { Self::get_object_tag().to_string() }
 
     fn preprocess(&mut self, scene: Scene, task_type: LightStrategyTask, real_time: bool) {
         todo!()

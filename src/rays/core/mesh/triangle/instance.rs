@@ -22,7 +22,7 @@ impl InstanceTriangleMesh {
 }
 
 impl NamedObject for InstanceTriangleMesh {
-    fn get_name(&self) -> &String { todo!() }
+    fn get_name(&self) -> String { todo!() }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }

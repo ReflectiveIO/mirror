@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use downcast_rs::Downcast;
 
 use crate::rays::color::Spectrum;
@@ -52,30 +54,33 @@ impl Default for MaterialEmissionDLSType {
 
 pub trait Material: Downcast {
     fn base(&self) -> &BaseMaterial;
+    fn base_mut(&mut self) -> &mut BaseMaterial;
 
-    fn set_light_id(&mut self, id: u32) { self.base().set_light_id(id) }
+    fn set_light_id(&mut self, id: u32) { self.base_mut().set_light_id(id) }
     fn get_light_id(&self) -> u32 { self.base().get_light_id() }
-    fn set_id(&mut self, id: u32) { self.base().set_id(id) }
+    fn set_id(&mut self, id: u32) { self.base_mut().set_id(id) }
     fn get_id(&self) -> u32 { self.base().get_id() }
-    fn set_emitted_gain(&mut self, v: Spectrum) { self.base().set_emitted_gain(v) }
+    fn set_emitted_gain(&mut self, v: Spectrum) { self.base_mut().set_emitted_gain(v) }
     fn get_emitted_gain(&self) -> &Spectrum { self.base().get_emitted_gain() }
-    fn set_emitted_power(&mut self, v: f32) { self.base().set_emitted_power(v) }
+    fn set_emitted_power(&mut self, v: f32) { self.base_mut().set_emitted_power(v) }
     fn get_emitted_power(&self) -> f32 { self.base().get_emitted_power() }
     fn set_emitted_power_normalize(&mut self, v: bool) {
-        self.base().set_emitted_power_normalize(v)
+        self.base_mut().set_emitted_power_normalize(v)
     }
     fn is_emitted_power_normalize(&self) -> bool { self.base().is_emitted_power_normalize() }
-    fn set_emitted_gain_normalize(&mut self, v: bool) { self.base().set_emitted_gain_normalize(v) }
+    fn set_emitted_gain_normalize(&mut self, v: bool) {
+        self.base_mut().set_emitted_gain_normalize(v)
+    }
     fn is_emitted_gain_normalize(&self) -> bool { self.base().is_emitted_gain_normalize() }
-    fn set_emitted_efficiency(&mut self, v: f32) { self.base().set_emitted_efficiency(v) }
+    fn set_emitted_efficiency(&mut self, v: f32) { self.base_mut().set_emitted_efficiency(v) }
     fn get_emitted_efficiency(&self) -> f32 { self.base().get_emitted_efficiency() }
     fn get_emitted_factor(&self) -> &Spectrum { self.base().get_emitted_factor() }
-    fn set_emitted_theta(&mut self, theta: f32) { self.base().set_emitted_theta(theta) }
+    fn set_emitted_theta(&mut self, theta: f32) { self.base_mut().set_emitted_theta(theta) }
     fn get_emitted_theta(&self) -> f32 { self.base().get_emitted_theta() }
     fn get_emitted_cos_theta_max(&self) -> f32 { self.base().get_emitted_cos_theta_max() }
-    fn set_emitted_temperature(&mut self, v: f32) { self.base().set_emitted_temperature(v) }
+    fn set_emitted_temperature(&mut self, v: f32) { self.base_mut().set_emitted_temperature(v) }
     fn set_emitted_temperature_normalize(&mut self, v: bool) {
-        self.base().set_emitted_temperature_normalize(v)
+        self.base_mut().set_emitted_temperature_normalize(v)
     }
     fn is_using_primitive_area(&self) -> bool { self.base().is_using_primitive_area() }
 
@@ -83,42 +88,45 @@ pub trait Material: Downcast {
     fn get_event_types(&self) -> BSDFEvent;
 
     fn is_light_source(&self) -> bool { self.base().is_light_source() }
-    fn set_photon_gi_enabled(&mut self, v: bool) { self.base().set_photon_gi_enabled(v) }
+    fn set_photon_gi_enabled(&mut self, v: bool) { self.base_mut().set_photon_gi_enabled(v) }
     fn is_photon_gi_enabled(&self) -> bool { self.base().is_photon_gi_enabled() }
     fn get_glossiness(&self) -> f32 { self.base().get_glossiness() }
 
     fn set_direct_light_sampling_type(&mut self, t: MaterialEmissionDLSType) {
-        self.base().set_direct_light_sampling_type(t)
+        self.base_mut().set_direct_light_sampling_type(t)
     }
     fn get_direct_light_sampling_type(&self) -> &MaterialEmissionDLSType {
         self.base().get_direct_light_sampling_type()
     }
     fn set_indirect_diffuse_visibility(&mut self, visible: bool) {
-        self.base().set_indirect_diffuse_visibility(visible)
+        self.base_mut().set_indirect_diffuse_visibility(visible)
     }
     fn is_visible_indirect_diffuse(&self) -> bool { self.base().is_visible_indirect_diffuse() }
     fn set_indirect_glossy_visibility(&mut self, visible: bool) {
-        self.base().set_indirect_glossy_visibility(visible)
+        self.base_mut().set_indirect_glossy_visibility(visible)
     }
     fn is_visible_indirect_glossy(&self) -> bool { self.base().is_visible_indirect_glossy() }
     fn set_indirect_specular_visibility(&mut self, visible: bool) {
-        self.base().set_indirect_specular_visibility(visible)
+        self.base_mut().set_indirect_specular_visibility(visible)
     }
     fn is_visible_indirect_specular(&self) -> bool { self.base().is_visible_indirect_specular() }
 
-    fn set_shadow_catcher(&mut self, enabled: bool) { self.base().set_shadow_catcher(enabled) }
+    fn set_shadow_catcher(&mut self, enabled: bool) { self.base_mut().set_shadow_catcher(enabled) }
     fn is_shadow_catcher(&self) -> bool { self.base().is_shadow_catcher() }
     fn set_shadow_catcher_only_infinite_lights(&mut self, enabled: bool) {
-        self.base().set_shadow_catcher_only_infinite_lights(enabled)
+        self.base_mut()
+            .set_shadow_catcher_only_infinite_lights(enabled)
     }
     fn is_shadow_catcher_only_infinite_lights(&self) -> bool {
         self.base().is_shadow_catcher_only_infinite_lights()
     }
 
-    fn set_holdout(&mut self, enabled: bool) { self.base().set_holdout(enabled) }
+    fn set_holdout(&mut self, enabled: bool) { self.base_mut().set_holdout(enabled) }
     fn is_holdout(&self) -> bool { self.base().is_holdout() }
 
-    fn set_bump_sample_distance(&mut self, dist: f32) { self.base().set_bump_sample_distance(dist) }
+    fn set_bump_sample_distance(&mut self, dist: f32) {
+        self.base_mut().set_bump_sample_distance(dist)
+    }
     fn get_bump_sample_distance(&self) -> f32 { self.base().get_bump_sample_distance() }
 
     fn is_delta(&self) -> bool { self.base().is_delta() }
@@ -141,7 +149,7 @@ pub trait Material: Downcast {
     }
 
     fn set_pass_through_shadow_transparency(&mut self, t: Spectrum) {
-        self.base().set_pass_through_shadow_transparency(t)
+        self.base_mut().set_pass_through_shadow_transparency(t)
     }
     fn get_pass_through_shadow_transparency(&self) -> &Spectrum {
         self.base().get_pass_through_shadow_transparency()
@@ -152,10 +160,10 @@ pub trait Material: Downcast {
             .get_emitted_radiance(hit_point, one_over_primitive_area)
     }
     fn get_emitted_radiance_y(&self, one_over_primitive_area: f32) -> f32 {
-        self.get_emitted_radiance_y(one_over_primitive_area)
+        self.base().get_emitted_radiance_y(one_over_primitive_area)
     }
 
-    fn set_emitted_importance(&mut self, imp: f32) { self.base().set_emitted_importance(imp) }
+    fn set_emitted_importance(&mut self, imp: f32) { self.base_mut().set_emitted_importance(imp) }
     fn get_emitted_importance(&self) -> f32 { self.base().get_emitted_importance() }
     fn get_front_transparency_texture(&self) -> &Box<dyn Texture> {
         self.base().get_front_transparency_texture()
@@ -166,25 +174,25 @@ pub trait Material: Downcast {
     fn get_emit_texture(&self) -> &Option<Box<dyn Texture>> { self.base().get_emit_texture() }
     fn get_bump_texture(&self) -> &Option<Box<dyn Texture>> { self.base().get_bump_texture() }
 
-    fn set_emission_map(&mut self, map: ImageMap) { self.base().set_emission_map(map) }
+    fn set_emission_map(&mut self, map: ImageMap) { self.base_mut().set_emission_map(map) }
     fn get_emission_map(&self) -> &ImageMap { self.base().get_emission_map() }
     fn get_emission_func(&self) -> &SampleableSphericalFunction { self.base().get_emission_func() }
 
     // MixMaterial can have multiple volumes assigned and needs
     // the pass_through_event information to be able to return the
     // correct volume.
-    fn set_interior_volume(&mut self, vol: Volume) { self.base().set_interior_volume(vol) }
+    fn set_interior_volume(&mut self, vol: Volume) { self.base_mut().set_interior_volume(vol) }
     fn get_interior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
         self.base()
             .get_interior_volume(hit_point, pass_through_event)
     }
-    fn set_exterior_volume(&mut self, vol: Volume) { self.base().set_exterior_volume(vol) }
+    fn set_exterior_volume(&mut self, vol: Volume) { self.base_mut().set_exterior_volume(vol) }
     fn get_exterior_volume(&self, hit_point: &HitPoint, pass_through_event: f32) -> &Volume {
         self.base()
             .get_exterior_volume(hit_point, pass_through_event)
     }
 
-    fn bump(&mut self, hit_point: &HitPoint) { self.base().bump(hit_point) }
+    fn bump(&mut self, hit_point: &HitPoint) { self.base_mut().bump(hit_point) }
 
     /// albedo() returns the material albedo. It is used for Albedo AOV
     fn albedo(&self, hit_point: &HitPoint) -> Spectrum { self.base().albedo(hit_point) }
@@ -248,19 +256,19 @@ pub trait Material: Downcast {
         old_mat: &Box<dyn Material>,
         new_mat: &Box<dyn Material>,
     ) {
-        self.base().update_material_references(old_mat, new_mat)
+        self.base_mut().update_material_references(old_mat, new_mat)
     }
 
     /// Return true if the material is referencing the specified material
     fn is_referencing(&self, mat: &Box<dyn Material>) -> bool { self.base().is_referencing(mat) }
     fn add_referenced_materials(&mut self, v: &Vec<Box<dyn Material>>) {
-        self.base().add_referenced_materials(v)
+        self.base_mut().add_referenced_materials(v)
     }
     fn add_referenced_textures(&mut self, v: &Vec<Box<dyn Texture>>) {
-        self.base().add_referenced_textures(v)
+        self.base_mut().add_referenced_textures(v)
     }
     fn add_referenced_image_maps(&mut self, v: &mut Vec<ImageMap>) {
-        self.base().add_referenced_image_maps(v)
+        self.base_mut().add_referenced_image_maps(v)
     }
     /// Update any reference to oldTex with newTex
     fn update_texture_references(
@@ -268,7 +276,7 @@ pub trait Material: Downcast {
         old_tex: &Box<dyn Texture>,
         new_tex: &Box<dyn Texture>,
     ) {
-        self.base().update_texture_references(old_tex, new_tex)
+        self.base_mut().update_texture_references(old_tex, new_tex)
     }
 
     fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties {
@@ -276,13 +284,13 @@ pub trait Material: Downcast {
     }
 
     fn update_avg_pass_through_transparency(&mut self) {
-        self.base().update_avg_pass_through_transparency()
+        self.base_mut().update_avg_pass_through_transparency()
     }
 }
 impl_downcast!(Material);
 
 impl NamedObject for Box<dyn Material> {
-    fn get_name(&self) -> &String { &String::from("material") }
+    fn get_name(&self) -> String { String::from("material") }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }

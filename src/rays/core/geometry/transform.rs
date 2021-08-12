@@ -1,6 +1,6 @@
 use std::ops::{Div, Mul};
 
-use crate::rays::geometry::{Cross, Matrix4x4, Point, Vector};
+use crate::rays::geometry::{Cross, Matrix4x4, Point, Ray, Vector};
 
 pub struct InvTransform {
     reference: Transform,
@@ -22,14 +22,14 @@ impl Transform {
 }
 
 impl Transform {
-    const TRANS_IDENTITY: Transform = Transform::new();
-
     pub fn new() -> Self {
         Self {
-            m: Matrix4x4::IDENTITY,
-            m_inv: Matrix4x4::IDENTITY,
+            m: Matrix4x4::identity(),
+            m_inv: Matrix4x4::identity(),
         }
     }
+
+    pub fn identity() -> Self { Self::new() }
 
     pub fn get_matrix(&self) -> &Matrix4x4 { &self.m }
 
@@ -60,7 +60,7 @@ impl From<[[f32; 4]; 4]> for Transform {
     fn from(mat: [[f32; 4]; 4]) -> Self {
         let matrix = Matrix4x4::from(mat);
         Self {
-            m: matrix,
+            m: matrix.clone(),
             m_inv: matrix.inverse(),
         }
     }
@@ -69,7 +69,7 @@ impl From<[[f32; 4]; 4]> for Transform {
 impl From<Matrix4x4> for Transform {
     fn from(mat: Matrix4x4) -> Self {
         Self {
-            m: mat,
+            m: mat.clone(),
             m_inv: mat.inverse(),
         }
     }
@@ -88,6 +88,7 @@ impl From<InvTransform> for Transform {
     }
 }
 
+/// Transform * Transform = Transform
 impl Mul for Transform {
     type Output = Transform;
 
@@ -96,16 +97,38 @@ impl Mul for Transform {
     }
 }
 
+/// Transform * Vector = Vector
 impl Mul<Vector> for Transform {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Self::Output { todo!() }
 }
 
+/// Transform * Vector = Vector
+impl Mul<&Vector> for &Transform {
+    type Output = Vector;
+
+    fn mul(self, rhs: &Vector) -> Self::Output { todo!() }
+}
+
+/// &Transform * Point = Point
 impl Mul<Point> for &Transform {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Self::Output { todo!() }
+}
+
+impl Mul<&Point> for &Transform {
+    type Output = Point;
+
+    fn mul(self, rhs: &Point) -> Self::Output { todo!() }
+}
+
+/// &Transform * &Ray = Ray
+impl Mul<&Ray> for &Transform {
+    type Output = Ray;
+
+    fn mul(self, rhs: &Ray) -> Self::Output { todo!() }
 }
 
 impl Div for Transform {
@@ -142,7 +165,7 @@ pub fn look_at(pos: &Point, look: &Point, up: &Vector) -> Transform {
     m[2][3] = pos.z;
     m[3][3] = 1.0;
 
-    let dir = Vector::from(*look - *pos).normalize();
+    let dir = (look - pos).normalize();
     let right = dir.cross(up).normalize();
     let up = right.cross(&dir);
 

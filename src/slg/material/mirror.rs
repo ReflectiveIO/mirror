@@ -1,7 +1,6 @@
 use super::material::Material;
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::Vector;
-use crate::rays::object::NamedObject;
 use crate::slg::bsdf::{BSDFEvent, BSDFEventType, HitPoint};
 use crate::slg::material::base::BaseMaterial;
 use crate::slg::material::MaterialType;
@@ -29,6 +28,8 @@ impl MirrorMaterial {
 
 impl Material for MirrorMaterial {
     fn base(&self) -> &BaseMaterial { &self.base }
+
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
 
     fn get_type(&self) -> MaterialType { MaterialType::Mirror }
 

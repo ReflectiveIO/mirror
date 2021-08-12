@@ -1,6 +1,5 @@
 use crate::rays::color::Spectrum;
 use crate::rays::geometry::{Ray, Vector};
-use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::bsdf::{BSDFEvent, HitPoint};
 use crate::slg::image_map::ImageMapCache;
@@ -37,6 +36,8 @@ impl ClearVolume {
 
 impl Material for ClearVolume {
     fn base(&self) -> &BaseMaterial { &self.base }
+
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
 
     fn get_type(&self) -> MaterialType { todo!() }
 

@@ -37,7 +37,11 @@ impl Properties {
 
     pub fn has(&self, name: &str) -> bool { self.props.get_str(name).is_ok() }
 
-    pub fn merge(&mut self, source: &Properties) { self.props.merge(source.props.clone()); }
+    pub fn merge(&mut self, source: &Properties) {
+        if let Err(err) = self.props.merge(source.props.clone()) {
+            error!("merge value to properties error: {}", err);
+        }
+    }
 }
 
 impl Default for Properties {

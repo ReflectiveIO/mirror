@@ -32,6 +32,8 @@ impl MatteMaterial {
 impl Material for MatteMaterial {
     fn base(&self) -> &BaseMaterial { &self.base }
 
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::Matte }
 
     fn get_event_types(&self) -> BSDFEvent { BSDFEventType::DIFFUSE | BSDFEventType::REFLECT }

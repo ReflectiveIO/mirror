@@ -39,6 +39,8 @@ impl RoughMatteTranslucentMaterial {
 impl Material for RoughMatteTranslucentMaterial {
     fn base(&self) -> &BaseMaterial { &self.base }
 
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::RoughMatteTranslucent }
 
     fn get_event_types(&self) -> BSDFEvent {

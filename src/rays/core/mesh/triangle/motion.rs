@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use crate::rays::core::geometry::{Point, Triangle};
 use crate::rays::core::mesh::MeshType;
 use crate::rays::core::named_object::NamedObject;
@@ -23,7 +25,7 @@ impl MotionTriangleMesh {
 }
 
 impl NamedObject for MotionTriangleMesh {
-    fn get_name(&self) -> &String { todo!() }
+    fn get_name(&self) -> String { todo!() }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }
@@ -84,7 +86,7 @@ impl Mesh for MotionTriangleMesh {
     ) {
         self.mesh
             .sample(local2world, tri_index, u0, u1, p, b0, b1, b2);
-        *p = local2world * *p;
+        *p = local2world * p.deref();
     }
 
     fn apply_transform(&mut self, trans: &Transform) { todo!() }

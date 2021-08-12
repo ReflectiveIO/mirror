@@ -20,7 +20,7 @@ impl Frame {
         coordinate_system(&self.z, &mut self.x, &mut self.y)
     }
 
-    pub fn to_world(&self, a: &Vector) -> Vector { self.x * a.x + self.y * a.y + self.z * a.z }
+    pub fn to_world(&self, a: &Vector) -> Vector { &self.x * a.x + &self.y * a.y + &self.z * a.z }
 
     pub fn to_local(&self, a: &Vector) -> Vector {
         Vector::new(a.dot(&self.x), a.dot(&self.y), a.dot(&self.z))

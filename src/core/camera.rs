@@ -80,35 +80,46 @@ impl Camera {
 
 impl CameraTrait for Camera {
     fn get_type(&self) -> CameraType {
-        CameraType::from(self.scene.scene.camera.unwrap().get_type())
+        CameraType::from(self.scene.scene.camera.as_ref().unwrap().get_type())
     }
 
     fn translate(&mut self, x: f32, y: f32, z: f32) {
         self.scene
             .scene
             .camera
+            .as_mut()
             .unwrap()
             .translate(&Vector::new(x, y, z));
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
     fn translate_left(&mut self, t: f32) {
-        self.scene.scene.camera.unwrap().translate_left(t);
+        self.scene.scene.camera.as_mut().unwrap().translate_left(t);
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
     fn translate_right(&mut self, t: f32) {
-        self.scene.scene.camera.unwrap().translate_right(t);
+        self.scene.scene.camera.as_mut().unwrap().translate_right(t);
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
     fn translate_forward(&mut self, t: f32) {
-        self.scene.scene.camera.unwrap().translate_forward(t);
+        self.scene
+            .scene
+            .camera
+            .as_mut()
+            .unwrap()
+            .translate_forward(t);
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
     fn translate_backward(&mut self, t: f32) {
-        self.scene.scene.camera.unwrap().translate_backward(t);
+        self.scene
+            .scene
+            .camera
+            .as_mut()
+            .unwrap()
+            .translate_backward(t);
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
@@ -116,28 +127,34 @@ impl CameraTrait for Camera {
         self.scene
             .scene
             .camera
+            .as_mut()
             .unwrap()
             .rotate(angle, &Vector::new(x, y, z));
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
     fn rotate_left(&mut self, angle: f32) {
-        self.scene.scene.camera.unwrap().rotate_left(angle);
+        self.scene.scene.camera.as_mut().unwrap().rotate_left(angle);
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
     fn rotate_right(&mut self, angle: f32) {
-        self.scene.scene.camera.unwrap().rotate_right(angle);
+        self.scene
+            .scene
+            .camera
+            .as_mut()
+            .unwrap()
+            .rotate_right(angle);
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
     fn rotate_up(&mut self, angle: f32) {
-        self.scene.scene.camera.unwrap().rotate_up(angle);
+        self.scene.scene.camera.as_mut().unwrap().rotate_up(angle);
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 
     fn rotate_down(&mut self, angle: f32) {
-        self.scene.scene.camera.unwrap().rotate_down(angle);
+        self.scene.scene.camera.as_mut().unwrap().rotate_down(angle);
         self.scene.scene.edit_actions.add_action(CameraEdit);
     }
 }

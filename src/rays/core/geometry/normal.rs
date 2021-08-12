@@ -3,9 +3,10 @@ use std::ops::*;
 use config::Value;
 
 use super::{Cross, Dot, Vector};
+use crate::rays::core::geometry::Point;
 use crate::rays::geometry::Matrix4x4;
 
-#[derive(Debug, Copy, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Normal {
     pub x: f32,
     pub y: f32,
@@ -99,10 +100,10 @@ impl SubAssign for Normal {
     }
 }
 
-impl Mul<f32> for Normal {
+impl Mul<f32> for &Normal {
     type Output = Normal;
 
-    fn mul(self, rhs: f32) -> Self::Output { Self::new(self.x * rhs, self.y * rhs, self.z * rhs) }
+    fn mul(self, rhs: f32) -> Self::Output { Normal::new(self.x * rhs, self.y * rhs, self.z * rhs) }
 }
 
 impl MulAssign<f32> for Normal {
@@ -157,10 +158,10 @@ impl Index<usize> for Normal {
     }
 }
 
-impl Mul<Normal> for f32 {
+impl Mul<&Normal> for f32 {
     type Output = Normal;
 
-    fn mul(self, rhs: Normal) -> Self::Output { rhs * self }
+    fn mul(self, rhs: &Normal) -> Self::Output { rhs * self }
 }
 
 /// Cross(Normal, Vector) -> Vector
@@ -187,6 +188,10 @@ impl Dot<Vector> for Normal {
     fn dot(&self, rhs: &Vector) -> f32 { self.x * rhs.x + self.y * rhs.y + self.z * rhs.z }
 }
 
+impl Dot<Point> for Normal {
+    fn dot(&self, rhs: &Point) -> f32 { self.x * rhs.x + self.y * rhs.y + self.z * rhs.z }
+}
+
 /// Normal *= &Matrix4x4
 impl MulAssign<&Matrix4x4> for Normal {
     fn mul_assign(&mut self, rhs: &Matrix4x4) {
@@ -198,6 +203,6 @@ impl MulAssign<&Matrix4x4> for Normal {
     }
 }
 
-impl Into<Value> for Normal {
+impl Into<Value> for &Normal {
     fn into(self) -> Value { todo!() }
 }

@@ -76,6 +76,8 @@ impl BaseMaterial {
 impl Material for BaseMaterial {
     fn base(&self) -> &BaseMaterial { unimplemented!() }
 
+    fn base_mut(&mut self) -> &mut BaseMaterial { unimplemented!() }
+
     fn set_light_id(&mut self, id: u32) { self.light_id = id }
 
     fn get_light_id(&self) -> u32 { self.light_id }

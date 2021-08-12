@@ -19,11 +19,11 @@ impl PathVolumeInfo {
         }
     }
 
-    pub const fn get_current_volume(&self) -> Option<&Volume> { self.current_volume.as_ref() }
+    pub fn get_current_volume(&self) -> Option<&Volume> { self.current_volume.as_ref() }
 
-    pub const fn get_volume(&self, index: usize) -> &Volume { self.volume_list.get(index).unwrap() }
+    pub fn get_volume(&self, index: usize) -> &Volume { self.volume_list.get(index).unwrap() }
 
-    pub const fn get_list_size(&self) -> usize { self.volume_list.len() }
+    pub fn get_list_size(&self) -> usize { self.volume_list.len() }
 
     pub fn add_volume(&mut self, vol: &Option<Volume>) {
         if vol.is_none() || self.volume_list.len() == PATH_VOLUME_INFO_SIZE {
@@ -33,13 +33,14 @@ impl PathVolumeInfo {
         // Update the current volume. ">=" because i want to catch the last added
         // volume.
         if self.current_volume.is_none()
-            || vol.unwrap().get_priority() >= self.current_volume.unwrap().get_priority()
+            || vol.as_ref().unwrap().get_priority()
+                >= self.current_volume.as_ref().unwrap().get_priority()
         {
-            self.current_volume = Some(vol.unwrap().clone());
+            self.current_volume = Some(vol.as_ref().unwrap().clone());
         }
 
         // Add the volume to the list
-        self.volume_list.push(vol.unwrap().clone());
+        self.volume_list.push(vol.as_ref().unwrap().clone());
     }
 
     pub fn remove_volume(&mut self, vol: &Option<Volume>) {
@@ -47,13 +48,13 @@ impl PathVolumeInfo {
             return;
         }
 
-        self.volume_list.retain(|&x| x != vol.unwrap());
+        self.volume_list.retain(|x| x != vol.as_ref().unwrap());
         self.current_volume = Some(self.volume_list.last().unwrap().clone())
     }
 
-    pub const fn simulate_remove_volume(&mut self, vol: Option<&Volume>) -> &Volume { todo!() }
+    pub fn simulate_remove_volume(&mut self, vol: Option<&Volume>) -> &Volume { todo!() }
 
-    pub const fn simulate_add_volume(&mut self, vol: Option<&Volume>) -> Option<&Volume> { todo!() }
+    pub fn simulate_add_volume(&mut self, vol: Option<&Volume>) -> Option<&Volume> { todo!() }
 
     pub fn set_scattered_start(&mut self, v: bool) { self.scattered_start = v }
 

@@ -32,9 +32,6 @@ impl ToString for LightStrategyType {
             LightStrategyType::Power => "POWER".to_string(),
             LightStrategyType::LogPower => "LOG_POWER".to_string(),
             LightStrategyType::DlsCache => "DLS_CACHE".to_string(),
-            _ => {
-                panic!("Unknown light strategy type")
-            },
         }
     }
 }
@@ -55,7 +52,7 @@ impl FromStr for LightStrategyType {
 
 pub trait LightStrategy {
     fn get_type(&self) -> &LightStrategyType;
-    fn get_tag(&self) -> &String;
+    fn get_tag(&self) -> String;
 
     fn preprocess(&mut self, scene: Scene, task_type: LightStrategyTask, real_time: bool);
 

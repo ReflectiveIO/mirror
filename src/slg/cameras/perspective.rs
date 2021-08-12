@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use delegate::delegate;
 
 use crate::rays::geometry::{Dot, Point, Ray, Transform, Vector};
@@ -11,8 +9,14 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::utils::PathVolumeInfo;
 
 pub struct PerspectiveCamera {
-    base: Arc<BaseCamera>,
+    base: BaseCamera,
     inner: ProjectiveCamera,
+}
+
+impl PerspectiveCamera {
+    pub fn local_sample_lens(&self, time: f32, u1: f32, u2: f32, lens_point: &Point) -> bool {
+        todo!()
+    }
 }
 
 impl PerspectiveCamera {
@@ -23,9 +27,9 @@ impl PerspectiveCamera {
         up: &Vector,
         sw: Option<[f64; 4]>,
     ) -> Self {
-        let mut inner = ProjectiveCamera::new(t, sw, orig, target, up);
+        let inner = ProjectiveCamera::new(t, sw, orig, target, up);
 
-        let base = inner.base().clone();
+        let mut base = inner.base().clone();
         base.field_of_view = 45.0;
         base.bokeh_distribution = BokehDistributionType::Exponential;
         base.bokeh_scale_x = 1.0;
@@ -38,7 +42,8 @@ impl PerspectiveCamera {
 impl Camera for PerspectiveCamera {
     delegate! {
         to self.inner {
-            fn base(&mut self) -> &mut Arc<BaseCamera>;
+            fn base(&self) -> &BaseCamera;
+            fn base_mut(&mut self) -> &mut BaseCamera;
             fn get_type(&self) -> &CameraType;
 
             /// Returns the bounding box of all possible ray origins for this camera.
@@ -87,9 +92,9 @@ impl Camera for PerspectiveCamera {
         let mut p0: Point;
 
         if self.base.lens_radius > 0.0 {
-            p0 = ray.origin + ray.direction * (self.base.focal_distance / cosi)
+            p0 = &ray.origin + &(&ray.direction * (self.base.focal_distance / cosi))
         } else {
-            p0 = ray.origin + ray.direction
+            p0 = &ray.origin + &ray.direction
         }
 
         if let Some(motion_system) = &self.base.motion_system {
@@ -101,21 +106,21 @@ impl Camera for PerspectiveCamera {
         *y = self.base.film_height as f32 - 1.0 - p0.y;
 
         // Check if we are inside the image plane
-        if (x < self.base.film_sub_region[0])
-            || (x >= self.base.film_sub_region[1] + 1)
-            || (y < self.base.film_sub_region[2])
-            || (y >= self.base.film_sub_region[3] + 1)
+        if (*x < self.base.film_sub_region[0] as f32)
+            || (*x >= (self.base.film_sub_region[1] + 1) as f32)
+            || (*y < self.base.film_sub_region[2] as f32)
+            || (*y >= (self.base.film_sub_region[3] + 1) as f32)
         {
             return false;
         } else {
             // World arbitrary clipping plane support
             if self.base.enable_clipping_plane {
                 // check if the ray end point is on the not visible side of the plane
-                let endpoint = ray.end;
+                let endpoint = &ray.origin + &(&ray.direction * ray.end);
                 if self
                     .base
                     .clipping_plane_normal
-                    .dot(endpoint - &self.base.clipping_plane_center)
+                    .dot(&(endpoint - &self.base.clipping_plane_center))
                     <= 0.0
                 {
                     return false;
@@ -133,7 +138,7 @@ impl Camera for PerspectiveCamera {
         self.local_sample_lens(time, u1, u2, &lens_point);
 
         if let Some(motion_system) = &self.base.motion_system {
-            *p = motion_system.sample(time) * (&self.base.trans.camera_to_world * lens_point);
+            *p = &motion_system.sample(time) * &(&self.base.trans.camera_to_world * lens_point);
         } else {
             *p = &self.base.trans.camera_to_world * lens_point;
         }
@@ -147,8 +152,8 @@ impl Camera for PerspectiveCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        mut pdf_w: Option<f32>,
-        mut factor: Option<f32>,
+        pdf_w: &mut Option<f32>,
+        factor: &mut Option<f32>,
     ) {
         let mut global_dir = self.get_dir().clone();
         if let Some(motion_system) = &self.base.motion_system {
@@ -158,21 +163,21 @@ impl Camera for PerspectiveCamera {
         let cos_at_camera = eye_ray.direction.dot(&global_dir);
         if cos_at_camera <= 0.0 {
             if pdf_w.is_some() {
-                pdf_w = Some(0.0);
+                *pdf_w = Some(0.0);
             }
             if factor.is_some() {
-                factor = Some(0.0);
+                *factor = Some(0.0);
             }
         } else {
             let camera_pdf_w: f32 =
                 1.0 / (cos_at_camera * cos_at_camera * cos_at_camera * self.base.pixel_area);
 
             if pdf_w.is_some() {
-                pdf_w = Some(camera_pdf_w);
+                *pdf_w = Some(camera_pdf_w);
             }
 
             if factor.is_some() {
-                factor = Some(camera_pdf_w / (eye_distance * eye_distance));
+                *factor = Some(camera_pdf_w / (eye_distance * eye_distance));
             }
         }
     }
@@ -193,19 +198,13 @@ impl Camera for PerspectiveCamera {
             self.base.bokeh_distribution.to_string(),
         );
 
-        if self.base.bokeh_distribution_image_map.is_some() {
-            let mut filename = String::new();
-            if real_filename {
-                filename = self
-                    .base
-                    .bokeh_distribution_image_map
-                    .unwrap()
-                    .get_name()
-                    .clone();
+        if let Some(bokeh_distribution_image_map) = &self.base.bokeh_distribution_image_map {
+            let filename = if real_filename {
+                bokeh_distribution_image_map.get_name()
             } else {
-                filename =
-                    imc.get_sequence_filename(&self.base.bokeh_distribution_image_map.unwrap())
-            }
+                imc.get_sequence_filename(bokeh_distribution_image_map)
+            };
+
             props.set("scene.camera.bokeh.distribution.image", filename);
         }
 

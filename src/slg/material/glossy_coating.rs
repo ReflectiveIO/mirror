@@ -66,6 +66,8 @@ impl GlossyCoatingMaterial {
 impl Material for GlossyCoatingMaterial {
     fn base(&self) -> &BaseMaterial { &self.base }
 
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::GlossyCoating }
 
     fn get_event_types(&self) -> BSDFEvent {

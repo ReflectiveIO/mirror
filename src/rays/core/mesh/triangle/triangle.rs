@@ -18,7 +18,7 @@ pub struct TriangleMesh {
 }
 
 impl NamedObject for TriangleMesh {
-    fn get_name(&self) -> &String { todo!() }
+    fn get_name(&self) -> String { todo!() }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }
@@ -33,7 +33,7 @@ impl Mesh for TriangleMesh {
     }
 
     fn get_vertex(&self, local2world: &Transform, vert_index: usize) -> Point {
-        self.vertices[vert_index]
+        self.vertices[vert_index].clone()
     }
 
     fn get_vertices(&self) -> &Vec<Point> { &self.vertices }

@@ -35,6 +35,8 @@ impl RoughMatteMaterial {
 impl Material for RoughMatteMaterial {
     fn base(&self) -> &BaseMaterial { &self.base }
 
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
+
     fn get_type(&self) -> MaterialType { MaterialType::RoughMatte }
 
     fn get_event_types(&self) -> BSDFEvent { BSDFEventType::DIFFUSE | BSDFEventType::REFLECT }

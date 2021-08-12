@@ -72,7 +72,7 @@ pub trait LightSource: Downcast {
 impl_downcast!(LightSource);
 
 impl NamedObject for Box<dyn LightSource> {
-    fn get_name(&self) -> &String { todo!() }
+    fn get_name(&self) -> String { todo!() }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }

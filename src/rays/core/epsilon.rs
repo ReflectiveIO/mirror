@@ -10,7 +10,7 @@ pub const DEFAULT_EPSILON_STATIC: f32 = 1e-5f32;
 pub const DEFAULT_COS_EPSILON_STATIC: f32 = 1e-4f32;
 
 // This is about 1e-5f for values near 1.f
-pub const DEFAULT_EPSILON_DISTANCE_FROM_VALUE: u8 = 0x80;
+pub const DEFAULT_EPSILON_DISTANCE_FROM_VALUE: u32 = 0x80;
 
 pub struct MachineEpsilon {
     min: f32,
@@ -19,7 +19,7 @@ pub struct MachineEpsilon {
 
 union MachineFloat {
     f: f32,
-    i: u8,
+    i: u32,
 }
 
 impl MachineEpsilon {
@@ -31,18 +31,20 @@ impl MachineEpsilon {
 
     pub fn get_max(&self) -> f32 { self.max }
 
-    pub fn next(&mut self, value: f32) -> f32 {
+    pub fn next(value: f32) -> f32 {
         let mut mf = MachineFloat { f: value };
-        mf.i += DEFAULT_EPSILON_DISTANCE_FROM_VALUE;
-
-        return mf.f;
+        unsafe {
+            mf.i += DEFAULT_EPSILON_DISTANCE_FROM_VALUE;
+            mf.f
+        }
     }
 
-    pub fn previous(&mut self, value: f32) -> f32 {
+    pub fn previous(value: f32) -> f32 {
         let mut mf = MachineFloat { f: value };
-        mf.i -= DEFAULT_EPSILON_DISTANCE_FROM_VALUE;
-
-        return mf.f;
+        unsafe {
+            mf.i -= DEFAULT_EPSILON_DISTANCE_FROM_VALUE;
+            mf.f
+        }
     }
 }
 
@@ -55,7 +57,10 @@ impl Default for MachineEpsilon {
     }
 }
 
-const MACHINE_EPSILON: MachineEpsilon = MachineEpsilon::default();
+const MACHINE_EPSILON: MachineEpsilon = MachineEpsilon {
+    min: DEFAULT_EPSILON_MIN,
+    max: DEFAULT_EPSILON_MAX,
+};
 
 pub trait Epsilon<T> {
     fn epsilon(value: &T) -> f32;
@@ -64,7 +69,7 @@ pub trait Epsilon<T> {
 impl Epsilon<f32> for MachineEpsilon {
     fn epsilon(value: &f32) -> f32 {
         clamp(
-            (MACHINE_EPSILON.next(*value) - value).abs(),
+            (MachineEpsilon::next(*value) - value).abs(),
             MACHINE_EPSILON.get_min(),
             MACHINE_EPSILON.get_max(),
         )

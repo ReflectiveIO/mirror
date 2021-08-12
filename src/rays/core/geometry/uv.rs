@@ -1,6 +1,6 @@
 use std::ops::*;
 
-#[derive(Debug, Copy, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct UV {
     pub u: f32,
     pub v: f32,

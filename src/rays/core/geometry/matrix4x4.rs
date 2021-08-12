@@ -9,8 +9,6 @@ pub struct Matrix4x4 {
 }
 
 impl Matrix4x4 {
-    pub const IDENTITY: Matrix4x4 = Matrix4x4::new();
-
     pub fn new() -> Self {
         let mut m: [[f32; 4]; 4] = Default::default();
         for i in 0..=4 {
@@ -24,6 +22,8 @@ impl Matrix4x4 {
         }
         Self { m }
     }
+
+    pub fn identity() -> Self { Self::new() }
 
     pub fn transpose(&self) -> Self {
         Matrix4x4::from([
@@ -79,7 +79,7 @@ impl Matrix4x4 {
         let mut minv: [[f32; 4]; 4] = self.m.clone();
 
         for i in 0..4 {
-            let (mut irow, mut icol): (i32, i32) = (-1, -1);
+            let (mut irow, mut icol): (usize, usize) = (usize::MIN, usize::MIN);
             let mut big = 0.0_f32;
 
             // Choose pivot
@@ -89,8 +89,8 @@ impl Matrix4x4 {
                         if ipiv[k] == 0 {
                             if minv[j][k].abs() >= big {
                                 big = minv[j][k].abs();
-                                irow = j as i32;
-                                icol = k as i32;
+                                irow = j;
+                                icol = k;
                             }
                         } else if ipiv[k] > 1 {
                             panic!("Singular matrix in MatrixInvert: {}", self.to_string())
@@ -102,45 +102,42 @@ impl Matrix4x4 {
             ipiv[icol as usize] += 1;
 
             // Swap rows _irow_ and _icol_ for pivot
-            if irow != icol {
-                for k in 0..4 {
-                    swap(&mut minv[irow as usize][k], &mut minv[icol as usize][k]);
-                }
-            }
-            indxr[i] = irow;
-            indxc[i] = icol;
-            if minv[icol as usize][icol as usize] == 0.0 {
+            // if irow != icol {
+            //     for k in 0..4 {
+            //         swap(&minv[irow][k], &mut minv[icol][k]);
+            //     }
+            // }
+            indxr[i] = irow as i32;
+            indxc[i] = icol as i32;
+            if minv[icol][icol] == 0.0 {
                 panic!("Singular matrix in MatrixInvert: {}", self.to_string());
             }
 
             // Set $m[icol][icol]$ to one by scaling row _icol_ appropriately
-            let pivinv = 1.0_f32 / minv[icol as usize][icol as usize];
-            minv[icol as usize][icol as usize] = 1.0_f32;
+            let pivinv = 1.0_f32 / minv[icol][icol];
+            minv[icol][icol] = 1.0_f32;
             for j in 0..4 {
-                minv[icol as usize][j] *= pivinv;
+                minv[icol][j] *= pivinv;
             }
             // Subtract this row from others to zero out their columns
             for j in 0..4 {
                 if j != icol {
-                    let save: f32 = minv[j as usize][icol as usize];
-                    minv[j as usize][icol as usize] = 0.0;
+                    let save: f32 = minv[j as usize][icol];
+                    minv[j as usize][icol] = 0.0;
                     for k in 0..4 {
-                        minv[j as usize][k] -= minv[icol as usize][k] * save;
+                        minv[j as usize][k] -= minv[icol][k] * save;
                     }
                 }
             }
         }
         // Swap columns to reflect permutation
-        for j in (0..=3).rev() {
-            if indxr[j] != indxc[j] {
-                for k in 0..4 {
-                    swap(
-                        &mut minv[k][indxr[j] as usize],
-                        &mut minv[k][indxc[j] as usize],
-                    );
-                }
-            }
-        }
+        // for j in (0..=3).rev() {
+        //     if indxr[j] != indxc[j] {
+        //         for k in 0..4 {
+        //             swap(&mut minv[k][indxr[j]], &mut minv[k][indxc[j]]);
+        //         }
+        //     }
+        // }
 
         return Matrix4x4::from(minv);
     }
@@ -278,4 +275,10 @@ impl Mul<&Ray> for &Matrix4x4 {
             .time(rhs.time)
             .build()
     }
+}
+
+impl Mul<Ray> for Matrix4x4 {
+    type Output = Ray;
+
+    fn mul(self, rhs: Ray) -> Self::Output { &self * &rhs }
 }

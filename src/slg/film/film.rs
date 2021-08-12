@@ -258,7 +258,7 @@ impl Film {
         height = props.get("film.height").unwrap_or(height);
 
         let mut sub_region: [i64; 4] = [0, 0, 0, 0];
-        let mut sub_region_used = false;
+        let sub_region_used: bool;
 
         if props.has("film.subregion") {
             let prop: [i64; 4] =

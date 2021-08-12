@@ -1,8 +1,8 @@
-use crate::rays::mesh::ExtMesh;
+use crate::rays::mesh::{ExtMesh, ExtTriangleMesh};
 use crate::rays::object::NamedObject;
 use crate::rays::Properties;
 use crate::slg::image_map::ImageMap;
-use crate::slg::material::Material;
+use crate::slg::material::{Material, NullMaterial};
 use crate::slg::scene::ExtMeshCache;
 
 pub enum BakeMapType {
@@ -45,13 +45,18 @@ impl SceneObject {
 impl Default for SceneObject {
     fn default() -> Self {
         Self {
-            ..Default::default()
+            mesh: Box::new(ExtTriangleMesh::default()),
+            material: Box::new(NullMaterial::default()),
+            object_id: 0,
+            bake_map: ImageMap::default(),
+            bake_map_uv_index: 0,
+            camera_in_visible: false,
         }
     }
 }
 
 impl NamedObject for SceneObject {
-    fn get_name(&self) -> &String { todo!() }
+    fn get_name(&self) -> String { todo!() }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }

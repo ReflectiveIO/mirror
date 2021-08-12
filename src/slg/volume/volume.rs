@@ -27,11 +27,9 @@ impl Volume {
 
     pub const fn get_priority(&self) -> i8 { self.priority }
 
-    pub const fn get_ior_texture(&self) -> &Box<dyn Texture> { &self.ior_texture }
+    pub fn get_ior_texture(&self) -> &Box<dyn Texture> { &self.ior_texture }
 
-    pub const fn get_volume_emission_texture(&self) -> &Box<dyn Texture> {
-        &self.volume_emission_texture
-    }
+    pub fn get_volume_emission_texture(&self) -> &Box<dyn Texture> { &self.volume_emission_texture }
 
     pub fn get_ior(&self, hp: &HitPoint) -> f32 { self.ior_texture.get_float_value(hp) }
 
@@ -49,6 +47,8 @@ impl Volume {
 
 impl Material for Volume {
     fn base(&self) -> &BaseMaterial { &self.base }
+
+    fn base_mut(&mut self) -> &mut BaseMaterial { &mut self.base }
 
     fn get_type(&self) -> MaterialType { todo!() }
 

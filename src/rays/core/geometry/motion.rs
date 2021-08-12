@@ -1,6 +1,7 @@
 use crate::rays::geometry::{Matrix4x4, Transform};
 use crate::rays::Properties;
 
+#[derive(Clone)]
 pub struct InterpolatedTransform {
     pub start_time: f32,
     pub end_time: f32,
@@ -8,7 +9,7 @@ pub struct InterpolatedTransform {
     pub end: Transform,
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct MotionSystem {
     times: Vec<f32>,
     interpolated_transforms: Vec<InterpolatedTransform>,

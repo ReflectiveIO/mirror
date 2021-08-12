@@ -79,26 +79,33 @@ impl BSDF {
 
     pub fn is_empty(&self) -> bool { self.material.is_none() }
 
-    pub fn is_light_source(&self) -> bool { self.material.unwrap().is_light_source() }
+    pub fn is_light_source(&self) -> bool { self.material.as_ref().unwrap().is_light_source() }
 
-    pub fn is_delta(&self) -> bool { self.material.unwrap().is_delta() }
+    pub fn is_delta(&self) -> bool { self.material.as_ref().unwrap().is_delta() }
 
     pub fn is_visible_indirect_diffuse(&self) -> bool {
-        self.material.unwrap().is_visible_indirect_diffuse()
+        self.material
+            .as_ref()
+            .unwrap()
+            .is_visible_indirect_diffuse()
     }
 
     pub fn is_visible_indirect_glossy(&self) -> bool {
-        self.material.unwrap().is_visible_indirect_glossy()
+        self.material.as_ref().unwrap().is_visible_indirect_glossy()
     }
 
     pub fn is_visible_indirect_specular(&self) -> bool {
-        self.material.unwrap().is_visible_indirect_specular()
+        self.material
+            .as_ref()
+            .unwrap()
+            .is_visible_indirect_specular()
     }
 
-    pub fn is_shadow_catcher(&self) -> bool { self.material.unwrap().is_shadow_catcher() }
+    pub fn is_shadow_catcher(&self) -> bool { self.material.as_ref().unwrap().is_shadow_catcher() }
 
     pub fn is_shadow_catcher_only_infinite_lights(&self) -> bool {
         self.material
+            .as_ref()
             .unwrap()
             .is_shadow_catcher_only_infinite_lights()
     }
@@ -107,9 +114,11 @@ impl BSDF {
 
     pub fn is_volume(&self) -> bool { todo!() }
 
-    pub fn is_photon_gi_enabled(&self) -> bool { self.material.unwrap().is_photon_gi_enabled() }
+    pub fn is_photon_gi_enabled(&self) -> bool {
+        self.material.as_ref().unwrap().is_photon_gi_enabled()
+    }
 
-    pub fn is_holdout(&self) -> bool { self.material.unwrap().is_holdout() }
+    pub fn is_holdout(&self) -> bool { self.material.as_ref().unwrap().is_holdout() }
 
     pub fn is_albedo_endpoint(&self) -> bool { todo!() }
 
@@ -117,34 +126,37 @@ impl BSDF {
 
     pub fn get_material_name(&self) -> &String { todo!() }
 
-    pub fn get_material_id(&self) -> u32 { self.material.unwrap().get_id() }
+    pub fn get_material_id(&self) -> u32 { self.material.as_ref().unwrap().get_id() }
 
-    pub fn get_light_id(&self) -> u32 { self.material.unwrap().get_light_id() }
+    pub fn get_light_id(&self) -> u32 { self.material.as_ref().unwrap().get_light_id() }
 
     pub fn get_material_interior_volume(&self) -> &Volume {
         self.material
+            .as_ref()
             .unwrap()
             .get_interior_volume(&self.hit_point, self.hit_point.pass_through_event)
     }
 
     pub fn get_material_exterior_volume(&self) -> &Volume {
         self.material
+            .as_ref()
             .unwrap()
             .get_exterior_volume(&self.hit_point, self.hit_point.pass_through_event)
     }
 
-    pub fn get_glossiness(&self) -> f32 { self.material.unwrap().get_glossiness() }
+    pub fn get_glossiness(&self) -> f32 { self.material.as_ref().unwrap().get_glossiness() }
 
     pub fn get_scene_object(&self) -> &SceneObject { &self.scene_object }
 
-    pub fn get_event_types(&self) -> BSDFEvent { self.material.unwrap().get_event_types() }
+    pub fn get_event_types(&self) -> BSDFEvent { self.material.as_ref().unwrap().get_event_types() }
 
-    pub fn get_material_type(&self) -> MaterialType { self.material.unwrap().get_type() }
+    pub fn get_material_type(&self) -> MaterialType { self.material.as_ref().unwrap().get_type() }
 
     pub fn get_pass_through_transparency(&self, back_tracing: bool) -> Spectrum { todo!() }
 
     pub fn get_pass_through_shadow_transparency(&self) -> &Spectrum {
         self.material
+            .as_ref()
             .unwrap()
             .get_pass_through_shadow_transparency()
     }

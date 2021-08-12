@@ -1,4 +1,3 @@
-use std::borrow::BorrowMut;
 use std::sync::Arc;
 
 use crate::rays::geometry::{rotate, Dot, Normal, Point, Ray, Transform, Vector};
@@ -9,7 +8,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::utils::PathVolumeInfo;
 
 pub struct ProjectiveCamera {
-    base: Arc<BaseCamera>,
+    base: BaseCamera,
 }
 
 impl ProjectiveCamera {
@@ -20,7 +19,7 @@ impl ProjectiveCamera {
         target: &Point,
         up: &Vector,
     ) -> Self {
-        let mut auto_update_screen_window: bool;
+        let auto_update_screen_window: bool;
         let mut screen_window: [f64; 4] = [0.0, 0.0, 0.0, 0.0];
 
         if let Some(w) = sw {
@@ -30,7 +29,7 @@ impl ProjectiveCamera {
             auto_update_screen_window = true;
         }
 
-        let mut base = Arc::new(BaseCamera::new(t));
+        let mut base = BaseCamera::new(t);
         base.orig = orig.clone();
         base.target = target.clone();
         base.up = up.normalize();
@@ -45,8 +44,9 @@ impl ProjectiveCamera {
 const DEFAULT_EPSILON_STATIC: f32 = 1e-5_f32;
 
 impl Camera for ProjectiveCamera {
-    #[inline]
-    fn base(&mut self) -> &mut Arc<BaseCamera> { self.base.borrow_mut() }
+    fn base(&self) -> &BaseCamera { &self.base }
+
+    fn base_mut(&mut self) -> &mut BaseCamera { &mut self.base }
 
     fn get_type(&self) -> &CameraType { &self.base.camera_type }
 
@@ -75,12 +75,12 @@ impl Camera for ProjectiveCamera {
 
     fn translate_right(&mut self, k: f32) { self.translate(&(k * self.base.x.normalize())); }
 
-    fn translate_forward(&mut self, k: f32) { self.translate(&(k * self.base.dir)); }
+    fn translate_forward(&mut self, k: f32) { self.translate(&(k * &self.base.dir)); }
 
-    fn translate_backward(&mut self, k: f32) { self.translate(&(-k * self.base.dir)); }
+    fn translate_backward(&mut self, k: f32) { self.translate(&(-k * &self.base.dir)); }
 
     fn rotate(&mut self, angle: f32, axis: &Vector) {
-        let mut dir = self.base.target - self.base.orig;
+        let dir = &self.base.target - &self.base.orig;
         let t = rotate(angle, axis);
         let dir: Vector = t * dir;
 
@@ -88,17 +88,17 @@ impl Camera for ProjectiveCamera {
         // skip this operation (it would trigger a Singular matrix in
         // MatrixInvert)
         if dir.normalize().dot(&self.base.up).abs() < 1.0 - DEFAULT_EPSILON_STATIC {
-            self.base.target = self.base.orig + dir;
+            self.base.target = &self.base.orig + &dir;
         }
     }
 
-    fn rotate_left(&mut self, angle: f32) { self.rotate(angle, &self.base.y) }
+    fn rotate_left(&mut self, angle: f32) { self.rotate(angle, &self.base.y.to_owned()) }
 
-    fn rotate_right(&mut self, angle: f32) { self.rotate(-angle, &self.base.y) }
+    fn rotate_right(&mut self, angle: f32) { self.rotate(-angle, &self.base.y.to_owned()) }
 
-    fn rotate_up(&mut self, angle: f32) { self.rotate(angle, &self.base.x) }
+    fn rotate_up(&mut self, angle: f32) { self.rotate(angle, &self.base.x.to_owned()) }
 
-    fn rotate_down(&mut self, angle: f32) { self.rotate(-angle, &self.base.x) }
+    fn rotate_down(&mut self, angle: f32) { self.rotate(-angle, &self.base.x.to_owned()) }
 
     fn generate_ray(
         &self,
@@ -125,18 +125,18 @@ impl Camera for ProjectiveCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        mut pdf_w: Option<f32>,
-        mut flux_to_radiance_factor: Option<f32>,
+        pdf_w: &mut Option<f32>,
+        flux_to_radiance_factor: &mut Option<f32>,
     ) {
         todo!()
     }
 
-    fn to_properties(&self, image_map_cache: &ImageMapCache, real_filename: bool) -> Properties {
+    fn to_properties(&self, imc: &ImageMapCache, real_filename: bool) -> Properties {
         let mut props = self.base.to_properties();
 
-        props.set("scene.camera.lookat.orig", self.base.orig);
-        props.set("scene.camera.lookat.target", self.base.target);
-        props.set("scene.camera.up", self.base.up);
+        props.set("scene.camera.lookat.orig", &self.base.orig);
+        props.set("scene.camera.lookat.target", &self.base.target);
+        props.set("scene.camera.up", &self.base.up);
 
         if !self.base.auto_update_screen_window {
             props.set(
@@ -152,11 +152,11 @@ impl Camera for ProjectiveCamera {
             );
             props.set(
                 "scene.camera.clipping-plane.center",
-                self.base.clipping_plane_center,
+                &self.base.clipping_plane_center,
             );
             props.set(
                 "scene.camera.clipping-plane.normal",
-                self.base.clipping_plane_normal,
+                &self.base.clipping_plane_normal,
             );
         }
 

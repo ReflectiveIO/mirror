@@ -25,7 +25,7 @@ impl ImageMap {
 }
 
 impl NamedObject for ImageMap {
-    fn get_name(&self) -> &String { &self.name }
+    fn get_name(&self) -> String { self.name.clone() }
 
     fn set_name(&mut self, name: &str) { self.name = name.to_string() }
 }

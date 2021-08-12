@@ -68,7 +68,7 @@ impl Config {
 
     /// Sets configuration Properties with new values. This method can be
     /// used only when the Config is not in use by a Session.
-    pub fn parse(&self, props: &Properties) { self.config.parse(props); }
+    pub fn parse(&mut self, props: &Properties) { self.config.parse(props); }
 
     /// Deletes any configuration Property starting with the given prefix.
     /// this method can be used only when the Config is not in use by a Session.

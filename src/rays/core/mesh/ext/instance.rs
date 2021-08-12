@@ -45,7 +45,7 @@ impl Mesh for ExtInstanceTriangleMesh {
 }
 
 impl NamedObject for ExtInstanceTriangleMesh {
-    fn get_name(&self) -> &String { todo!() }
+    fn get_name(&self) -> String { todo!() }
 
     fn set_name(&mut self, name: &str) { todo!() }
 }

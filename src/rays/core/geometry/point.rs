@@ -5,7 +5,7 @@ use config::Value;
 use crate::rays::core::geometry::Transform;
 use crate::rays::geometry::{Matrix4x4, Vector};
 
-#[derive(Debug, Copy, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Point {
     pub x: f32,
     pub y: f32,
@@ -38,10 +38,10 @@ impl Point {
     }
 
     #[inline]
-    pub fn distance(&self, p: &Point) -> f32 { (*self - *p).length() }
+    pub fn distance(&self, p: &Point) -> f32 { (self - p).length() }
 
     #[inline]
-    pub fn distance_squared(&self, p: &Point) -> f32 { (*self - *p).length_squared() }
+    pub fn distance_squared(&self, p: &Point) -> f32 { (self - p).length_squared() }
 }
 
 impl From<[f32; 3]> for Point {
@@ -81,12 +81,12 @@ impl AddAssign for Point {
 }
 
 /// The addition operator +.
-/// Point + Vector = Point
-impl Add<Vector> for Point {
-    type Output = Self;
+/// &Point + &Vector = Point
+impl Add<&Vector> for &Point {
+    type Output = Point;
 
-    fn add(self, rhs: Vector) -> Self::Output {
-        Self {
+    fn add(self, rhs: &Vector) -> Self::Output {
+        Point {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
@@ -126,6 +126,18 @@ impl Sub<&Point> for &Point {
 
     fn sub(self, rhs: &Point) -> Self::Output {
         Vector::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+    }
+}
+
+impl Sub<&Point> for Point {
+    type Output = Point;
+
+    fn sub(self, rhs: &Point) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
     }
 }
 
@@ -264,11 +276,20 @@ impl MulAssign<&Matrix4x4> for Point {
     }
 }
 
+/// Point *= Matrix4x4
+impl MulAssign<Matrix4x4> for Point {
+    fn mul_assign(&mut self, rhs: Matrix4x4) { *self *= &rhs }
+}
+
 /// Point *= &Transform
 impl MulAssign<&Transform> for Point {
     fn mul_assign(&mut self, rhs: &Transform) { todo!() }
 }
 
-impl Into<Value> for Point {
+impl MulAssign<Transform> for Point {
+    fn mul_assign(&mut self, rhs: Transform) { *self *= &rhs }
+}
+
+impl Into<Value> for &Point {
     fn into(self) -> Value { todo!() }
 }

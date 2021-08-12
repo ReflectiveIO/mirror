@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::f32::consts::PI;
 
 use crate::rays::color::Spectrum;
@@ -31,7 +32,6 @@ impl SphericalFunction for NopSphericalFunction {
     fn evaluate(&self, phi: f32, theta: f32) -> Spectrum { Spectrum::from(1.0) }
 }
 
-#[derive(Clone, PartialEq)]
 pub struct SampleableSphericalFunction {
     func: Box<dyn SphericalFunction>,
     uv_dist2d: Distribution2D,
@@ -79,4 +79,12 @@ impl Default for SampleableSphericalFunction {
             average: 0.0,
         }
     }
+}
+
+impl Clone for SampleableSphericalFunction {
+    fn clone(&self) -> Self { todo!() }
+}
+
+impl PartialEq for SampleableSphericalFunction {
+    fn eq(&self, other: &Self) -> bool { todo!() }
 }

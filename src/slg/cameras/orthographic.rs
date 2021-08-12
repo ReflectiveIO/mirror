@@ -10,7 +10,7 @@ use crate::slg::image_map::ImageMapCache;
 use crate::slg::utils::PathVolumeInfo;
 
 pub struct OrthographicCamera {
-    base: Arc<BaseCamera>,
+    base: BaseCamera,
     inner: ProjectiveCamera,
 
     camera_pdf: f32,
@@ -18,7 +18,7 @@ pub struct OrthographicCamera {
 
 impl OrthographicCamera {
     pub fn new(orig: &Point, target: &Point, up: &Vector, sw: Option<[f64; 4]>) -> Self {
-        let mut inner = ProjectiveCamera::new(CameraType::Orthographic, sw, orig, target, up);
+        let inner = ProjectiveCamera::new(CameraType::Orthographic, sw, orig, target, up);
         let base = inner.base().clone();
         Self {
             base,
@@ -31,7 +31,8 @@ impl OrthographicCamera {
 impl Camera for OrthographicCamera {
     delegate! {
         to self.inner {
-            fn base(&mut self) -> &mut Arc<BaseCamera>;
+            fn base(&self) -> &BaseCamera;
+            fn base_mut(&mut self) -> &mut BaseCamera;
             fn get_type(&self) -> &CameraType;
 
             /// Returns the bounding box of all possible ray origins for this camera.
@@ -74,8 +75,8 @@ impl Camera for OrthographicCamera {
         eye_distance: f32,
         film_x: f32,
         film_y: f32,
-        mut pdf_w: Option<f32>,
-        mut flux_to_radiance_factor: Option<f32>,
+        pdf_w: &mut Option<f32>,
+        flux_to_radiance_factor: &mut Option<f32>,
     ) {
         todo!()
     }
