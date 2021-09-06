@@ -17,7 +17,7 @@ pub struct ImageMapTexture {
 }
 
 impl ImageMapTexture {
-    fn new(
+    pub fn new(
         tex_name: &String,
         img: &ImageMap,
         mp: &Box<dyn TextureMapping2D>,

@@ -20,7 +20,7 @@ impl ImageMapCache {
         storage_type: StorageType,
         wrap_type: WrapType,
     ) -> ImageMap {
-        ImageMap::default()
+        ImageMap::new(filename, gamma, storage_type, wrap_type)
     }
 
     pub fn delete_image_map(&mut self, im: &ImageMap) {}

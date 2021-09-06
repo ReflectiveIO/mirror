@@ -8,7 +8,7 @@ use crate::slg::material::{Material, MaterialEmissionDLSType, MaterialType};
 use crate::slg::textures::Texture;
 use crate::slg::volume::Volume;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone)]
 pub struct BaseMaterial {
     mat_id: u32,
     light_id: u32,
@@ -56,6 +56,10 @@ pub struct BaseMaterial {
 
 impl Default for BaseMaterial {
     fn default() -> Self { todo!() }
+}
+
+impl PartialEq for BaseMaterial {
+    fn eq(&self, other: &Self) -> bool { self.mat_id == other.mat_id }
 }
 
 impl BaseMaterial {

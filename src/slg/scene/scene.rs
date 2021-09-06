@@ -15,7 +15,9 @@ use crate::slg::light::{LightSourceDefinitions, Spotlight};
 use crate::slg::material::{Material, MaterialDefinitions};
 use crate::slg::scene::{ExtMeshCache, SceneObject, SceneObjectDefinitions};
 use crate::slg::shape::TessellationType;
-use crate::slg::textures::{Texture, TextureDefinitions, TextureMapping2D, TextureMapping3D};
+use crate::slg::textures::{
+    ImageMapTexture, Texture, TextureDefinitions, TextureMapping2D, TextureMapping3D,
+};
 use crate::slg::utils::PathVolumeInfo;
 use crate::slg::volume::Volume;
 use crate::slg::{EditAction, EditActionList};
